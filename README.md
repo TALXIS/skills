@@ -23,6 +23,10 @@ agentbox repository is the single source of truth for the toolchain.
 Working without a dev container is fine too — `/init-repo` checks your toolchain
 and tells you exactly what's missing.
 
+For a complete example setup and a hands-on demo of the whole workflow — dev
+container, monorepo, data model, UI, tests, CI/CD — see
+**[TALXIS/alm-lab](https://github.com/TALXIS/alm-lab)**.
+
 ## Install
 
 Works identically in **Claude Code** and **GitHub Copilot CLI**:
