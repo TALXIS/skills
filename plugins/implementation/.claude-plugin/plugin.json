@@ -1,6 +1,6 @@
 {
   "name": "implementation",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Build TALXIS / Power Platform apps in a local-first monorepo: scaffold components with the TALXIS CLI (txc), validate with dotnet build, deploy as Package Deployer packages. Use when creating a new TALXIS project or working on an existing one.",
   "author": {
     "name": "NETWORG",
