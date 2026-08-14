@@ -2,7 +2,7 @@
 
 The design principle of this repo: **move engineering out of markdown and into the
 tools.** Every workaround a skill has to describe is a defect here. Each item below
-should become a [tools-cli](https://github.com/TALXIS/tools-cli) (or DevKit templates)
+should become a [tools-cli](https://github.com/TALXIS/tools-cli)
 issue; when it ships, the corresponding skill prose gets deleted.
 
 | # | Improvement | Replaces | Status |

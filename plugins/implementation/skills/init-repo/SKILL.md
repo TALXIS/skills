@@ -26,17 +26,12 @@ node --version
 
 - Node must be >= 22.12.
 - If `txc` is missing: `dotnet tool install --global TALXIS.CLI`
-- Then always refresh both, even when present (a stale template pack fails confusingly
-  later, e.g. "Unknown parameter" on a valid parameter):
+- Then refresh it even when present (stale tooling fails confusingly later, e.g.
+  "Unknown parameter" on a valid parameter):
 
 ```
 dotnet tool update --global TALXIS.CLI
-dotnet new install TALXIS.DevKit.Templates.Dataverse
 ```
-
-`txc workspace component create` reads its scaffolding from the
-`TALXIS.DevKit.Templates.Dataverse` template pack, not from the CLI binary — the two
-must stay in lockstep.
 
 ## Step 2 — New or existing repository?
 
@@ -71,8 +66,8 @@ dotnet sln add src/Packages.Main/Packages.Main.csproj
 ```
 
 The `.slnx` migration matters: it is the XML solution format — human-readable and
-merge-friendly. Also create `NuGet.config` at the root (TALXIS DevKit build SDK and
-templates come from nuget.org):
+merge-friendly. Also create `NuGet.config` at the root (TALXIS build dependencies
+come from nuget.org):
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>

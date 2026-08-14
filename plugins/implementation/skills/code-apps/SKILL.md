@@ -32,7 +32,7 @@ dotnet sln add src/Apps.<Name>
 dotnet add "src/Solutions.UI/Solutions.UI.csproj" reference "src/Apps.<Name>/Apps.<Name>.csproj"
 ```
 
-A plain `ProjectReference` is all the wiring: the DevKit build discovers any
+A plain `ProjectReference` is all the wiring: the TALXIS build discovers any
 `ProjectType=CodeApp` reference regardless of which solution carries it — no dedicated
 solution project. During the solution build it runs `npm install` / `npm run build`,
 registers the app as a CanvasApp root component, and packs `dist/` into the solution.
