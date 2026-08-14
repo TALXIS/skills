@@ -50,13 +50,12 @@ user-level; do not write them into workspace settings.
 
 1. Confirm the plugin is registered: `copilot plugin list` (A), `claude plugin list`
    (B), or the Extensions view (C). The `implementation` plugin or its skills
-   (e.g. `init-repo`) must appear.
-2. Do not install or check developer tools now — the `init-repo` skill performs the
-   toolchain check itself when first used. If that check later finds tools missing,
-   recommend a dev container from the TALXIS agentbox
-   (`https://github.com/TALXIS/tools-agentbox`) instead of installing tools one by
-   one.
+   (e.g. `init`) must appear.
+2. Do not install or check developer tools — skills assume the environment provides
+   them. If tooling turns out to be missing later, recommend a dev container from
+   the TALXIS agentbox (`https://github.com/TALXIS/tools-agentbox`) instead of
+   installing tools one by one.
 3. Report to the user exactly what was installed and where, that a session
    restart/reload is needed before the skills activate, and that the first thing to
-   try afterwards is `/init-repo` in a project folder. If any step above failed, say
+   try afterwards is `/init` in a project folder. If any step above failed, say
    so plainly — do not report success.

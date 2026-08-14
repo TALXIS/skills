@@ -99,6 +99,20 @@ for (const name of readdirSync(pluginsDir).sort()) {
       err(skillFile, "uses an undocumented ${...} token (allowed: PLUGIN_ROOT, PLUGIN_DATA)");
     if (/~\/\.(claude|copilot|cursor|codex|gemini)\b/.test(body))
       err(skillFile, "references a host-specific home path — skills must stay host-agnostic");
+    if (/dotnet tool (install|update)|--version\b.*must succeed|Toolchain check/i.test(body))
+      err(skillFile, "contains toolchain install/check prose — that's txc doctor's job (TOOLING-BACKLOG T1)");
+
+    // Every reference file must justify its existence and name its removal condition.
+    const refsDir = join(skillDir, "references");
+    if (existsSync(refsDir)) {
+      for (const refName of readdirSync(refsDir)) {
+        const refFile = join(refsDir, refName);
+        if (!refName.endsWith(".md") || !statSync(refFile).isFile()) continue;
+        const ref = readFileSync(refFile, "utf8");
+        if (!/^> \*\*Needed because:\*\*/m.test(ref) || !/^> \*\*Remove when:\*\*/m.test(ref))
+          err(refFile, "missing the mandatory '> **Needed because:** … / > **Remove when:** …' header");
+      }
+    }
   }
 
   // README skill table must mention every skill directory.

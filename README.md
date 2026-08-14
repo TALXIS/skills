@@ -37,7 +37,7 @@ available in every project folder.
 Open your agent in an empty folder (or an existing TALXIS repository) and run:
 
 ```
-/init-repo
+/init
 ```
 
 It scaffolds the monorepo and ends on a passing local build.

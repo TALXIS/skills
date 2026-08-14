@@ -1,59 +1,57 @@
 # Contributing
 
-## The one rule
+## The two rules
 
-**A skill is a router to deterministic `txc` commands, not a tutorial.** If you are
-about to write prose telling the agent how to work around a tool limitation, stop:
-file the limitation in [TOOLING-BACKLOG.md](TOOLING-BACKLOG.md) (and ideally as a
-[tools-cli](https://github.com/TALXIS/tools-cli) issue), document the workaround in
-one sentence, and link the backlog item so the prose can be deleted when the tool
-catches up.
+1. **Skills are organized by universal developer intent** (tables, backend logic,
+   screens, tests, deployment) — never by platform vocabulary. The consuming agent
+   knows nothing about Power Platform and shouldn't need to.
+2. **The CLI answers "how"; markdown never duplicates it.** Steer the agent to
+   `txc component type list/explain`, `txc workspace component parameter list <type>`,
+   and `txc docs get <id>`. If you're about to write prose working around a tool
+   limitation, add the gap to [TOOLING-BACKLOG.md](TOOLING-BACKLOG.md) instead and
+   keep the workaround in a reference file that names it.
 
-## Skill authoring standard
+## Skill standard (enforced by `scripts/validate.mjs` on every PR)
 
-Enforced by `scripts/validate.mjs` on every PR (no path filter):
-
-- `skills/<name>/SKILL.md` — exact filename; frontmatter `name` equals the directory
-  name; `description` ≤ 1024 chars and contains a **"Use when …"** routing hint.
-- Frontmatter: simple single-line `key: value` scalars only, ~200 tokens max.
-- Body ≤ 5000 tokens; over 4000 requires a `references/` directory (progressive
-  disclosure — thin SKILL.md, fat references, one level deep).
-- Host-agnostic: no `~/.claude`-style paths, no `${…}` tokens beyond
+- Body skeleton: contract line → "ask the CLI first" → intent→type mapping →
+  sequence → invariants → references. Target ≤ ~70 lines.
+- No `--param` enumerations in SKILL.md — `parameter list` is the authority. A
+  specific parameter may appear only when it encodes an invariant.
+- Zero toolchain prose: no version checks, installs, or updates (that's `txc doctor`,
+  T1). Machine-checked.
+- Frontmatter: single-line `name:` (= directory name) and `description:` (≤ 1024
+  chars, contains "Use when …", platform-agnostic vocabulary with Dataverse/Power
+  Platform as trigger keywords only).
+- Host-agnostic: no `~/.claude`-style paths, no tokens beyond
   `${PLUGIN_ROOT}` / `${PLUGIN_DATA}`.
+- Body ≤ 5000 tokens; > 4000 requires `references/`.
 
-Not machine-checked (yet) but required in review:
+## References standard (machine-checked)
 
-- Every invariant states the command that verifies it; `dotnet build` is the
-  universal validation loop.
-- Local-first: no cloud calls unless the user asked or the skill's contract says so
-  in its first lines.
-- No step numbers referenced across files or skills — they drift.
-- No portal click-paths as the happy path.
-- Variants of one operation = one canonical skill + ≤20-line delegation wrappers,
-  never near-duplicate skills.
-- One approval per skill run: gather all inputs up front, don't re-prompt.
+Every `skills/*/references/*.md` starts with:
+
+```
+> **Needed because:** <the txc gap>
+> **Remove when:** <TOOLING-BACKLOG item / tools-cli change>
+```
+
+When the named fix ships, delete the file and shrink the skill.
 
 ## Manifests
 
-`plugin.json` (Agent Plugins 1.0) and `mcp.json` are the **source of truth**.
+`plugin.json` (Agent Plugins 1.0) and `mcp.json` are the source of truth;
 `.claude-plugin/plugin.json` and `.mcp.json` are generated — never edit them:
 
 ```
-node scripts/generate-manifests.mjs
-node scripts/validate.mjs
+node scripts/generate-manifests.mjs && node scripts/validate.mjs
 ```
 
-`version` lives only in `plugin.json`. Bump it in the PR that changes the plugin:
-skill removed/renamed → major, skill added → minor, fixes → patch.
-
-## Placeholder plugins
-
-A plugin directory with only a README is a placeholder: not installable, not listed
-in the marketplace. Add `plugin.json` + the first skill in the same PR that lists it.
+`version` lives only in `plugin.json`: skill removed/renamed → major, skill added →
+minor, fixes → patch. Placeholder plugins (README-only) are not installable and not
+listed in the marketplace.
 
 ## Local testing
 
-- Claude Code: `claude --plugin-dir ./plugins/implementation`, then drive a skill.
-- Copilot CLI: `copilot plugin install <abs-path>/plugins/implementation` (Copilot
-  copies at install time — uninstall/reinstall to pick up edits; Claude Code re-reads
-  on launch).
+- Claude Code: `claude --plugin-dir ./plugins/implementation`
+- Copilot CLI: `copilot plugin install <abs-path>/plugins/implementation`
+  (Copilot copies at install time — reinstall to pick up edits)

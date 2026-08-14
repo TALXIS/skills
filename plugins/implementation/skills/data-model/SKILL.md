@@ -1,94 +1,47 @@
 ---
 name: data-model
-description: Creates the Solutions.DataModel solution with Dataverse tables (pp-entity) and columns (pp-entity-attribute) via txc, wires it into the deployment package, and validates with dotnet build. Use when adding tables, entities, columns, attributes, or lookups to a TALXIS project, or when asked to create or extend the data model.
+description: Creates and evolves the data model of a TALXIS / Power Platform / Dataverse workspace — database tables, columns and fields, relationships and lookups, enumerations. Use when adding or changing tables, entities, columns, option sets, or relationships between records.
 ---
 
-# Implement the data model
+# Data model
 
-**Contract:** when this skill ends, `src/Solutions.DataModel` contains the requested
-tables and columns, is referenced by `Packages.Main`, and `dotnet build` passes at the
-repository root. Local only — no cloud environment is touched.
+**Contract:** components are scaffolded locally and `dotnet build` passes.
+Local only — nothing deploys, no live environment is touched.
 
-One solution per concern: schema lives in `Solutions.DataModel`, never in UI or logic
-solutions. The repository must already be initialized (see the `init-repo` skill).
-
-## Ordering invariant
-
-Entity → attributes → forms/views. A column requires its entity to exist; a form or
-view requires the entity and its columns to exist — scaffolding out of order produces
-broken XML references. Never scaffold a lookup before its target entity exists.
-
-## Step 1 — Gather inputs (once)
-
-From the existing workspace (`txc workspace explain` if unsure): `<PublisherName>`,
-`<PublisherPrefix>`. For each table: logical name (lowercase, no prefix — the CLI adds
-it), plural logical name, display names. For each column: attribute type, required
-level, display name.
-
-## Step 2 — Create the solution (first time only)
-
-Skip if `src/Solutions.DataModel/Solutions.DataModel.csproj` exists. From the root:
+## Ask the CLI first
 
 ```
-txc workspace component create pp-solution --output "src/Solutions.DataModel" --param "PublisherName=<PublisherName>" --param "PublisherPrefix=<PublisherPrefix>"
-dotnet add "src/Packages.Main/Packages.Main.csproj" reference "src/Solutions.DataModel/Solutions.DataModel.csproj"
-dotnet sln add src/Solutions.DataModel/Solutions.DataModel.csproj
+txc component type list --search <term>            # find the component type (aliases included)
+txc component type explain <type>                  # what it is
+txc workspace component parameter list <type>      # every parameter, typed, with defaults
 ```
 
-The `ProjectReference` puts the solution into the `.pdpkg.zip` and drives import
-order; `dotnet sln add` puts it under the root `dotnet build`.
+Never guess parameters — `parameter list` is the authority.
 
-## Step 3 — Create entities
+## Intent → component type
 
-One command per new table:
-
-```
-txc workspace component create pp-entity --output "src/Solutions.DataModel" --param "EntityType=Standard" --param "Behavior=New" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<entity>" --param "LogicalNamePlural=<entities>" --param "DisplayName=<Display Name>" --param "DisplayNamePlural=<Display Names>"
-```
-
-To reference a table owned by another solution (or a standard Dataverse table)
-without duplicating its schema, use `Behavior=Existing` — it creates a reference
-folder, not a table definition:
-
-```
-txc workspace component create pp-entity --output "src/Solutions.DataModel" --param "Behavior=Existing" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<entity>" --param "DisplayName=<Display Name>"
-```
-
-## Step 4 — Create columns
-
-One command per column. `EntitySchemaName` is the prefixed name
-(`<PublisherPrefix>_<entity>`); `RequiredLevel` is `required` or `none`. Base shape:
-
-```
-txc workspace component create pp-entity-attribute --output "src/Solutions.DataModel" --param "EntitySchemaName=<PublisherPrefix>_<entity>" --param "AttributeType=Text" --param "RequiredLevel=required" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<column>" --param "DisplayName=<Display Name>"
-```
-
-`AttributeType` values and their extra params (add to the base shape):
-
-| AttributeType | Extra params |
+| You want | Component type |
 |---|---|
-| `Text` | — |
-| `MultilineText` | — |
-| `WholeNumber` | — |
-| `Decimal` | `--param "DecimalPrecision=3"` |
-| `Money` | `--param "DecimalPrecision=2"` |
-| `Boolean` | `--param "BooleanTrueLabel=Yes" --param "BooleanFalseLabel=No"` |
-| `DateTime` | `--param "DateTimeFormat=date"` for date-only; omit for date+time |
-| `OptionSet(Local)` | `--param "OptionSetOptions=<Label1>,<Label2>,<Label3>"` |
-| `Lookup` | `--param "LookupTarget=<PublisherPrefix>_<targetentity>"` |
+| a database table | `Entity` (alias `Table`) |
+| a column / field on a table | `EntityAttribute` |
+| a relationship / lookup between tables | search: `txc component type list --search relationship` |
+| an enumeration (fixed value list) | search: `txc component type list --search optionset` |
 
-## Step 5 — Validate
+## Sequence
 
-```
-dotnet build
-```
+1. Ensure a solution project for the data model exists (conventionally
+   `src/Solutions.DataModel`); if not, create one (`--search solution`), add it to
+   the solution file, and reference it from the deployment package project.
+2. Create the table, then its columns — **always table before columns, and both
+   before any form or view exists for them** (UI XML references break otherwise).
+3. Relationships require both tables to exist first.
+4. `dotnet build`.
 
-Must pass. `TALXISXSD001` = schema validation failed (fix the reported XML);
-`TALXISGUID001` = duplicate GUID (regenerate the reported id).
+## Invariants
 
-## Step 6 — Summary
+- To use a table owned by another solution project without duplicating its schema,
+  create the entity reference with `Behavior=Existing`.
+- Table and column changes belong in the data-model solution, never in UI or
+  logic solutions (see the `deploy` skill for layering).
 
-Report the tables and columns created, that `Packages.Main` references the solution,
-that `dotnet build` passed, and that nothing was deployed. Natural next steps, one
-line each: security roles for the new tables (`security-roles` skill), an app and
-navigation (`model-app` skill).
+Details and worked examples: [references/scaffolding.md](references/scaffolding.md)

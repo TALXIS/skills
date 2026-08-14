@@ -1,87 +1,58 @@
 ---
 name: deploy
-description: Deploys the built TALXIS package to a Dataverse environment with txc env pkg import, in dependency order, and pulls portal edits back to source with txc env solution pull. Use when the user asks to deploy, push, import, or publish the app to an environment, or to sync manual environment changes back into the repository.
+description: Ships a TALXIS / Power Platform / Dataverse app — connects environments, builds the deployable package, deploys it, pulls remote changes back, and sets up the release pipeline. Use when creating or connecting an environment, deploying, releasing, or automating CI/CD.
 ---
 
-# Deploy to an environment
+# Deploy
 
-**Contract:** this skill touches the cloud — run it only when the user asked to
-deploy or sync. It requires a valid txc profile; it never creates environments
-(that is the `environment-setup` skill).
+**Contract:** this is the one skill that touches the cloud — creating and
+connecting environments, and importing packages. Deploy only when the user asked.
+Everything else in this workspace stays local-first: build components locally and
+deploy them; never edit a live environment as a substitute for local work.
 
-## Step 0 — Verify the profile
-
-```
-txc config profile list --format json
-```
-
-The target profile must exist on this machine — a cached name from another
-machine or session is not enough. If missing, route to `environment-setup`
-before anything else. Never guess a target; deploy to Dev unless the user named
-another environment. Never deploy directly to production — always Dev/Test first.
-
-## Step 1 — Import dependency packages first
-
-Any external package the app references (e.g. a PCF control) must already exist
-in the target environment — importing the app package first fails Dataverse's
-missing-dependency check. Example (package pulled from nuget.org by name, latest
-version):
+## Ask the CLI first
 
 ```
-txc env pkg import TALXIS.Controls.Grid.Package --profile <profile>
+txc config --help                # auth, connections, profiles
+txc environment --help           # live-environment operations
+txc docs get deployment-workflow # long-form guide
+txc docs get solution-layering   # managed/unmanaged doctrine
 ```
 
-## Step 2 — Build the deployment package
+## Connect an environment
 
-```
-dotnet publish src/Packages.Main/Packages.Main.csproj -c Release
-```
+Bootstrap order is fixed: **auth → connection → profile → select**
+(`txc config auth login`, `txc config connection create`,
+`txc config profile create`, `txc config profile select`). Verify with
+`txc config profile validate` before any environment operation. Environments are
+cheap and ephemeral — source control is the source of truth; never share a dev
+environment between people.
 
-Deliberately no `-o` — an explicit output dir leaks a global `PublishDir` into
-nested plugin builds and breaks them (tools-devkit-build#109). The `.pdpkg.zip`
-lands at `src/Packages.Main/bin/Release/Packages.Main.pdpkg.zip` (tooling-backlog
-T6). Release packs managed (Test/prod); Debug packs unmanaged (Dev). The build
-must be clean — never deploy a broken build.
+## Build the artifact
 
-## Step 3 — Import the package
+`dotnet build` validates; publishing the deployment package project in
+**Release** packs **managed** solutions (test/prod), **Debug** packs
+**unmanaged** (dev). The package artifact is a single deployable zip composing
+all referenced solutions in dependency order.
 
-```
-txc env pkg import <path-to-.pdpkg.zip> --profile <profile>
-```
+## Deploy and round-trip
 
-Import order of the solutions inside the package is derived from
-`ProjectReference`s, so dependencies install first.
+1. Import dependency packages first (e.g. a packaged UI control the app
+   references), then the app package: `txc environment package import`.
+2. After edits made directly in a live dev environment, pull them back into
+   source: `txc environment solution pull` — then commit. Data packages
+   round-trip the same way (`txc data package export` / `import`).
+3. On failure: check the latest deployment record, then component layers, then
+   missing dependencies — never retry more than twice without diagnosing.
 
-## Step 4 — Pull environment edits back to source
+## Invariants
 
-After manual portal edits in Dev (security roles, forms, …), pull the unmanaged
-layer back into the source tree — this is the bidirectional inner loop, and the
-only sanctioned way portal changes reach source control:
+- Production contains **managed** solutions only; the unmanaged working state
+  lives in dev and in source control.
+- A managed package cannot overwrite an existing unmanaged solution (or vice
+  versa) — uninstall first.
+- CI/CD uses OIDC federation — identifiers only, no stored secrets
+  ([references/ci-cd.md](references/ci-cd.md)).
 
-```
-txc env solution pull --folder <solution path> --profile <profile>
-```
-
-`<solution path>` is the solution's folder in the repo (e.g.
-`src/Solutions.Security`). Then `git status -- src/` to show what changed. Pull
-only from Dev — the place where humans edit; pipelines only ship built packages
-forward.
-
-## Failure recovery
-
-Diagnose before retrying; never retry more than twice without finding the root
-cause.
-
-| Symptom | Action |
-|---|---|
-| Import failed, unclear why | Check the latest deployment's findings first |
-| Component error | Inspect the component's solution layers, resolve the conflict (see `solution-layering`) |
-| Missing dependency | Import the dependency package first (Step 1) |
-| Version conflict | Increment the solution version, rebuild, retry |
-| Managed/unmanaged mismatch | Dataverse rejects importing managed over unmanaged (or vice versa) — uninstall first or rebuild with the matching configuration |
-| Timeout / generic | Retry once, check environment health |
-
-## Summary
-
-Report: target profile and URL, packages imported (dependencies + app), whether
-managed or unmanaged, any solutions pulled back, and the resulting `git status`.
+Details: [references/](references/) — environments, build, deployment, layering,
+ci-cd (+ workflow, ruleset, and application-user templates)
