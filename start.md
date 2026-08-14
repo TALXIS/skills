@@ -70,12 +70,11 @@ client's existing MCP config — merge, never overwrite the user's file. (Requir
 1. Confirm the plugin/skills are registered: `claude plugin list` (A),
    `copilot plugin list` (B), or your client's plugin/skills listing (C–E). The
    `implementation` plugin or its skills (e.g. `init-repo`) must appear.
-2. Confirm the toolchain baseline: `dotnet --version`, `git --version`,
-   `node --version` (need 22.12+). The `txc` CLI itself is installed later by the
-   `init-repo` skill — its absence now is fine. If tools are missing, recommend a
-   dev container composed from the TALXIS agentbox features instead of installing
-   tools one by one — see the Prerequisites section of
-   `https://github.com/TALXIS/skills` for the ready-made `devcontainer.json`.
+2. Do not install or check developer tools now — the `init-repo` skill performs the
+   toolchain check itself when first used. If that check later finds tools missing,
+   recommend a dev container from the TALXIS agentbox
+   (`https://github.com/TALXIS/tools-agentbox`) instead of installing tools one by
+   one.
 3. Report to the user exactly what was installed and where, that a session
    restart/reload is needed before the skills activate, and that the first thing to
    try afterwards is `/init-repo` in a project folder. If any step above failed, say

@@ -14,39 +14,14 @@ that reads `SKILL.md` skills.
 
 ## Prerequisites
 
-Develop in a dev container composed from the
-**[TALXIS agentbox](https://github.com/TALXIS/tools-agentbox)** features — you pull a
-slim base and only the tools you need:
+Develop in a dev container from the
+**[TALXIS agentbox](https://github.com/TALXIS/tools-agentbox)** — start from its
+[power-platform template](https://github.com/TALXIS/tools-agentbox/tree/master/src/templates/power-platform),
+or compose a slimmer one from the dev container features published there. The
+agentbox repository is the single source of truth for the toolchain.
 
-```jsonc
-// .devcontainer/devcontainer.json
-{
-  "image": "mcr.microsoft.com/dotnet/sdk:10.0",
-  "features": {
-    "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/node:1": { "version": "22" },
-    "ghcr.io/devcontainers/features/github-cli:1": {},   // ci-cd skill
-    "ghcr.io/devcontainers/features/azure-cli:1": {},    // ci-cd skill (OIDC setup)
-    "ghcr.io/talxis/tools-agentbox/txc-cli:1": {},
-    "ghcr.io/talxis/tools-agentbox/pac-cli:1": {}        // optional
-  }
-}
-```
-
-Open it in GitHub Codespaces or VS Code (Dev Containers). The `txc-cli` / `pac-cli`
-features auto-update the CLIs on every container start. For the complete environment
-(VS Code extensions, MCP wiring, port forwarding), start from the
-[power-platform template](https://github.com/TALXIS/tools-agentbox/tree/master/src/templates/power-platform)
-— or use the pre-built `ghcr.io/talxis/tools-agentbox/image:latest` when you want
-everything baked in.
-
-<details>
-<summary>Working without a dev container?</summary>
-
-You need the **.NET SDK**, **Git**, and **Node.js 22.12+** — `/init-repo` installs
-and updates the TALXIS CLI (`txc`) itself.
-
-</details>
+Working without a dev container is fine too — `/init-repo` checks your toolchain
+and tells you exactly what's missing.
 
 ## Install
 
@@ -115,10 +90,8 @@ authoring standard (enforced by CI on every PR).
 
 | Symptom | Fix |
 |---|---|
-| `txc` not found after install | `dotnet tool install --global TALXIS.CLI`, ensure `~/.dotnet/tools` is on `PATH` |
-| "Unknown parameter" on a valid scaffold parameter | Stale template pack: `dotnet new install TALXIS.DevKit.Templates.Dataverse` |
 | Plugin installed but skills don't trigger | Restart the agent session (`/reload-plugins` in Claude Code) |
-| `TALXISXSD001` / `TALXISGUID001` build errors | Schema violation / duplicate GUID — fix the reported file; the build output names it |
+| Toolchain problems (missing or stale CLIs) | Run `/init-repo` — it checks and repairs the toolchain, or use an [agentbox](https://github.com/TALXIS/tools-agentbox) dev container |
 
 ## Uninstall
 
