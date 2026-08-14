@@ -1,0 +1,17 @@
+{
+  "name": "talxis",
+  "owner": {
+    "name": "NETWORG",
+    "url": "https://github.com/TALXIS"
+  },
+  "metadata": {
+    "description": "TALXIS plugins for coding agents — build Power Platform apps in a local-first monorepo with the TALXIS CLI (txc): scaffold, build, validate, and deploy deterministically."
+  },
+  "plugins": [
+    {
+      "name": "implementation",
+      "source": "./plugins/implementation",
+      "description": "Build TALXIS / Power Platform apps in a local-first monorepo: scaffold components with the TALXIS CLI (txc), validate with dotnet build, deploy as Package Deployer packages. Use when creating a new TALXIS project or working on an existing one."
+    }
+  ]
+}

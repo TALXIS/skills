@@ -1,0 +1,20 @@
+# Runs on every PR and push with no path filter — PRs that don't touch skills must
+# still get a passing check, otherwise required-status-check PRs block forever.
+name: validate
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generated manifests are in sync
+        run: node scripts/generate-manifests.mjs --check
+      - name: Static quality gates
+        run: node scripts/validate.mjs
