@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "description": "Build TALXIS / Power Platform / Dataverse apps in a local-first monorepo: data model, backend logic, frontend, security, tests, and deployment — thin skills that steer the agent to the TALXIS CLI (txc) for everything. Use when creating a new TALXIS project or working on an existing one.",
   "author": {
-    "name": "NETWORG",
+    "name": "TALXIS",
     "url": "https://github.com/TALXIS"
   },
   "homepage": "https://github.com/TALXIS/skills",
