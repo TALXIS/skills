@@ -3,11 +3,10 @@
 Build TALXIS / Power Platform apps with your coding agent — scaffolded, built, and
 validated **locally in a monorepo**, deployed only when you ask.
 
-This repository is the TALXIS plugin marketplace for coding agents. Plugins follow the
-[Agent Plugins](https://agent-plugins.org/) open standard (skills + MCP servers) and
-additionally ship Claude Code manifests, so one install works across
-Claude Code, GitHub Copilot (CLI, VS Code, cloud agent), Cursor, Codex, and any client
-that reads `SKILL.md` skills.
+This repository is the TALXIS plugin marketplace for coding agents, built for
+**GitHub Copilot** (CLI, app, VS Code chat) and **Claude Code**. Plugins follow the
+[Agent Plugins](https://agent-plugins.org/) open standard (skills + MCP servers), so
+other compliant clients work too.
 
 > One-link setup: paste this to your agent —
 > `Fetch and follow https://raw.githubusercontent.com/TALXIS/skills/main/start.md to set me up for building TALXIS apps.`
@@ -36,21 +35,14 @@ Works identically in **Claude Code** and **GitHub Copilot CLI**:
 /plugin install implementation@talxis
 ```
 
+In **VS Code** (Copilot chat): add `"TALXIS/skills"` to the
+`chat.plugins.marketplaces` setting and install `implementation` from the
+Extensions view (`@agentPlugins`).
+
 Installing the plugin registers the skills **and** the `txc` MCP server in one step.
-You only install once; the plugin is then available in every project folder.
-
-<details>
-<summary>Other agents (VS Code, Cursor, Codex, …)</summary>
-
-- **VS Code**: add `"TALXIS/skills"` to the `chat.plugins.marketplaces` setting, then
-  install `implementation` from the Extensions view (`@agentPlugins`).
-- **Cursor / Codex / Kiro**: point your client's plugin marketplace at
-  `https://github.com/TALXIS/skills.git` — plugins carry a standard Agent Plugins 1.0
-  manifest.
-- **Anything that supports skills**: `npx -y skills add TALXIS/skills`, then register
-  the MCP server per [start.md](start.md).
-
-</details>
+You only install once; the plugin is then available in every project folder. Plugins
+follow the [Agent Plugins](https://agent-plugins.org/) standard, so other compliant
+clients can add this repository as a marketplace too.
 
 ## Try it
 
@@ -60,16 +52,14 @@ Open your agent in an empty folder (or an existing TALXIS repository) and run:
 /init-repo
 ```
 
-The skill checks your toolchain, scaffolds the monorepo (`.slnx` solution, NuGet feed,
-Package Deployer project), and ends on a passing `dotnet build`.
-**Nothing deploys to the cloud.**
+The skill checks your toolchain, scaffolds the monorepo, and ends on a passing local
+build. **Nothing deploys to the cloud.**
 
 ## Verify the install
 
-Ask your agent: *"Initialize a TALXIS repository here."* You should see it check
-`txc --version` and finish with a green `dotnet build`. In Claude Code,
-`claude plugin list` shows `implementation@talxis` and `claude mcp list` shows the
-`txc` server.
+List your agent's installed plugins — `implementation@talxis` must appear. Then ask:
+*"Initialize a TALXIS repository here."* The agent should pick up the `init-repo`
+skill and end on a passing local build.
 
 ## Plugins
 
