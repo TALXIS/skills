@@ -14,20 +14,34 @@ that reads `SKILL.md` skills.
 
 ## Prerequisites
 
-Develop in the **[TALXIS agentbox](https://github.com/TALXIS/tools-agentbox)** — a
-dev container image with the whole toolchain preinstalled (.NET SDK, Node.js, git,
-`txc`, `pac`, `gh`, `az`):
+Develop in a dev container composed from the
+**[TALXIS agentbox](https://github.com/TALXIS/tools-agentbox)** features — you pull a
+slim base and only the tools you need:
 
 ```jsonc
 // .devcontainer/devcontainer.json
-{ "image": "ghcr.io/talxis/tools-agentbox/image:latest" }
+{
+  "image": "mcr.microsoft.com/dotnet/sdk:10.0",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/node:1": { "version": "22" },
+    "ghcr.io/devcontainers/features/github-cli:1": {},   // ci-cd skill
+    "ghcr.io/devcontainers/features/azure-cli:1": {},    // ci-cd skill (OIDC setup)
+    "ghcr.io/talxis/tools-agentbox/txc-cli:1": {},
+    "ghcr.io/talxis/tools-agentbox/pac-cli:1": {}        // optional
+  }
+}
 ```
 
-Open it in GitHub Codespaces or VS Code (Dev Containers), or run it directly:
-`docker run -it ghcr.io/talxis/tools-agentbox/image:latest`.
+Open it in GitHub Codespaces or VS Code (Dev Containers). The `txc-cli` / `pac-cli`
+features auto-update the CLIs on every container start. For the complete environment
+(VS Code extensions, MCP wiring, port forwarding), start from the
+[power-platform template](https://github.com/TALXIS/tools-agentbox/tree/master/src/templates/power-platform)
+— or use the pre-built `ghcr.io/talxis/tools-agentbox/image:latest` when you want
+everything baked in.
 
 <details>
-<summary>Working outside the agentbox?</summary>
+<summary>Working without a dev container?</summary>
 
 You need the **.NET SDK**, **Git**, and **Node.js 22.12+** — `/init-repo` installs
 and updates the TALXIS CLI (`txc`) itself.

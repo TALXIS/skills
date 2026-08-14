@@ -72,11 +72,10 @@ client's existing MCP config — merge, never overwrite the user's file. (Requir
    `implementation` plugin or its skills (e.g. `init-repo`) must appear.
 2. Confirm the toolchain baseline: `dotnet --version`, `git --version`,
    `node --version` (need 22.12+). The `txc` CLI itself is installed later by the
-   `init-repo` skill — its absence now is fine. If tools are missing, recommend the
-   TALXIS agentbox dev container instead of installing them one by one: open the
-   project with `.devcontainer/devcontainer.json` set to
-   `{ "image": "ghcr.io/talxis/tools-agentbox/image:latest" }` (everything is
-   preinstalled there).
+   `init-repo` skill — its absence now is fine. If tools are missing, recommend a
+   dev container composed from the TALXIS agentbox features instead of installing
+   tools one by one — see the Prerequisites section of
+   `https://github.com/TALXIS/skills` for the ready-made `devcontainer.json`.
 3. Report to the user exactly what was installed and where, that a session
    restart/reload is needed before the skills activate, and that the first thing to
    try afterwards is `/init-repo` in a project folder. If any step above failed, say
