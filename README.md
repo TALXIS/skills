@@ -14,11 +14,25 @@ that reads `SKILL.md` skills.
 
 ## Prerequisites
 
-- **.NET SDK** — builds and validates everything (`dotnet build` is the local validation loop)
-- **Git**
-- **Node.js 22.12+** — npm-based builds (scripts, code apps, PCF)
+Develop in the **[TALXIS agentbox](https://github.com/TALXIS/tools-agentbox)** — a
+dev container image with the whole toolchain preinstalled (.NET SDK, Node.js, git,
+`txc`, `pac`, `gh`, `az`):
 
-That's it — `/init-repo` installs and updates the TALXIS CLI (`txc`) itself.
+```jsonc
+// .devcontainer/devcontainer.json
+{ "image": "ghcr.io/talxis/tools-agentbox/image:latest" }
+```
+
+Open it in GitHub Codespaces or VS Code (Dev Containers), or run it directly:
+`docker run -it ghcr.io/talxis/tools-agentbox/image:latest`.
+
+<details>
+<summary>Working outside the agentbox?</summary>
+
+You need the **.NET SDK**, **Git**, and **Node.js 22.12+** — `/init-repo` installs
+and updates the TALXIS CLI (`txc`) itself.
+
+</details>
 
 ## Install
 
