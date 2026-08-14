@@ -8,15 +8,12 @@ This is the TALXIS plugin marketplace for coding agents, built for **GitHub Copi
 [Agent Plugins](https://agent-plugins.org/) open standard, so other compliant clients
 work too.
 
-> One-link setup: paste this to your agent —
-> `Fetch and follow https://raw.githubusercontent.com/TALXIS/skills/main/start.md to set me up for building TALXIS apps.`
-
 ## Prerequisites
 
 Develop in a dev container from the
 **[TALXIS agentbox](https://github.com/TALXIS/tools-agentbox)** — the single source
 of truth for the toolchain. For a complete example setup and hands-on demo, see
-**[TALXIS/alm-lab](https://github.com/TALXIS/alm-lab)**.
+**[TALXIS ALM lab](https://github.com/TALXIS/alm-lab)**.
 
 ## Install
 
@@ -47,7 +44,7 @@ It scaffolds the monorepo and ends on a passing local build.
 
 | Plugin | Status | Scope |
 |---|---|---|
-| [`implementation`](plugins/implementation/) | **available** | Scaffold, build, validate, deploy — extracted from [TALXIS/alm-lab](https://github.com/TALXIS/alm-lab) |
+| [`implementation`](plugins/implementation/) | **available** | Scaffold, build, validate, deploy — extracted from [TALXIS ALM lab](https://github.com/TALXIS/alm-lab) |
 | [`data`](plugins/data/) | planned | Data migration, querying, reports, integration |
 | [`support`](plugins/support/) | planned | Troubleshooting, RCA, environment logs (supersedes tools-opskit-cli) |
 | [`design`](plugins/design/) | planned | Prototypes, BDD authoring, backlog, specs |
