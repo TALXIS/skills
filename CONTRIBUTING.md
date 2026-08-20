@@ -52,6 +52,6 @@ listed in the marketplace.
 
 ## Local testing
 
-- Claude Code: `claude --plugin-dir ./plugins/implementation`
-- Copilot CLI: `copilot plugin install <abs-path>/plugins/implementation`
+- Claude Code: `claude --plugin-dir ./plugins/implement`
+- Copilot CLI: `copilot plugin install <abs-path>/plugins/implement`
   (Copilot copies at install time — reinstall to pick up edits)

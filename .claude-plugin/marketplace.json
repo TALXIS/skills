@@ -9,8 +9,8 @@
   },
   "plugins": [
     {
-      "name": "implementation",
-      "source": "./plugins/implementation",
+      "name": "implement",
+      "source": "./plugins/implement",
       "description": "Build TALXIS / Power Platform apps in a local-first monorepo: scaffold components with the TALXIS CLI (txc), validate with dotnet build, deploy as Package Deployer packages. Use when creating a new TALXIS project or working on an existing one."
     }
   ]

@@ -3,9 +3,9 @@
 
 # Set up runtime environments
 
-**Contract:** this is the one implementation skill that touches the cloud — it
+**Contract:** this is the one skill in this plugin that touches the cloud — it
 creates or connects environments and binds txc profiles to them. Every other
-implementation skill is local; deployment itself is the `deploy` skill.
+skill in this plugin is local; deployment itself is the `deploy` skill.
 
 Source control is the single source of truth, so environments are cheap and
 ephemeral: recreate rather than repair. Dev is a personal build-and-break space;

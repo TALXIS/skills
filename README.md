@@ -21,11 +21,11 @@ Identical in **Claude Code** and **GitHub Copilot CLI**:
 
 ```
 /plugin marketplace add TALXIS/skills
-/plugin install implementation@talxis
+/plugin install implement@talxis
 ```
 
 In **VS Code** (Copilot chat): add `"TALXIS/skills"` to the
-`chat.plugins.marketplaces` setting and install `implementation` from the Extensions
+`chat.plugins.marketplaces` setting and install `implement` from the Extensions
 view (`@agentPlugins`). One install registers the skills **and** the `txc` MCP server,
 available in every project folder.
 
@@ -44,7 +44,7 @@ It scaffolds the monorepo and ends on a passing local build.
 
 | Plugin | Status | Scope |
 |---|---|---|
-| [`implementation`](plugins/implementation/) | **available** | Scaffold, build, validate, deploy — extracted from [TALXIS ALM lab](https://github.com/TALXIS/alm-lab) |
+| [`implement`](plugins/implement/) | **available** | Scaffold, build, validate, deploy — extracted from [TALXIS ALM lab](https://github.com/TALXIS/alm-lab) |
 | [`data`](plugins/data/) | planned | Data migration, querying, reports, integration |
 | [`support`](plugins/support/) | planned | Troubleshooting, RCA, environment logs (supersedes tools-opskit-cli) |
 | [`design`](plugins/design/) | planned | Prototypes, BDD authoring, backlog, specs |

@@ -1,4 +1,4 @@
-# implementation
+# implement
 
 Build TALXIS / Power Platform apps in a local-first monorepo. Seven skills, one per
 developer intent — each steers the agent to the
@@ -24,5 +24,5 @@ current `txc` gap — every file names the fix that deletes it
 
 ```
 /plugin marketplace add TALXIS/skills
-/plugin install implementation@talxis
+/plugin install implement@talxis
 ```
