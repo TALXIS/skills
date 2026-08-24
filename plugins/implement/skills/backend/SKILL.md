@@ -11,16 +11,17 @@ description: Implements server-side logic in a TALXIS / Power Platform / Dataver
 ## Ask the CLI first
 
 ```
-txc component type list --search plugin            # code project + registration types
-txc workspace component parameter list <type>      # every parameter, typed
-txc docs get plugin-development                    # long-form guide
+dotnet new list | grep -i "power platform: plugin"  # C# project template (not a component type — references/plugin-development.md)
+txc component type list --search plugin             # registration types only: assembly, step
+txc workspace component parameter list <type>       # every parameter, typed
+txc docs get plugin-development                     # long-form guide
 ```
 
 ## Intent → component type
 
 | You want | Component type |
 |---|---|
-| a C# project for server-side logic | search: `--search plugin` (project type) |
+| a C# project for server-side logic | project scaffold `pp-plugin` — `dotnet new list`, not `component type list` |
 | register the compiled logic in the platform | plugin assembly type |
 | run it on a specific event (create/update/…) | plugin step type |
 

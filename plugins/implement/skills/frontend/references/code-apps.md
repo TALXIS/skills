@@ -1,5 +1,8 @@
-> **Needed because:** the offline data-source generation sequence is not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in help/docs (T12).
+> **Needed because:** the offline data-source generation sequence is not surfaced by
+> txc help, and the `pp-app-code` project template is invisible to `txc component
+> type list` (it's a `dotnet new` template, not a component-type enum entry).
+> **Remove when:** txc surfaces sequences in help/docs (T12), and exposes its own
+> project-level templates through a discovery command (T17).
 
 # Create a code app
 
@@ -22,7 +25,9 @@ keep general-purpose CRUD in the model-driven app.
 
 ## Step 2 — Scaffold and wire into the build
 
-From the repository root:
+`pp-app-code` is a `dotnet new` project scaffold — `txc component type list
+--search code` returns nothing; `dotnet new list | grep -i "power platform: code
+app"` finds it. From the repository root:
 
 ```
 txc workspace component create pp-app-code --output "src/Apps.<Name>" --param "DisplayName=<Display Name>" --param "AppName=<appname>"

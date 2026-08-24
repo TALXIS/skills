@@ -13,6 +13,7 @@ Local only — nothing deploys; custom apps preview locally with `npm run dev`.
 ```
 txc component type list --search <term>            # find the component type
 txc workspace component parameter list <type>      # every parameter, typed
+dotnet new list | grep -i "power platform"         # project scaffolds (generative pages, code apps, script libraries) — not in component type list
 txc docs get form-xml-reference                    # form structure guide
 ```
 
@@ -24,10 +25,10 @@ txc docs get form-xml-reference                    # form structure guide
 | navigation (menu areas, groups, links) | sitemap types — `--search sitemap` |
 | a detail/edit screen for a table | form — `--search form` |
 | a list of records | view — `--search view` |
-| a fully custom page (React) | generative page — `--search page` |
-| a fully custom SPA app (React + Vite) | code app — `--search code` |
+| a fully custom page (React) | generative page — project scaffold, `dotnet new list` ([references/generative-pages.md](references/generative-pages.md)) |
+| a fully custom SPA app (React + Vite) | code app — project scaffold, `dotnet new list` ([references/code-apps.md](references/code-apps.md)) |
 | a packaged reusable UI component on a form | `txc workspace control attach` |
-| client-side logic on forms | script library + event handler types — `--search script` |
+| client-side logic on forms | script library + form event handler — project scaffolds, `dotnet new list` ([references/form-scripts.md](references/form-scripts.md)) |
 | a toolbar / command-bar button | ribbon types — `--search ribbon` |
 
 ## Sequence

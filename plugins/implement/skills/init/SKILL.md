@@ -38,8 +38,10 @@ Gather once: project name, publisher name, publisher prefix. Then:
 3. `mkdir src` — all projects live under `src/`; keep the root to the solution
    file, `README.md`, `.gitignore`, and `NuGet.config` (nuget.org feed)
 4. Create the deployment package project (the unit of deployment that composes
-   all solutions): find its type with `txc component type list --search package`,
-   check inputs with `txc workspace component parameter list <type>`, create with
+   all solutions): it's a project scaffold, not a component type, so find it with
+   `dotnet new list | grep -i "power platform"` instead of `component type list`
+   (see [references/project-scaffolds.md](references/project-scaffolds.md)); check
+   inputs with `txc workspace component parameter list <type>`, create with
    `txc workspace component create <type> --output src/<name>`, then
    `dotnet sln add` it
 5. `dotnet build` — must pass before you finish

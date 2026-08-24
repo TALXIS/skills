@@ -1,5 +1,10 @@
-> **Needed because:** the library/handler wiring sequence is not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in help/docs (T12).
+> **Needed because:** the library/handler wiring sequence is not surfaced by txc
+> help, and both `pp-script-library` and `pp-form-event-handler` are invisible to
+> `txc component type list` (they're `dotnet new` templates, not component-type
+> enum entries — no search term for "script", "library", "handler", or "event"
+> finds either one).
+> **Remove when:** txc surfaces sequences in help/docs (T12), and exposes its own
+> project-level templates through a discovery command (T17).
 
 # Form scripts
 
@@ -10,6 +15,10 @@ root. Local only — nothing is deployed.
 Prerequisite: the target form exists and you have its GUID (see the `forms` skill).
 
 ## Create the script library (once per workspace)
+
+`pp-script-library` is a `dotnet new` project scaffold — `dotnet new list | grep -i
+"power platform: script library"` finds it (`txc component type list --search
+script` returns nothing).
 
 ```
 txc workspace component create pp-script-library \
@@ -49,6 +58,10 @@ dotnet build src/Scripts.UI
 ```
 
 ## Register event handlers
+
+`pp-form-event-handler` is also a `dotnet new` project scaffold, not a Dataverse
+component type — `dotnet new list | grep -i "power platform: form event handler"`
+finds it.
 
 **onLoad** (form-level):
 

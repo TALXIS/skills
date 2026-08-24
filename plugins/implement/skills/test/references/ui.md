@@ -1,5 +1,9 @@
-> **Needed because:** the BDD scaffold/run sequence and binding scope are not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in help/docs (T12).
+> **Needed because:** the BDD scaffold/run sequence and binding scope are not
+> surfaced by txc help, and both `pp-test-ui` and `pp-test-ui-feature` are
+> invisible to `txc component type list` (they're `dotnet new` templates, not
+> component-type enum entries).
+> **Remove when:** txc surfaces sequences in help/docs (T12), and exposes its own
+> project-level templates through a discovery command (T17).
 
 # UI testing with Playwright + Reqnroll
 
@@ -17,7 +21,9 @@ and navigation. They navigate via the model-driven URL shape
 
 ## Step 1 — Scaffold the test project
 
-From the repository root:
+`pp-test-ui` is a `dotnet new` project scaffold — `txc component type list
+--search test` returns nothing; `dotnet new list | grep -i "power platform: ui
+test"` finds it. From the repository root:
 
 ```
 txc workspace component create pp-test-ui --output "src/Tests.UI"
@@ -32,7 +38,9 @@ rm -f src/Tests.UI/Features/Calculator.feature src/Tests.UI/Features/Calculator.
 
 ## Step 2 — Add a feature file
 
-One per feature under test, PascalCase name:
+`pp-test-ui-feature` is also a `dotnet new` project scaffold, not a component type
+(`--search feature` finds nothing either). One per feature under test, PascalCase
+name:
 
 ```
 txc workspace component create pp-test-ui-feature --param "name=<FeatureName>" --output "src/Tests.UI"

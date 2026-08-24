@@ -1,5 +1,8 @@
-> **Needed because:** stage semantics and project conventions are not surfaced by txc help.
-> **Remove when:** txc surfaces sequences and stage semantics in help/docs (T12).
+> **Needed because:** stage semantics and project conventions are not surfaced by txc
+> help, and the `pp-plugin` project template is invisible to `txc component type
+> list` (it's a `dotnet new` template, not a component-type enum entry).
+> **Remove when:** txc surfaces sequences and stage semantics in help/docs (T12), and
+> exposes its own project-level templates through a discovery command (T17).
 
 # Develop Dataverse plugins
 
@@ -27,7 +30,11 @@ target entity, the SDK message (Create/Update/Delete), and the intended stage.
 
 ## Step 2 — Create the plugin project (first time only)
 
-Skip if `src/Plugins.<Name>/Plugins.<Name>.csproj` exists. From the repository root:
+Skip if `src/Plugins.<Name>/Plugins.<Name>.csproj` exists. `pp-plugin` is a
+`dotnet new` project scaffold — `txc component type list --search plugin` won't
+find it (that search only returns the registration types, `PluginAssembly` and
+`SdkMessageProcessingStep`); `dotnet new list | grep -i "power platform: plugin"`
+does. From the repository root:
 
 ```
 txc workspace component create pp-plugin --output "src/Plugins.<Name>" --param "PublisherName=<PublisherName>" --param "Company=<PublisherName>"

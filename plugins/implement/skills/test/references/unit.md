@@ -1,5 +1,10 @@
-> **Needed because:** the test scaffold requires a manual workaround and the wiring is not surfaced by txc help.
-> **Remove when:** pp-plugin-test template Cleanup is fixed (T5) and sequences land in help/docs (T12).
+> **Needed because:** the test scaffold requires a manual workaround, the wiring is
+> not surfaced by txc help, and both `pp-plugin-test` and `pp-test-script` are
+> invisible to `txc component type list` (they're `dotnet new` templates, not
+> component-type enum entries).
+> **Remove when:** pp-plugin-test template Cleanup is fixed (T5), sequences land in
+> help/docs (T12), and txc exposes its own project-level templates through a
+> discovery command (T17).
 
 # Unit tests for plugins and scripts
 
@@ -17,6 +22,10 @@ Two independent layers — scaffold only the ones the repository needs:
   target. Requires an existing `Scripts.UI` project.
 
 ## Plugin tests — Step 1: scaffold (first time only)
+
+`pp-plugin-test` is a `dotnet new` project scaffold — `txc component type list
+--search test` returns nothing; `dotnet new list | grep -i "power platform: plugin
+test"` finds it.
 
 Skip if `src/Tests.Plugins/Tests.Plugins.csproj` exists. From the repository root,
 pre-create `.template.temp` first — the `pp-plugin-test` template's Cleanup
@@ -63,6 +72,9 @@ dotnet test src/Tests.Plugins/Tests.Plugins.csproj --nologo
 Must pass. This is the edit-run loop: change plugin or test, re-run.
 
 ## Script tests — Step 1: scaffold (first time only)
+
+`pp-test-script` is also a `dotnet new` project scaffold, not a component type —
+`dotnet new list | grep -i "power platform: script test"` finds it.
 
 Skip if `src/Tests.Scripts` exists. `ScriptLibraryPath` points at the bundle
 `Scripts.UI` builds — the same file that ships as the web resource is the file under
