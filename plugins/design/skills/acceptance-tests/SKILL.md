@@ -36,8 +36,11 @@ artifacts to consult before drafting; verify what exists, invent nothing.
 5. **Reference fixtures by alias** — no inline sample data where a fixture
    exists; add missing fixtures in the same change.
 6. **Self-validate:** every step phrase matches a binding, every fixture
-   reference resolves, every AC bullet is covered by at least one scenario, and
-   every scenario has at least one `Then`. Re-draft until all four hold.
+   reference resolves, every asserted record exists in the fixture data its
+   scenario creates, every AC bullet is covered by at least one scenario, and
+   every scenario has at least one `Then`. Re-draft until all five hold —
+   [references/production-learnings.md](references/production-learnings.md)
+   carries the field-tested rules behind them.
 7. **Deliver as a draft** for human review, reporting the AC → scenario
    coverage mapping.
 
@@ -47,7 +50,9 @@ artifacts to consult before drafting; verify what exists, invent nothing.
   scenario. If no binding matches, report the missing phrase to the user and
   leave the scenario tagged as blocked — writing bindings is test-project work
   (the implement plugin's `test` skill), not scenario authoring.
-- Scenarios never precede or amend their AC — the story changes first.
+- Scenarios never precede or amend their AC — the story changes first. Story
+  comments are not AC: a requirement found in a comment thread gets promoted
+  into the story, never quietly encoded in a scenario.
 - Coverage is a gate, not a suggestion: a functional story without a tagged
   feature file is not ready for implementation.
 - Prefer multiple `Scenario:` blocks over `Scenario Outline` when setups differ
