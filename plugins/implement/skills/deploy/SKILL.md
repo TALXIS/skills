@@ -51,14 +51,15 @@ all referenced solutions in dependency order.
   lives in dev and in source control.
 - A managed package cannot overwrite an existing unmanaged solution (or vice
   versa) — uninstall first.
-- Never add `--force-overwrite` or `--allow-production` to make a failing import
-  "just work" — they overwrite others' in-progress customizations or drop the
-  production guardrail. Use either only when the user explicitly asked for that
-  outcome in the current conversation; otherwise diagnose the failure.
+- Never add `--force-overwrite` (on solution import — it overwrites others'
+  in-progress unmanaged work) or `--allow-production` (on environment commands —
+  it drops the production guardrail) to make a failing command "just work". Use
+  either only when the user explicitly asked for that outcome in the current
+  conversation; otherwise diagnose the failure.
 - Import success is not verification: an import can succeed with the changed
   component silently absent. Verify a shipped change by querying the live
-  content (Web API or a `txc data` query) and comparing the actual value —
-  never by import-job status or the solution's presence alone.
+  content (Web API or `txc environment data query`) and comparing the actual
+  value — never by import-job status or the solution's presence alone.
 - CI/CD uses OIDC federation — identifiers only, no stored secrets
   ([references/ci-cd.md](references/ci-cd.md)).
 

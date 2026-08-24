@@ -51,7 +51,7 @@ layer); registering the entity in `<RootComponents>` alone is not enough. The
 failure is silent: the build is clean, the import succeeds, and the component is
 simply absent from the target. If a shipped component never appears, count the
 files on disk against their occurrences in the packed `customizations.xml`
-before touching layers — and verify the live content, never the import status.
+before touching layers.
 
 ## Layer conflict triage
 
