@@ -1,0 +1,22 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "support",
+  "version": "0.1.0",
+  "description": "Troubleshoot TALXIS / Power Platform / Dataverse apps with evidence-first investigation: extract identifiers from the ticket, run targeted read-only queries and log lookups through the TALXIS CLI (txc), and write findings with a gated root-cause analysis and action plan. Use when investigating a support ticket, incident, bug report, or unexplained behavior in a live environment.",
+  "author": {
+    "name": "TALXIS",
+    "url": "https://github.com/TALXIS"
+  },
+  "homepage": "https://github.com/TALXIS/skills",
+  "repository": "https://github.com/TALXIS/skills",
+  "license": "MIT",
+  "keywords": [
+    "talxis",
+    "power-platform",
+    "dataverse",
+    "txc",
+    "troubleshooting",
+    "support",
+    "incident"
+  ]
+}
