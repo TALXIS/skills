@@ -1,13 +1,26 @@
-# data (planned)
+# data
 
-Data lifecycle skills for TALXIS / Power Platform projects — not yet installable.
+Data lifecycle skills for TALXIS / Power Platform projects — thin skills that steer
+the agent to the [TALXIS CLI (`txc`)](https://github.com/TALXIS/tools-cli) for the
+*how* and carry only what the CLI can't answer yet. Installing this plugin also
+registers the `txc` MCP server.
 
-Planned scope:
+| Skill | Use when… |
+|---|---|
+| `test-data` | provisioning repeatable test/reference data: grow the project's existing deployable data package (CMT, stable GUIDs), stage records live, round-trip via `txc data package export`, prove the import in a fresh environment |
 
-- **data-migration** — configuration/reference data as source (CMT packages with
-  stable GUIDs, `disableplugins`), volume-based routing (single record / bulk /
-  package), export round-trips via `txc data pkg export`.
-- **data-querying** — routing between `txc env data query sql | odata | fetchxml`.
+Each skill's `references/` holds detailed recipes that exist only because of a
+current `txc` gap — every file names the fix that deletes it
+(see [TOOLING-BACKLOG.md](../../TOOLING-BACKLOG.md)).
+
+Planned next:
+
+- **data-querying** — routing between SQL / OData / FetchXML live queries.
 - **reports** and **integration** — later.
 
-This plugin is added to the marketplace when its first skill lands.
+## Install
+
+```
+/plugin marketplace add TALXIS/skills
+/plugin install data@talxis
+```
