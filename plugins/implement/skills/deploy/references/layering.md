@@ -42,6 +42,17 @@ conflicts, unclear ownership) and never schema changes in UI diffs.
 If the repository already uses different solution names, its convention wins —
 route by concern into the existing structure, do not invent new solutions.
 
+## Subcomponents pack only where declared
+
+Entities register in `Solution.xml` with `behavior="1"` — no subcomponents ride
+along automatically. A view or form added under an entity's folder packs only if
+the entity itself is declared in that same solution (an `Entity.xml` in the
+layer); registering the entity in `<RootComponents>` alone is not enough. The
+failure is silent: the build is clean, the import succeeds, and the component is
+simply absent from the target. If a shipped component never appears, count the
+files on disk against their occurrences in the packed `customizations.xml`
+before touching layers — and verify the live content, never the import status.
+
 ## Layer conflict triage
 
 When a deployed component behaves unexpectedly, list its solution layers in the
