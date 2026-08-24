@@ -12,6 +12,11 @@
       "name": "implement",
       "source": "./plugins/implement",
       "description": "Build TALXIS / Power Platform apps in a local-first monorepo: scaffold components with the TALXIS CLI (txc), validate with dotnet build, deploy as Package Deployer packages. Use when creating a new TALXIS project or working on an existing one."
+    },
+    {
+      "name": "support",
+      "source": "./plugins/support",
+      "description": "Troubleshoot TALXIS / Power Platform / Dataverse apps with evidence-first investigation: extract identifiers from the ticket, run targeted read-only queries and log lookups through the TALXIS CLI (txc), and write findings with a gated root-cause analysis and action plan. Use when investigating a support ticket, incident, bug report, or unexplained behavior in a live environment."
     }
   ]
 }
