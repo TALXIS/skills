@@ -31,10 +31,6 @@ Never guess parameters — `--help` on every command is the authority.
 | a handful, this session only | bulk-create the same way — still throwaway |
 | anything a future environment must also have | the package loop below |
 
-Reference data, demo records, test fixtures — whatever a freshly provisioned
-environment needs — belongs in the package. Live creation is then only a staging
-step before export.
-
 ## Sequence — one table per iteration
 
 1. **Locate the existing package.** Search for the Package Deployer data project
@@ -43,12 +39,11 @@ step before export.
    (`data.xml`), and `ImportConfig.xml`. If none exists, stop and confirm that
    creating one is in scope before scaffolding anything.
 2. **Describe the table live** — `txc environment entity describe <logicalname>` —
-   then curate a lean `<entity>` block into `data_schema.xml`: primary id, primary
-   name, the custom-prefix fields, state fields only when they matter, lookups only
-   to entities the package already seeds. Never dump every attribute the describe
-   returns — the schema is deliberately curated.
-3. **Stage sample records live** — through the app UI or record create. Ask the
-   user for realistic values (names, codes, relationships); don't invent them.
+   then curate a lean `<entity>` block into `data_schema.xml`
+   ([references/package-merge.md](references/package-merge.md) carries the
+   field-selection checklist); never dump every attribute the describe returns.
+3. **Stage sample records live** via record create; ask the user for realistic
+   values — don't invent them.
 4. **Export the round-trip** — `txc data package export` against the package's
    schema file, into a scratch directory. It emits a correctly formatted
    `data.xml`/`data_schema.xml` pair with GUIDs and lookup annotations resolved —
@@ -68,7 +63,8 @@ step before export.
   re-import idempotent — records update in place instead of duplicating.
 - **`disableplugins`** in the import configuration wherever seeding must not
   trigger server-side logic.
-- Duplicate-detection overrides on import are for freshly reset or empty
-  environments only — never against one that already holds this data.
+- `--override-safety-checks` on import skips the CLI's duplicate checking —
+  every record is created as new. Freshly reset or empty environments only,
+  never against one that already holds this data.
 - The package's full build-and-deploy stays in CI; this loop ends at a clean
   local `data package import`.

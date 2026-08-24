@@ -1,5 +1,5 @@
 > **Needed because:** `txc data package export` emits a complete package for every entity in the schema, so growing an existing curated package means hand-merging single `<entity>` nodes — and the CMT XML carries encoding conventions the CLI neither documents nor validates on merge.
-> **Remove when:** `txc data package export` can export selected entities and merge them into an existing package in place (tools-cli change; candidate TOOLING-BACKLOG entry).
+> **Remove when:** `txc data package export` can export selected entities and merge them into an existing package in place (TOOLING-BACKLOG T17).
 
 # Merging exported CMT data into an existing package
 
