@@ -1,7 +1,7 @@
 {
   "name": "design",
   "version": "0.1.0",
-  "description": "Design-phase skills for TALXIS / Power Platform / Dataverse projects: turn user-story acceptance criteria into executable Gherkin feature files in a companion tests repo, with coverage as a readiness gate. Use when authoring BDD tests from acceptance criteria or preparing a design backlog for implementation handover.",
+  "description": "Design-phase skills for TALXIS / Power Platform / Dataverse projects: turn user-story acceptance criteria into executable Gherkin feature files in a companion tests repo, with coverage as a readiness gate. Use when authoring BDD tests from acceptance criteria or preparing a design backlog for implementation handover. Authors scenario content only — scaffolding or running test projects in the app workspace is the implement plugin’s test skill.",
   "author": {
     "name": "TALXIS",
     "url": "https://github.com/TALXIS"

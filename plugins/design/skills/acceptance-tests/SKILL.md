@@ -1,6 +1,6 @@
 ---
 name: acceptance-tests
-description: Turns a user story's acceptance criteria into executable Gherkin .feature files in the project's companion tests repo, bound to the TALXIS UI test kit's step vocabulary. Use when authoring BDD scenarios from acceptance criteria, generating feature files for a story, or checking that every functional story has executable test coverage before implementation.
+description: Turns a user story's acceptance criteria into executable Gherkin .feature files in the project's companion tests repo, bound to the TALXIS UI test kit's step vocabulary. Use when authoring BDD scenarios from acceptance criteria, generating feature files for a story, or checking that every functional story has executable test coverage before implementation. Authors scenario content only — scaffolding or running test projects in the app workspace is the implement plugin’s test skill.
 ---
 
 # Acceptance tests
@@ -14,18 +14,9 @@ human review — this skill never merges its own output.
 
 ## Ask the pattern sources first
 
-There is no txc verb for test authoring — the conventions live in two public
-repos. Read them before drafting; verify what exists, invent nothing:
-
-- [TALXIS/docs-patterns-practices](https://github.com/TALXIS/docs-patterns-practices)
-  — feature-file conventions, tests-repo scaffold, fixture format
-- [TALXIS/tools-testkit-ui](https://github.com/TALXIS/tools-testkit-ui) — the
-  test kit (`TALXIS.TestKit.Bindings`): the authoritative catalog of bound
-  step phrases
-
-```
-txc docs list    # long-form guides, when working inside a TALXIS workspace
-```
+Conventions and the bound step-phrase catalog live outside this skill — read
+[references/pattern-sources.md](references/pattern-sources.md) for the exact
+artifacts to consult before drafting; verify what exists, invent nothing.
 
 ## Sequence
 
@@ -53,7 +44,9 @@ txc docs list    # long-form guides, when working inside a TALXIS workspace
 ## Invariants
 
 - Never invent a step phrase — an unbound phrase is a broken test, not a
-  scenario. If the phrase is missing, write the step binding first, then use it.
+  scenario. If no binding matches, report the missing phrase to the user and
+  leave the scenario tagged as blocked — writing bindings is test-project work
+  (the implement plugin's `test` skill), not scenario authoring.
 - Scenarios never precede or amend their AC — the story changes first.
 - Coverage is a gate, not a suggestion: a functional story without a tagged
   feature file is not ready for implementation.

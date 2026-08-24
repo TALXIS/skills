@@ -23,3 +23,4 @@ issue; when it ships, the corresponding skill prose gets deleted.
 | T14 | `txc workspace explain` / `project explain` inspect the actual workspace instead of printing a hardcoded string; the static prose moves into the `init` skill | Static const-string knowledge living in CLI code | proposed |
 | T15 | Fix tools-cli README discovery-command paths (`txc workspace component type list` does not exist; real: `txc component type list`, `txc workspace component parameter list`) | Agents copying broken commands from the README | proposed |
 | T16 | `txc docs list` exposes the `tags` field already present in its index | Untagged, unfilterable docs listing | proposed |
+| T18 | Feature-file conventions and the TestKit bound step-phrase catalog queryable via `txc docs` (or a dedicated verb) | `acceptance-tests` references/pattern-sources.md (read-two-repos workaround) | proposed |
