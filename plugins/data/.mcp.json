@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "txc": {
+      "type": "stdio",
+      "command": "dnx",
+      "args": [
+        "TALXIS.CLI.MCP",
+        "--yes"
+      ]
+    }
+  }
+}
