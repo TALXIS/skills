@@ -11,17 +11,17 @@ environment — say so before running them against one.
 ## Ask the CLI first
 
 ```
-txc component type list --search test              # test project types
-txc workspace component parameter list <type>      # every parameter, typed
+dotnet new list | grep -i "power platform"          # test project scaffolds — not in component type list (references/unit.md, references/ui.md)
+txc workspace component parameter list <type>       # every parameter, typed
 ```
 
 ## Intent → component type
 
 | You want | Component type |
 |---|---|
-| unit tests for server-side logic (in-memory platform) | plugin test project |
-| unit tests for client scripts (mocked runtime) | script test project |
-| BDD end-to-end UI tests (Gherkin + browser) | UI test project + feature type |
+| unit tests for server-side logic (in-memory platform) | `pp-plugin-test` — project scaffold, `dotnet new list` |
+| unit tests for client scripts (mocked runtime) | `pp-test-script` — project scaffold, `dotnet new list` |
+| BDD end-to-end UI tests (Gherkin + browser) | `pp-test-ui` + `pp-test-ui-feature` — project scaffolds, `dotnet new list` |
 
 ## Sequence
 

@@ -1,5 +1,9 @@
-> **Needed because:** the page + sitemap wiring sequence is not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in help/docs (T12).
+> **Needed because:** the page + sitemap wiring sequence is not surfaced by txc
+> help, and the `pp-page-generative` project template is invisible to `txc
+> component type list` (it's a `dotnet new` template, not a component-type enum
+> entry).
+> **Remove when:** txc surfaces sequences in help/docs (T12), and exposes its own
+> project-level templates through a discovery command (T17).
 
 # Create a generative page
 
@@ -22,7 +26,9 @@ summary cards, tables, whatever the page needs); there is no direct WebApi clien
 
 ## Step 2 — Scaffold
 
-From the repository root:
+`pp-page-generative` is a `dotnet new` project scaffold — `txc component type list
+--search page` returns nothing; `dotnet new list | grep -i "power platform:
+generative page"` finds it. From the repository root:
 
 ```
 txc workspace component create pp-page-generative --output "src/GenPages.<Name>" --param "Name=<pagename>" --param "DisplayName=<Display Name>"
