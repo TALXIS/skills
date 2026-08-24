@@ -1,6 +1,6 @@
 ---
 name: troubleshoot
-description: Investigates incidents in a deployed app by evidence, not guesswork — extracts identifiers from the ticket, runs targeted read-only queries against records and platform logs through the TALXIS CLI (txc), and writes findings.md, with rca.md and action-plan.md gated behind confirmed evidence. Use when investigating a support ticket, bug report, failed automation, or unexplained data change in a Power Platform / Dataverse environment.
+description: Investigates incidents in a deployed app by evidence, not guesswork — extracts identifiers from the ticket, runs targeted read-only queries against records and platform logs through the TALXIS CLI (txc), and produces gated findings. Use when investigating a support ticket, incident, failed automation, or unexplained behavior or data change in a live Power Platform / Dataverse environment — not for bugs reproducible in local development.
 ---
 
 # Troubleshoot
@@ -64,6 +64,3 @@ Piped txc output is JSON by default; every command answers `--help`.
 
 - [references/log-sources.md](references/log-sources.md) — the four log
   tables, key columns, filters, and retention traps.
-
-The evidence-before-conclusions gating echoes Matt Pocock's `triage` skill
-([github.com/mattpocock/skills](https://github.com/mattpocock/skills)).

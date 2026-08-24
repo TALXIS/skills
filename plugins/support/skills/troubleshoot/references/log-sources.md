@@ -17,7 +17,10 @@ Run history of **solution-aware** cloud flows. Key columns: `name` (run id),
 (`category` = 5 for modern flows) — resolve a flow's id by name there first.
 
 Traps: flows outside a solution do not write here — their runs exist only in
-the Power Automate portal. Run rows are retained roughly a month.
+the Power Automate portal. Retention is the org's `FlowRunTimeToLiveInSeconds`
+setting — default ~28 days, but admins can shorten it or set 0 (ingestion
+off) — so check that setting before treating an empty flowrun result as
+evidence of anything.
 
 ## plugintracelog — plug-in traces
 
