@@ -12,6 +12,11 @@
       "name": "implement",
       "source": "./plugins/implement",
       "description": "Build TALXIS / Power Platform apps in a local-first monorepo: scaffold components with the TALXIS CLI (txc), validate with dotnet build, deploy as Package Deployer packages. Use when creating a new TALXIS project or working on an existing one."
+    },
+    {
+      "name": "design",
+      "source": "./plugins/design",
+      "description": "Design-phase skills for TALXIS / Power Platform / Dataverse projects: turn user-story acceptance criteria into executable Gherkin feature files in a companion tests repo, with coverage as a readiness gate. Use when authoring BDD tests from acceptance criteria or preparing a design backlog for implementation handover."
     }
   ]
 }
