@@ -27,9 +27,12 @@ here to design.
 2. **Does the customer's industry already do this?** A workflow their people
    already recognise beats a better one they have to learn. Novelty is a cost
    charged to the user; spend it only where the differentiation is.
-3. **Does TALXIS already ship it?** Look across products and delivered projects
-   before designing — a shape already built once is already themed, tested, and
-   owned by someone.
+3. **Has it been built already?** A packaged control is themed, tested and
+   owned by someone else — search the published packages (`TALXIS.Controls.*`)
+   and whatever this workspace already references. Then ask whether your own
+   organisation has solved this before; where no index exists, ask the people
+   who would know rather than treating absence of a catalog as absence of
+   prior art.
 4. **Does the base-controls palette cover it?** → Ladder B.
 5. **Only then, bespoke** — and named (Sequence step 4).
 
