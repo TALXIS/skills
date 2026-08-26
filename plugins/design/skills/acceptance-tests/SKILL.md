@@ -46,6 +46,12 @@ artifacts to consult before drafting; verify what exists, invent nothing.
 
 ## Invariants
 
+- **Reuse before authoring.** Search the existing feature files, step
+  definitions and fixtures first, and extend what is there rather than adding a
+  parallel version of it — the same discipline
+  ([ponytail](https://github.com/DietrichGebert/ponytail)) the `prototypes`
+  skill applies to controls. A duplicate fixture is a future contradiction; a
+  second phrase for an existing step is a binding that will rot.
 - Never invent a step phrase — an unbound phrase is a broken test, not a
   scenario. If no binding matches, report the missing phrase to the user and
   leave the scenario tagged as blocked — writing bindings is test-project work
