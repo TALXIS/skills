@@ -1,4 +1,4 @@
-# Agent behaviour configuration
+# Harness behaviour configuration
 
 How an agent harness should behave in a TALXIS workspace — the instructions loaded into every
 session, and the briefing injected at session start. This is the process/know-how half of the setup;

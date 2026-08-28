@@ -126,15 +126,15 @@ for (const name of readdirSync(pluginsDir).sort()) {
   }
 }
 
-// ── agent ────────────────────────────────────────────────────────────────────
+// ── harness ──────────────────────────────────────────────────────────────────
 // Harness-behaviour config, fetched over HTTPS by TALXIS/tools-agentbox. Not a plugin, so it is
 // checked here rather than by the plugins walk above — a box that can't read it fails to provision,
 // which makes a typo in this directory everyone's problem.
-const agentDir = join(root, "agent");
-if (existsSync(agentDir)) {
-  const instructionsPath = join(agentDir, "instructions.json");
+const harnessDir = join(root, "harness");
+if (existsSync(harnessDir)) {
+  const instructionsPath = join(harnessDir, "instructions.json");
   if (!existsSync(instructionsPath)) {
-    err(agentDir, "agent/ must contain instructions.json");
+    err(harnessDir, "harness/ must contain instructions.json");
   } else {
     const instructions = JSON.parse(readFileSync(instructionsPath, "utf8"));
     const declared = [];
@@ -142,29 +142,29 @@ if (existsSync(agentDir)) {
       const name = instructions[key];
       if (name === undefined) continue;
       if (typeof name !== "string" || name.includes("/") || !name.endsWith(".md")) {
-        err(instructionsPath, `${key} must be a plain .md filename inside agent/`);
+        err(instructionsPath, `${key} must be a plain .md filename inside harness/`);
         continue;
       }
       declared.push(name);
-      if (!existsSync(join(agentDir, name)))
-        err(instructionsPath, `${key} names '${name}', which does not exist in agent/`);
-      else if (!readFileSync(join(agentDir, name), "utf8").trim())
-        err(join(agentDir, name), "is empty — remove the key from instructions.json instead");
+      if (!existsSync(join(harnessDir, name)))
+        err(instructionsPath, `${key} names '${name}', which does not exist in harness/`);
+      else if (!readFileSync(join(harnessDir, name), "utf8").trim())
+        err(join(harnessDir, name), "is empty — remove the key from instructions.json instead");
     }
     if (!declared.length) err(instructionsPath, "must declare at least one of systemPrompt, initialMessage");
 
-    for (const name of readdirSync(agentDir).sort()) {
+    for (const name of readdirSync(harnessDir).sort()) {
       if (!name.endsWith(".md") || name === "README.md" || declared.includes(name)) continue;
-      err(join(agentDir, name), "not declared in agent/instructions.json — declare it or remove it");
+      err(join(harnessDir, name), "not declared in harness/instructions.json — declare it or remove it");
     }
 
     // Same host-agnostic rule the skills carry: this text reaches every harness on every box.
     for (const name of declared) {
-      const file = join(agentDir, name);
+      const file = join(harnessDir, name);
       if (!existsSync(file)) continue;
       const body = readFileSync(file, "utf8");
       if (/~\/\.(claude|copilot|cursor|codex|gemini)\b/.test(body))
-        err(file, "references a host-specific home path — agent config must stay host-agnostic");
+        err(file, "references a host-specific home path — harness config must stay host-agnostic");
       if (/dotnet tool (install|update)|apt-get|npm install -g/.test(body))
         err(file, "contains toolchain install prose — that belongs to agentbox, not here");
     }

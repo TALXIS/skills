@@ -50,10 +50,10 @@ node scripts/generate-manifests.mjs && node scripts/validate.mjs
 minor, fixes → patch. Placeholder plugins (README-only) are not installable and not
 listed in the marketplace.
 
-## Agent behaviour config (`agent/`)
+## Harness behaviour config (`harness/`)
 
-`agent/` holds how a harness should behave in a TALXIS workspace — session-wide instructions and the
-session-start briefing — declared in `agent/instructions.json` and machine-checked by
+`harness/` holds how a harness should behave in a TALXIS workspace — session-wide instructions and the
+session-start briefing — declared in `harness/instructions.json` and machine-checked by
 `scripts/validate.mjs`. It is fetched over HTTPS by the AgentBox provisioner
 ([TALXIS/tools-agentbox](https://github.com/TALXIS/tools-agentbox)), not installed by
 `/plugin install`, so it lives outside `plugins/`.
