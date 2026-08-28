@@ -20,6 +20,12 @@ Rules:
 4. Directory name == plugin name == marketplace entry name, always.
 5. `version` is bumped only in `plugin.json` (major: skill removed/renamed; minor:
    skill added; patch: fixes).
-6. Source knowledge lives in [TALXIS/alm-lab](https://github.com/TALXIS/alm-lab)
+6. `agent/` is harness-behaviour config (session instructions + the session-start briefing),
+   fetched by the AgentBox provisioner rather than installed as a plugin — it lives outside
+   `plugins/`, is declared in `agent/instructions.json`, and follows the same host-agnostic,
+   zero-toolchain-prose rules as skills. This repo says *how* an agent should work; which tools a
+   box has, and installing or updating them, belongs to
+   [TALXIS/tools-agentbox](https://github.com/TALXIS/tools-agentbox).
+7. Source knowledge lives in [TALXIS/alm-lab](https://github.com/TALXIS/alm-lab)
    (`.lab-scripts/` checkpoints and scaffold scripts) — extract exact `txc` commands
    from there, never invent parameters.
