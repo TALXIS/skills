@@ -1,0 +1,7 @@
+{
+    "//": "Harness-behaviour configuration, fetched over HTTPS by the TALXIS AgentBox provisioner (TALXIS/tools-agentbox) and applied to whichever agent harness a box runs. Not a plugin: nothing here is installed by /plugin install. See harness/README.md.",
+
+    "systemPrompt": "system-prompt.md",
+
+    "initialMessage": "initial-message.md"
+}
