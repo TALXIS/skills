@@ -1,5 +1,7 @@
 > **Needed because:** managed/unmanaged doctrine and destructive-vs-safe semantics are invisible in txc help.
-> **Remove when:** destructive/read-only annotations reach --help (T13) and doctrine lands in help/docs (T12).
+> **Remove when:** destructive/read-only annotations reach --help (T13), doctrine
+> lands in help/docs (T12), and `txc workspace validate` fails on an undeclared
+> subcomponent (T7) — the counting method below is a static check done by hand.
 
 # Solution layering and routing
 
