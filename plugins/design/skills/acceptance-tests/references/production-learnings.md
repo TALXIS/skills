@@ -1,5 +1,5 @@
 > **Needed because:** each rule was learned from a real defect or a withdrawn finding across two production runs on the same sprint backlog — one decomposed per AC bullet, one re-decomposed by journey. None is derivable from the contract alone.
-> **Remove when:** each is enforced by tooling — a two-part gate in the tests-repo scaffold's CI, and an AC-fetch path that parses HTML properly (pattern repo / TOOLING-BACKLOG).
+> **Remove when:** each is enforced by tooling — a two-part gate in the UI test project's CI, and an AC-fetch path that parses HTML properly (pattern repo / TOOLING-BACKLOG).
 
 # Production learnings
 

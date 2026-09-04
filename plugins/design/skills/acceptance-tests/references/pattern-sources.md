@@ -12,7 +12,7 @@ Read the specific artifacts, not the repos at large.
   comments, and tier detection. **This skill adds only the three gaps it leaves:**
   work-item traceability with a generated coverage index, test-data uniqueness and
   cleanup semantics, and localisation.
-- Same repo: the tests-repo scaffold, feature-file conventions, and fixture format.
+- Same repo: feature-file conventions and fixture format.
   Locate the testing/BDD section and follow its current layout.
 - [TALXIS/tools-testkit-ui](https://github.com/TALXIS/tools-testkit-ui) — the kit
   (`TALXIS.TestKit.Bindings`) is the **authoritative catalog of bound step

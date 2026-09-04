@@ -1,6 +1,6 @@
 ---
 name: acceptance-tests
-description: Turns a sprint's acceptance criteria into executable Gherkin .feature files under the project's tests directory, decomposed by user journey and bound to the TALXIS UI test kit's step vocabulary. Use when authoring BDD scenarios from acceptance criteria, generating feature files for a story or a sprint, or checking that every functional story has executable test coverage before implementation. Authors scenario content only — scaffolding or running test projects in the app workspace is the implement plugin's test skill.
+description: Turns a sprint's acceptance criteria into executable Gherkin .feature files in the workspace's UI test project (src/Tests.UI/Features/), decomposed by user journey and bound to the TALXIS UI test kit's step vocabulary. Use when authoring BDD scenarios from acceptance criteria, generating feature files for a story or a sprint, or checking that every functional story has executable test coverage before implementation. Authors scenario content only — scaffolding or running test projects in the app workspace is the implement plugin's test skill.
 ---
 
 # Acceptance tests
@@ -11,10 +11,9 @@ criteria are the only source; if a scenario needs something the AC does not say,
 fix the story first. Files ship as a draft: this skill never merges its own
 output.
 
-**Where they live is the project's call, not this skill's.** A companion tests
-repo and a `tests/` directory in the app repo are both in use at NETWORG; the
-method of record, `bdd-agent-v2`, is itself a monorepo. Follow whatever the
-project already does, and ask if there is nothing to follow.
+**They live in the app workspace**, in the UI test project the `txc` component
+types create: `src/Tests.UI/Features/`. A separate companion tests repo predates
+that component type — follow it only where a project already has one.
 
 **Never one scenario per AC bullet.** Measured on a full sprint: over half the
 assertions end up about the platform, not the product.
@@ -29,8 +28,8 @@ drafting. Verify what exists, invent nothing.
 
 ## Sequence
 
-1. **Locate the test project.** Missing, scaffold it from the pattern repo's
-   template, where the project already puts tests. Read the feature-file
+1. **Locate the test project** — `src/Tests.UI`. Missing, route to the
+   `implement` plugin's `test` skill to scaffold it. Read the feature-file
    hierarchy, project-local step definitions and data fixtures first.
 2. **Group the sprint into journeys**, not stories: one journey usually spans
    several stories, and one story usually feeds several journeys. Name each after
