@@ -23,3 +23,16 @@ issue; when it ships, the corresponding skill prose gets deleted.
 | T14 | `txc workspace explain` / `project explain` inspect the actual workspace instead of printing a hardcoded string; the static prose moves into the `init` skill | Static const-string knowledge living in CLI code | proposed |
 | T15 | Fix tools-cli README discovery-command paths (`txc workspace component type list` does not exist; real: `txc component type list`, `txc workspace component parameter list`) | Agents copying broken commands from the README | proposed |
 | T16 | `txc docs list` exposes the `tags` field already present in its index | Untagged, unfilterable docs listing | proposed |
+
+## ubml
+
+Same principle, different CLI: these are [ubml](https://github.com/TALXIS/ubml)
+issues rather than tools-cli ones. The `consulting` plugin is the consumer.
+
+| # | Improvement | Replaces | Status |
+|---|---|---|---|
+| U1 | `ubml add <type>` scaffolds a document `ubml validate` accepts (it did not, for all 13 types) | "validate straight after scaffolding, do not trust the template" prose in `extract-insights` - **deleted** | [ubml#46](https://github.com/TALXIS/ubml/pull/46) open |
+| U2 | `ubml nextid` reads the workspace instead of a cache that survives a branch switch, and stops reporting `Highest:` from the same stale cache | "check what nextid hands you, grep the document for the last id" prose in `extract-insights` and `promote-to-model` - **deleted** | [ubml#46](https://github.com/TALXIS/ubml/pull/46) open |
+| U3 | `derivedFrom` on `VS#####` and `CP#####`, so a strategy document carries machine-checked provenance like every other document type | "citations in strategy are prose the validator never checks" prose in `promote-to-model` - **deleted** | [ubml#46](https://github.com/TALXIS/ubml/pull/46) open |
+| U4 | `supersedes` accepts a list, so one decision can formally close several open questions | "chain it, or make the second a `related` with a note" prose in `extract-insights` | proposed |
+| U5 | `ubml walk` - which insight is next in source-date order, with its source text and position, and recording the answer | The ordering, presentation-format and per-source map sections of `validate-insights` - **deleted**, and asserted in the CLI's own tests instead | [ubml#46](https://github.com/TALXIS/ubml/pull/46) open |
