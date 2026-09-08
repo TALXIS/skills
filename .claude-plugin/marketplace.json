@@ -12,6 +12,11 @@
       "name": "implement",
       "source": "./plugins/implement",
       "description": "Build TALXIS / Power Platform apps in a local-first monorepo: scaffold components with the TALXIS CLI (txc), validate with dotnet build, deploy as Package Deployer packages. Use when creating a new TALXIS project or working on an existing one."
+    },
+    {
+      "name": "consulting",
+      "source": "./plugins/consulting",
+      "description": "Business analysis and process modeling with UBML - register discovery sources and extract traceable insights from them, walk those insights with a stakeholder until each is confirmed, promote the confirmed ones into the operational model, and validate before every commit. Thin skills that steer the agent to the ubml CLI for everything it covers. Requires ubml 1.4. Use when turning interviews, transcripts or discovery notes into a structured business model."
     }
   ]
 }
