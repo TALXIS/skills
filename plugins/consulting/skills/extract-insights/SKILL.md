@@ -5,10 +5,11 @@ description: Registers a discovery source in a UBML business-modeling workspace 
 
 # Extract insights
 
-**Contract:** one source in, claims out. Register the source, walk it once, turn
-every distinct claim into an insight citing it. Nothing is interpreted before it
-is registered, nothing is claimed without a source, everything lands `proposed`.
-Model files stay untouched.
+**Contract:** one source in, claims and suggestions out. Register the source,
+walk it once, turn every distinct claim into an insight citing it, and where the
+claim obviously belongs on a model element, propose that element beside it.
+Nothing is interpreted before it is registered, nothing is claimed without a
+source, and everything - insight and proposal alike - lands unreviewed.
 
 ## Ask the CLI first
 
@@ -49,25 +50,46 @@ manual edit.
    - Quote warts included. Widen a quote that does not parse alone rather than
      tidying it; mark a join across non-adjacent passages.
 
-4. **Link, don't merge.** A second source repeating a claim becomes a second
+4. **Propose the element the claim would become**, where there obviously is
+   one. Write it into the document for its type with `reviewStatus: proposed`
+   and `derivedFrom` naming the insight. The reviewer approves the insight and
+   the element together, so the interpretation gets reviewed while the source is
+   still on screen rather than weeks later in a promotion pass nobody reads.
+
+   Propose only what the claim itself decides. "Customer Service handles the
+   call" proposes an actor; it does not decide whether Customer Service and the
+   area manager are one role - that is a cross-insight judgement and belongs to
+   `promote-to-model`.
+
+   **Most insights propose nothing, and that is the normal case.** Reasoning,
+   rationale, a risk nobody took up - none of it has a model element and none of
+   it is worth less for that. An insight is never judged by whether it produced
+   a proposal.
+
+   Where the claim would land on an element but you cannot tell which - the
+   source says "the order" and three different orders exist - that ambiguity is
+   the proposal's job to surface. Say so in the proposal's description and let
+   the reviewer settle it. Guessing here is how the wrong reading gets promoted.
+
+5. **Link, don't merge.** A second source repeating a claim becomes a second
    insight `related` to the first - silent de-duplication destroys the
    corroboration. Contradictions are related and both stay `proposed`. A later
    source settling an earlier question uses `supersedes`, which takes exactly
    one id; chain them rather than pointing the newest at everything.
 
-5. **A derived source is not a second witness.** Ask where the second source got
+6. **A derived source is not a second witness.** Ask where the second source got
    the claim before treating agreement as convergence. A proposal written from a
    client's outline repeats one testimony. Record the restatement, mark it
    derivative in `notes`, and do **not** raise the original's `confidence`:
    otherwise four documents in one paper trail turn a single unverified
    statement into the best-evidenced fact in the workspace.
 
-6. **Close the loop.** Every claim ends up an insight or an explicit "ignored,
+7. **Close the loop.** Every claim ends up an insight or an explicit "ignored,
    not actionable" note. Say which and how many. Judge that against the source,
    never against a model - capture who is involved, what they do, in what order,
    what they need, and above all why anyone decided any of it.
 
-7. **Re-sweep when the target changes.** Extraction is shaped by what you have
+8. **Re-sweep when the target changes.** Extraction is shaped by what you have
    somewhere to put: a workspace holding only insights leaves structural claims
    behind, because "an order line carries a quantity" reads as mechanics and has
    no file to belong to. When the workspace gains document types, go back over
@@ -75,7 +97,7 @@ manual edit.
    had no reason to see. The tell is a field appearing in a design argument that
    no insight states.
 
-8. **Hand off.** `validate-insights` confirms, `promote-to-model` models,
+9. **Hand off.** `validate-insights` confirms, `promote-to-model` models,
    nothing commits without `validate-model`.
 
 ## Invariants

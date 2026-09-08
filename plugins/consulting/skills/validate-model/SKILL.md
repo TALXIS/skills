@@ -44,31 +44,37 @@ the only way you run the validator: those warnings are the audit in step 4.
 3. **Budget the warnings.** Roughly one transient unreferenced-ID warning per
    new ID is expected. Growth beyond that, or a new warning kind, is a
    regression to fix before moving on.
-4. **Check what the CLI cannot**, both before the commit.
+4. **Read the unreviewed count.** `validate` reports how many elements carry
+   `reviewStatus: proposed`. Non-zero before a commit that claims the model is
+   finished means modelling decisions nobody approved are in it. Mid-review that
+   is expected; at handover it is the defect this pipeline exists to prevent.
+5. **Check the one thing the CLI still cannot.**
 
    Read the `status` of every insight a promoted element's `derivedFrom` names.
-   A `proposed` one resolves perfectly and is still an element promoted without
-   a reviewer, which is the failure this skill owns. A `retired` one is worse:
-   it was withdrawn and something still rests on it.
+   A `proposed` one resolves perfectly and is still an element built on an
+   unconfirmed claim; a `retired` one was withdrawn and something still rests on
+   it. `reviewStatus` says a human approved the modelling, not that the evidence
+   under it survived.
 
    Then run **without** `--suppress-unused` and read the unreferenced insights.
    Most are reasoning the model had no use for, which is normal. You are
    scanning for the one claim about how the business behaves that no element
    type claimed.
-5. **Re-read the prose.** Nothing validates the workspace description or README,
+6. **Re-read the prose.** Nothing validates the workspace description or README,
    so they go stale in the direction that misleads. Check the counts and the
    tense: "insights not walked yet carry `proposed`" and "these were walked and
    deliberately left open" are the same insights and opposite claims.
-6. **Commit only on zero errors.** Stage the UBML documents, nothing else, never
+7. **Commit only on zero errors.** Stage the UBML documents, nothing else, never
    derived exports. The message says what was added and which source it came
    from.
 
 ## Invariants
 
 - Zero errors before commit - no exceptions, no "fix it in the next commit".
-- A resolvable reference is not an approved one. `derivedFrom` pointing at a
-  `proposed` insight passes every check the CLI has and still breaks the only
-  guarantee this pipeline makes.
+- A resolvable reference is not an approved one, and an approved element is not
+  a sound one. `reviewStatus: accepted` says a human agreed with the modelling;
+  `derivedFrom` pointing at a `proposed` insight says the claim underneath was
+  never confirmed. Both have to hold.
 - Files are named for the document type, not the subject - splitting by subject
   fragments the workspace by the accident of which subject arrived first. Where
   a type requires a prefix segment (`*.glossary.ubml.yaml` and others - ask the

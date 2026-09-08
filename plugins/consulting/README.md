@@ -8,13 +8,14 @@ confirmed ones are promoted into the operational model, and nothing commits
 without validation.
 
 The chain the plugin exists to protect is **source, then insight, then model**.
-Any field in the resulting model walks back to the sentence someone said.
+Any field in the resulting model walks back to the sentence someone said, and to
+the moment a human agreed it should be modelled that way.
 
 | Skill | Use when… |
 |---|---|
 | `extract-insights` | a transcript, interview or document arrives and the workspace should learn from it |
-| `validate-insights` | extracted claims need signing off by a stakeholder, one at a time |
-| `promote-to-model` | validated insights become actors, entities, processes and metrics |
+| `validate-insights` | extracted claims and the elements they propose need signing off, one bundle at a time |
+| `promote-to-model` | the joins no single insight could decide - merges, ordering, entry and exit points |
 | `validate-model` | schema and cross-reference checking a workspace; gating every commit on zero errors |
 
 Each skill steers the agent to the [`ubml` CLI](https://github.com/TALXIS/ubml)

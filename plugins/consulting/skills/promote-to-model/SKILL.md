@@ -5,10 +5,14 @@ description: In a UBML business-modeling workspace, promotes reviewer-validated 
 
 # Promote to model
 
-**Contract:** the model changes only here, and only from insights a reviewer has
-confirmed. Every promoted element traces to at least one cited insight; every
-field written is evidenced. No placeholders, no padding "for completeness", no
-guessing.
+**Contract:** every element in the model is one a reviewer approved, and this is
+where the ones they approved get finished. Most arrive already accepted from the
+walk, element by element. What is left here is the work no single insight could
+decide - and it is proposed and walked like everything else, never written
+straight in.
+
+Every element traces to at least one cited insight; every field is evidenced. No
+placeholders, no padding "for completeness", no guessing.
 
 **The model is not the point of the workspace.** The insights are the record -
 what was said, by whom, when and why. The model is a reading aid over them, built
@@ -32,19 +36,31 @@ scaffolds a NEW document only; extending one is a manual edit.
 
 ## Sequence
 
-1. **Only `validated` insights.** Corroboration is not confirmation: two sources
-   agreeing raises `confidence`, only a reviewer moves `status`. Wait for the
-   walk to finish - a model over a half-walked workspace reads as a statement
-   about the business when it is a statement about how far the review got, and
-   the gaps look like decisions. If you must build early, name the unwalked
-   areas in the workspace description.
-2. **Element type from the evidence.** People, roles, teams and systems become
+1. **Start from what the walk already accepted.** `ubml validate` reports how
+   many elements still carry `reviewStatus: proposed`; that count should be
+   zero before you begin, or the walk is not finished. A model built over a
+   half-walked workspace reads as a statement about the business when it is a
+   statement about how far the review got, and the gaps look like decisions.
+2. **Do only the work no single insight could decide.** Everything a claim
+   decides on its own was proposed and approved during the walk. What is left is
+   the joins:
+
+   - two names for one thing - "dispatcher" and "dispatch coordinator" - become
+     one element with the alias in its description
+   - the ordering between steps, which no one insight states
+   - a process's entry and exit points, which only exist once the steps do
+   - an element several insights imply and none proposes
+
+   Each of these is a modelling decision like any other. Write it
+   `reviewStatus: proposed`, cite every insight behind it, and walk it. A join
+   written straight to `accepted` is the unreviewed promotion pass this pipeline
+   exists to stop.
+3. **Element type from the evidence.** People, roles, teams and systems become
    actors; records and documents entities; activities processes with steps;
    measurements metrics. On an ambiguous name the source's verb decides
    ("maintains the checklist" → entity, "runs the checklist" → process); still
-   ambiguous → ask, don't guess.
-3. **Write into the document for the type**, never a new file named after the
-   capability. A `PR#####` states what it is for in its own description.
+   ambiguous → ask, don't guess. Write into the document for the type, never a
+   new file named after the capability.
 4. **Allocate every ID with `ubml nextid`.** Two passes running at once each see
    a workspace without the other's uncommitted work and allocate the same id, so
    sequence a split promotion: actors and entities commit before anything
