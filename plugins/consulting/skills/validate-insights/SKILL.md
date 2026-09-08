@@ -53,15 +53,12 @@ Everything below is the part `walk` cannot do.
 
 ## Walk the claim and the element it would create together
 
-An insight carrying a proposal is one decision to the reviewer and two records in
-the workspace. Show both:
+`walk next` shows both: the claim, and any element it would create. Show what it
+emits - an insight carrying a proposal is one decision to the reviewer and two
+records in the workspace.
 
-```
-**Source says** …
-**Extracted as** …
-**Would add** AC01040 · actor · "Customer Service" · role, human
-`IN01230`
-```
+Record each with `walk set <id>`; the id says which is meant, so an insight takes
+`validated` or `disputed` and an element takes `accepted` or `rejected`.
 
 Three answers, not two. They may take the claim and reject the element - the
 extraction is right and the modelling is wrong. That is the most useful answer
