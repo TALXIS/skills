@@ -28,8 +28,8 @@ ubml walk set <id> <status>  # record the answer
 
 `walk next` orders by when the material was produced, not by ID - a stakeholder
 reads their own project as a story, and later sources arrive as answers to what
-earlier ones left open. It carries the position ("source 1 of 4, insight 2 of
-5"), which tells the reviewer how far through they are where an ID tells them
+earlier ones left open. It carries the position ("source 1 of 5, insight 2 of
+26"), which tells the reviewer how far through they are where an ID tells them
 nothing, and opens each source with how many insights it holds and how many
 restate something already walked, so they can spend attention on the ones that
 are new.
@@ -117,11 +117,22 @@ say so.
 | rejects it | status becomes `disputed`, and the claim stays in the workspace |
 | corrects the wording | the text changes, the source text does not, and you show the corrected claim back before moving on |
 | explains what a term meant | goes in `context`, and may resolve an apparent contradiction |
+| cannot settle it | status becomes `deferred`, with the reason and who can answer |
 | introduces something new | nothing, until it has a source of its own |
 
-The enum is `proposed`, `validated`, `disputed`, `retired` and nothing else - a
-rejected claim is `disputed`, not `invalidated`. Ask the CLI rather than
-inventing a word that reads right.
+The enum is `proposed`, `validated`, `disputed`, `deferred`, `retired` and
+nothing else - a rejected claim is `disputed`, not `invalidated`. Ask the CLI
+rather than inventing a word that reads right.
+
+`deferred` is an answer. A reviewer who reaches a claim and cannot confirm it -
+the term appears four different ways in the transcript, the person who knows was
+not on the call - has decided something, and leaving it `proposed` records the
+opposite. The walk then offers that claim every time and the review cannot get
+past it. Note who can settle it and what exactly they need to answer; "check
+with the business owner" is not a question anyone can take away.
+
+It is not `disputed`. A deferred claim may be perfectly true; what is missing is
+the means to confirm it.
 
 Show a correction back before moving on. Not as a question - they have answered -
 but as one line they can catch. A correction is where the author is most likely
