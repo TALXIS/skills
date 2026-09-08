@@ -28,8 +28,9 @@ ubml validate .        # validate the whole workspace root
 ```
 
 A citation of an `SR#####` that does not exist fails like any dangling
-reference. Whether the source's `file` pointer still resolves is not checked;
-verify that by hand when a source is added.
+reference, and so does a source whose `file` points at nothing or holds a URL -
+`url` is the field for an artefact, `file` for the text stored beside the
+workspace.
 
 `--suppress-unused` is for the routine gate - insight and term ids are
 legitimately unreferenced until the model is promoted from them. Never make it
