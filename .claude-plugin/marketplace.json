@@ -9,9 +9,14 @@
   },
   "plugins": [
     {
+      "name": "design",
+      "source": "./plugins/design",
+      "description": "Design TALXIS / Power Platform work before building it: personas, the data model, where each behaviour runs, the user flows, and Gherkin features — from a problem statement in an empty folder, or against a repository that already exists. Read-only. Use when a change needs designing or specifying before any code is written."
+    },
+    {
       "name": "implement",
       "source": "./plugins/implement",
-      "description": "Build TALXIS / Power Platform apps in a local-first monorepo: scaffold components with the TALXIS CLI (txc), validate with dotnet build, deploy as Package Deployer packages. Use when creating a new TALXIS project or working on an existing one."
+      "description": "Build TALXIS / Power Platform apps in a local-first monorepo: describe an app and /implement:builder scaffolds it end to end, or scaffold one concern at a time with the TALXIS CLI (txc). Validated with dotnet build, deployed as Package Deployer packages only when asked. Use when creating a new TALXIS project or working on an existing one."
     }
   ]
 }

@@ -1,15 +1,28 @@
 # Contributing
 
-## The two rules
+## The three rules
 
 1. **Skills are organized by universal developer intent** (tables, backend logic,
    screens, tests, deployment) — never by platform vocabulary. The consuming agent
    knows nothing about Power Platform and shouldn't need to.
-2. **The CLI answers "how"; markdown never duplicates it.** Steer the agent to
-   `txc component type list/explain`, `txc workspace component parameter list <type>`,
-   and `txc docs get <id>`. If you're about to write prose working around a tool
-   limitation, add the gap to [TOOLING-BACKLOG.md](TOOLING-BACKLOG.md) instead and
+2. **Every `txc` command in a skill must be run before merge.** Not read from the
+   README, not inferred from a sibling command — executed, with its output checked
+   for the intent the skill claims. Skills once documented five `--search` terms
+   that returned `[]`, including the first step of creating a new project. CI can't
+   catch this (no `txc` in the runner) until T9/T17 ship, so it is a review rule.
+3. **The CLI answers "how"; markdown never duplicates it.** Steer the agent to the
+   discovery loop below and to `txc docs get <id>`. If you're about to write prose
+   working around a tool limitation, add the gap to [TOOLING-BACKLOG.md](TOOLING-BACKLOG.md) instead and
    keep the workaround in a reference file that names it.
+
+Discovery a skill can rely on today — `component type list` covers only 8 of the 51
+scaffoldable templates (T17), so steer to these instead:
+
+```
+txc workspace component create --help              # every template, by short name
+txc component type explain <template>              # what it is, when to use it, its CHAIN
+txc workspace component parameter list <template>  # every parameter, typed
+```
 
 ## Skill standard (enforced by `scripts/validate.mjs` on every PR)
 
