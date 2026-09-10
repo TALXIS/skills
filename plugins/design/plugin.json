@@ -1,0 +1,23 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "design",
+  "version": "0.2.0",
+  "description": "Design TALXIS / Power Platform / Dataverse work before building it: work out the personas a system serves, settle the data model, decide where each behaviour runs, map the user flows, and write the Gherkin — from a problem statement in an empty folder, or against a repository that already exists. Read-only; nothing is scaffolded or deployed. Use when a change needs designing, specifying, or agreeing before any code is written.",
+  "author": {
+    "name": "TALXIS",
+    "url": "https://github.com/TALXIS"
+  },
+  "homepage": "https://github.com/TALXIS/skills",
+  "repository": "https://github.com/TALXIS/skills",
+  "license": "MIT",
+  "keywords": [
+    "talxis",
+    "power-platform",
+    "dataverse",
+    "design",
+    "personas",
+    "specification",
+    "bdd",
+    "gherkin"
+  ]
+}

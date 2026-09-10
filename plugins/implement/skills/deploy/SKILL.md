@@ -17,23 +17,35 @@ txc config --help                # auth, connections, profiles
 txc environment --help           # live-environment operations
 txc docs get deployment-workflow # long-form guide
 txc docs get solution-layering   # managed/unmanaged doctrine
+txc docs get troubleshooting     # decision trees for deployment failures
 ```
 
 ## Connect an environment
 
-Bootstrap order is fixed: **auth → connection → profile → select**
-(`txc config auth login`, `txc config connection create`,
-`txc config profile create`, `txc config profile select`). Verify with
-`txc config profile validate` before any environment operation. Environments are
-cheap and ephemeral — source control is the source of truth; never share a dev
-environment between people.
+One command bootstraps sign-in, credential, connection, and profile:
+
+```
+txc config profile create --url <environment-url>
+```
+
+Then `txc config profile pin` to bind it to this repository directory, so every
+later command in this workspace targets the right environment without a flag.
+(The advanced path — `config auth login` → `config connection create` →
+`config profile create --auth … --connection …` → `config profile select` — is
+for reusing an existing credential across several environments.)
+
+Verify with `txc config profile validate <name>` before any environment operation
+(the name is required despite the help text claiming a default — T19; add
+`--skip-live` for structural checks without a round-trip).
+Environments are cheap and ephemeral — source control is the source of truth;
+never share a dev environment between people.
 
 ## Build the artifact
 
-`dotnet build` validates; publishing the deployment package project in
-**Release** packs **managed** solutions (test/prod), **Debug** packs
-**unmanaged** (dev). The package artifact is a single deployable zip composing
-all referenced solutions in dependency order.
+`txc workspace validate` and `dotnet build` validate; publishing the deployment
+package project in **Release** packs **managed** solutions (test/prod), **Debug**
+packs **unmanaged** (dev). The package artifact is a single deployable zip
+composing all referenced solutions in dependency order.
 
 ## Deploy and round-trip
 
@@ -42,8 +54,9 @@ all referenced solutions in dependency order.
 2. After edits made directly in a live dev environment, pull them back into
    source: `txc environment solution pull` — then commit. Data packages
    round-trip the same way (`txc data package export` / `import`).
-3. On failure: check the latest deployment record, then component layers, then
-   missing dependencies — never retry more than twice without diagnosing.
+3. On failure: check the latest deployment record (`txc environment deployment`),
+   then component layers (`txc environment component`), then missing
+   dependencies — never retry more than twice without diagnosing.
 
 ## Invariants
 

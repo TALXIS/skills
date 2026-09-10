@@ -31,23 +31,34 @@ available in every project folder.
 
 ## Try it
 
-Open your agent in an empty folder (or an existing TALXIS repository) and run:
+Open your agent in an empty folder (or an existing TALXIS repository) and describe
+what you want:
 
 ```
-/init
+/implement:builder "track service visits and their technicians"
 ```
 
-It scaffolds the monorepo and ends on a passing local build.
+It asks who uses the app and what they need to do, proposes the tables, screens and
+roles for your approval, then scaffolds the lot — ending on a passing local build.
 **Nothing deploys to the cloud.**
+
+To just orient in a repository or scaffold an empty one, run
+`/implement:workspace`.
+
+To settle the design first, run `/design:spec "<what needs building>"` — the data
+model, where each behaviour runs, the user flows — or start from
+`/design:personas "<the problem>"` when the system is new. Both work in an empty
+folder or against an existing repository, write one file each and touch nothing
+else; `/implement:builder` then builds from them instead of re-asking.
 
 ## Plugins
 
 | Plugin | Status | Scope |
 |---|---|---|
 | [`implement`](plugins/implement/) | **available** | Scaffold, build, validate, deploy — extracted from [TALXIS ALM lab](https://github.com/TALXIS/alm-lab) |
+| [`design`](plugins/design/) | **available** | Decide before building: personas, solution design, Gherkin features — read-only |
 | [`data`](plugins/data/) | planned | Data migration, querying, reports, integration |
 | [`support`](plugins/support/) | planned | Troubleshooting, RCA, environment logs (supersedes tools-opskit-cli) |
-| [`design`](plugins/design/) | planned | Prototypes, BDD authoring, backlog, specs |
 
 ## Why this exists
 

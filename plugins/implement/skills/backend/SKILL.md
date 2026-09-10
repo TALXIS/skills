@@ -11,27 +11,39 @@ description: Implements server-side logic in a TALXIS / Power Platform / Dataver
 ## Ask the CLI first
 
 ```
-txc component type list --search plugin            # code project + registration types
-txc workspace component parameter list <type>      # every parameter, typed
+txc workspace component create --help              # every scaffoldable template, by short name
+txc component type explain <template>              # what it is, when to use it, and its CHAIN
+txc workspace component parameter list <template>  # every parameter, typed, with defaults
 txc docs get plugin-development                    # long-form guide
 ```
 
-## Intent → component type
+`explain` names the exact ordered chain for the plugin templates — follow it
+rather than inventing one.
 
-| You want | Component type |
+`txc` prints JSON to stdout and logs to stderr. **Trust the exit code** — an
+unknown `--param` fails with *empty stdout* and exit 2 (T20).
+
+## Intent → template
+
+| You want | Template |
 |---|---|
-| a C# project for server-side logic | search: `--search plugin` (project type) |
-| register the compiled logic in the platform | plugin assembly type |
-| run it on a specific event (create/update/…) | plugin step type |
+| a C# project for server-side logic | `pp-plugin` |
+| register the compiled logic in the platform | `pp-plugin-assembly` |
+| run it on a specific event (create/update/…) | `pp-plugin-assembly-step` |
+| a callable action/function on the Web API | `pp-api-endpoint` |
+| a custom workflow activity | `pp-workflow-activity` |
 
 ## Sequence
 
-1. Create the plugin project under `src/`, add it to the solution file, write the
-   C# classes, `dotnet build`.
+1. Create the plugin project (`pp-plugin`) under `src/`, add it to the solution
+   file, write the C# classes extending the generated `PluginBase`, `dotnet build`.
 2. Registration lives in a logic solution project (conventionally
    `src/Solutions.Logic`), which takes a `ProjectReference` to the plugin project.
-3. Register the assembly first, then its steps — **assembly before steps, always**.
-4. `dotnet build`.
+   That solution needs `pp-solution --param GeneratePluginAssembly=true`.
+3. Register the assembly (`pp-plugin-assembly`) first, then its steps
+   (`pp-plugin-assembly-step`) — **assembly before steps, always**, and one step
+   per plugin class per message.
+4. `txc workspace validate` and `dotnet build`.
 
 ## Invariants
 

@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "implement",
-  "version": "0.4.0",
-  "description": "Build TALXIS / Power Platform / Dataverse apps in a local-first monorepo: data model, backend logic, frontend, security, tests, and deployment — thin skills that steer the agent to the TALXIS CLI (txc) for everything. Use when creating a new TALXIS project or working on an existing one.",
+  "version": "1.0.0",
+  "description": "Build TALXIS / Power Platform / Dataverse apps in a local-first monorepo. Describe an app and /implement:builder scaffolds it end to end — data model, backend logic, frontend, security, tests — or reach for one concern at a time. Thin skills that steer the agent to the TALXIS CLI (txc) for everything, and deploy only when asked. Use when creating a new TALXIS project or working on an existing one.",
   "author": {
     "name": "TALXIS",
     "url": "https://github.com/TALXIS"

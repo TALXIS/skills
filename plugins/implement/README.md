@@ -1,17 +1,21 @@
 # implement
 
-Build TALXIS / Power Platform apps in a local-first monorepo. Seven skills, one per
+Build TALXIS / Power Platform apps in a local-first monorepo. Eight skills, one per
 developer intent — each steers the agent to the
 [TALXIS CLI (`txc`)](https://github.com/TALXIS/tools-cli) for the *how* and carries
 only what the CLI can't answer yet. Installing this plugin also registers the `txc`
 MCP server.
 
+Start with `builder` — it drives all the others. The rest are there for when you want
+one concern at a time, and the agent routes to them on its own.
+
 | Skill | Use when… |
 |---|---|
-| `init` | beginning a session: check workspace state, scaffold a new project, orient in an existing one |
+| `builder` | **the front door**: one line in ("track service visits"), a scaffolded app out |
+| `workspace` | beginning a session: check workspace state, scaffold a new project, orient in an existing one |
 | `data-model` | creating database tables, columns, relationships, enumerations |
 | `backend` | server-side validation, automation, business rules |
-| `frontend` | screens, pages, forms, lists, navigation, UI components |
+| `frontend` | the app shell, screens, pages, forms, lists, navigation, UI components |
 | `security` | roles, permissions, who-can-do-what |
 | `test` | unit tests and end-to-end UI tests |
 | `deploy` | environments, deploying, release pipeline |
@@ -25,4 +29,10 @@ current `txc` gap — every file names the fix that deletes it
 ```
 /plugin marketplace add TALXIS/skills
 /plugin install implement@talxis
+```
+
+Then, in any folder:
+
+```
+/implement:builder "track service visits and their technicians"
 ```
