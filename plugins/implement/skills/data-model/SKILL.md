@@ -11,31 +11,39 @@ Local only — nothing deploys, no live environment is touched.
 ## Ask the CLI first
 
 ```
-txc component type list --search <term>            # find the component type (aliases included)
-txc component type explain <type>                  # what it is
-txc workspace component parameter list <type>      # every parameter, typed, with defaults
+txc workspace component create --help              # every scaffoldable template, by short name
+txc component type explain <template>              # what it is, when to use it, and its CHAIN
+txc workspace component parameter list <template>  # every parameter, typed, with defaults
 ```
 
-Never guess parameters — `parameter list` is the authority.
+Never guess parameters — `parameter list` is the authority. `explain` often names
+the exact ordered chain a component needs; follow it rather than inventing one.
 
-## Intent → component type
+`txc` prints JSON to stdout and logs to stderr. **Trust the exit code** — an
+unknown `--param` fails with *empty stdout* and exit 2 (T20).
 
-| You want | Component type |
+## Intent → template
+
+| You want | Template |
 |---|---|
-| a database table | `Entity` (alias `Table`) |
-| a column / field on a table | `EntityAttribute` |
-| a relationship / lookup between tables | search: `txc component type list --search relationship` |
-| an enumeration (fixed value list) | search: `txc component type list --search optionset` |
+| a solution project to hold the schema | `pp-solution` |
+| a database table | `pp-entity` |
+| a column / field on a table | `pp-entity-attribute` |
+| an enumeration (fixed value list) | `pp-optionset-global` |
+| a relationship / lookup between tables | `pp-entity-attribute` with `AttributeType=Lookup` and `LookupTarget` (this *is* the 1:N relationship) |
+| a business process flow over a table | `pp-bpf` → `pp-bpf-stage` → `pp-bpf-stage-step` |
 
 ## Sequence
 
 1. Ensure a solution project for the data model exists (conventionally
-   `src/Solutions.DataModel`); if not, create one (`--search solution`), add it to
+   `src/Solutions.DataModel`); if not, create one with `pp-solution`, add it to
    the solution file, and reference it from the deployment package project.
 2. Create the table, then its columns — **always table before columns, and both
    before any form or view exists for them** (UI XML references break otherwise).
-3. Relationships require both tables to exist first.
-4. `dotnet build`.
+3. A lookup column requires its target table to exist first. There is no N:N
+   template — author `EntityRelationship` XML by hand when a many-to-many is
+   genuinely needed.
+4. `txc workspace validate` and `dotnet build`.
 
 ## Invariants
 

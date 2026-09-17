@@ -32,15 +32,21 @@ rm -f src/Tests.UI/Features/Calculator.feature src/Tests.UI/Features/Calculator.
 
 ## Step 2 — Add a feature file
 
-One per feature under test, PascalCase name:
+**If `features/*.feature` were authored by `design:features`, copy them into
+`src/Tests.UI/Features/` as they are** and skip the template — they are the agreed
+acceptance criteria, and regenerating them loses the mapping to
+`TALXIS.TestKit.Bindings` recorded in `implementation-guide.md`.
+
+Only with no authored features, scaffold a stub — one per feature under test,
+PascalCase name:
 
 ```
 txc workspace component create pp-test-ui-feature --param "name=<FeatureName>" --output "src/Tests.UI"
 ```
 
 This scaffolds an empty `Feature: <FeatureName>` stub in `src/Tests.UI/Features/` —
-write the real scenarios into it. Reqnroll generates the `.feature.cs` designer
-file from it at build time; nothing else to create.
+write the real scenarios into it. Either way Reqnroll generates the `.feature.cs`
+designer file at build time; nothing else to create.
 
 ## Step 3 — Write scenarios (BDD discipline)
 
@@ -53,10 +59,10 @@ Scenarios speak business language so domain experts can read and challenge them:
   localization.
 - Never hard-sleep — wait for a specific element instead.
 
-For model-driven surfaces, phrase steps to match the frozen bindings (open app,
-open view, open record, fill field, press command, assert value). For code apps,
-write the steps you need as C# classes in `src/Tests.UI/StepDefinitions/` following
-the same rules.
+For model-driven surfaces, phrase steps to match the frozen bindings — call the
+`guide_testing` MCP tool with no `query` for the catalog rather than guessing at them,
+which is also what `design:features` maps against. For code apps, write the steps you need as
+C# classes in `src/Tests.UI/StepDefinitions/` following the same rules.
 
 ## Step 4 — Configure
 

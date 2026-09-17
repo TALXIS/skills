@@ -12,29 +12,45 @@ live environment via the `deploy` skill's profile.
 ## Ask the CLI first
 
 ```
-txc component type list --search role              # role + privilege types
-txc workspace component parameter list <type>      # every parameter, typed
+txc workspace component create --help              # every scaffoldable template, by short name
+txc component type explain <template>              # what it is, when to use it, and its CHAIN
+txc workspace component parameter list <template>  # every parameter, typed, with defaults
 txc docs get security-roles                        # long-form guide
 ```
+`txc` prints JSON to stdout and logs to stderr. **Trust the exit code** — an
+unknown `--param` fails with *empty stdout* and exit 2 (T20).
 
-## Intent → component type
+## Intent → template
 
-| You want | Component type |
+| You want | Template |
 |---|---|
-| a named set of permissions | security role — `--search role` |
-| what a role may do on a table | role privilege type |
+| a named set of permissions | `pp-security-role` |
+| what a role may do on a table | `pp-security-role-privilege` |
+| let a persona open the app | `pp-app-security-role` |
 
 ## Sequence
 
+0. **If `implementation-guide.md` has a `Security` section, that is the design** —
+   `design:spec` already crossed the personas with the data model. Scaffold it as
+   written; don't re-derive who needs what.
 1. Roles live in their own solution project (conventionally
    `src/Solutions.Security`).
-2. Create the role, then one privilege entry per table it touches.
-3. `dotnet build`.
+2. Create the role (**one role file per persona**), then one
+   `pp-security-role-privilege` entry per table it touches.
+3. Grant the app to each role with `pp-app-security-role` — without it the app
+   opens only for system administrators.
+4. `txc workspace validate` and `dotnet build`.
 
 ## Invariants
 
-- Privilege **depth**: Basic = own records · Local = business unit · Deep = unit
-  + children · Global = whole organization. Grant the shallowest depth that works.
+- Privilege **levels** are `None` · `User` · `BusinessUnit` · `ParentChild` ·
+  `Global` — the platform's values, not the UI's *Basic/Local/Deep* labels, which the
+  template rejects. A type left out defaults to `None`. Grant the shallowest that works.
+- `PrivilegeTypeAndLevel` takes `[{ "type": "Read", "level": "Global" }, …]` per
+  `txc docs get security-roles`; the parameter's own description shows a different,
+  stale shape (T23). Follow the doc, and trust the exit code.
+- Privileges attach to a role **by name** (`RoleName`), so it must match the role
+  file exactly — a typo silently grants nothing.
 - Model roles for **personas, not people**; test users get least-privilege roles,
   never admin.
 
