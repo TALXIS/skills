@@ -1,52 +1,44 @@
 ---
 name: init
-description: Orients you in a TALXIS / Power Platform / Dataverse repository at the start of a session — checks workspace state, scaffolds a new monorepo when empty, and ends on a passing local build. Use when beginning work in a repository, initializing or setting up a project, or when asked what this workspace contains.
+description: Orients you in a TALXIS / Power Platform / Dataverse repository — an existing project's layout and build, or scaffolding a new one. Use when starting work in a repository, new or existing, or when asked what it contains.
 ---
 
 # Init
 
-**Contract:** when this skill ends you know the state of the workspace; a new
-project is scaffolded and `dotnet build` passes. Local only — nothing deploys.
-Tool missing? Use `machine-setup`.
+Local only — nothing deploys. Tool missing? Use `machine-setup`.
 
 ## Ask the CLI first
 
 ```
-txc workspace explain           # repo layout rules and the init sequence
-txc workspace project explain   # supported project types and how they compose
-txc docs list                   # long-form guides (txc docs get <id>)
+txc workspace explain           # layout rules and the init sequence
+txc workspace project explain   # project types and how they compose
+txc docs list                   # guides (txc docs get <id>)
 ```
 
-Piped txc output is JSON by default; every command answers `--help`.
+Piped txc output is JSON; every command answers `--help`.
 
-## Check the workspace state — always, at session start
+## Existing repository
 
-A TALXIS workspace has a solution file (`*.slnx` or `*.sln`) at the root and a
-`src/` directory of projects. Check both, then run `dotnet build` to confirm the
-workspace is healthy before changing anything. Report what exists — projects,
-solutions, and anything broken — before taking on new work.
+The root holds `*.slnx` (or `*.sln`) and `src/` with the projects. Run
+`dotnet build` before changing anything; report the projects, the solutions and
+anything broken.
 
-## New project
+## New repository
 
-Gather once: project name, publisher name, publisher prefix. Then:
+Ask once: project name, publisher name, publisher prefix.
 
-1. `git init -b main` and `dotnet new gitignore`
-2. `dotnet new sln --name <ProjectName>` — prefer the XML solution format:
-   `dotnet sln <ProjectName>.sln migrate`, then delete the old `.sln`
-3. `mkdir src` — all projects live under `src/`; keep the root to the solution
-   file, `README.md`, `.gitignore`, and `NuGet.config` (nuget.org feed)
-4. Create the deployment package project (the unit of deployment that composes
-   all solutions): find its type with `txc component type list --search package`,
-   check inputs with `txc workspace component parameter list <type>`, create with
-   `txc workspace component create <type> --output src/<name>`, then
-   `dotnet sln add` it
-5. `dotnet build` — must pass before you finish
+1. `git init -b main`, `dotnet new gitignore`
+2. `dotnet new sln --name <Name>`, `dotnet sln <Name>.sln migrate`, delete the `.sln`
+3. Root keeps only the solution, `README.md`, `.gitignore`, `NuGet.config`
+   (nuget.org), and `.devcontainer/devcontainer.json` with
+   `{"image": "ghcr.io/talxis/tools-agentbox/image:latest"}`; projects go in `src/`
+4. Deployment package project: find its type with
+   `txc component type list --search package`, its inputs with
+   `txc workspace component parameter list <type>`, create it with
+   `txc workspace component create <type> --output src/<name>`, `dotnet sln add` it
+5. `dotnet build` passes
 
-Do not create other projects yet: solutions and code projects are added by the
-`data-model`, `backend`, and `frontend` skills when the first component of that
-concern appears. One solution per concern keeps schema changes out of UI diffs.
+Other projects come later, from `data-model`, `backend` and `frontend`: one
+solution per concern keeps schema changes out of UI diffs.
 
-## Validate
-
-`dotnet build` at the repository root is the universal validation loop for
-everything in this workspace — run it after every scaffold or edit.
+`dotnet build` at the root validates every change.

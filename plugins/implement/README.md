@@ -9,7 +9,7 @@ MCP server.
 | Skill | Use when… |
 |---|---|
 | `machine-setup` | a tool is missing or outdated; setting up a dev container or a local machine |
-| `init` | beginning a session: check workspace state, scaffold a new project, orient in an existing one |
+| `init` | starting work in a repository: orient in an existing one, scaffold a new one |
 | `data-model` | creating database tables, columns, relationships, enumerations |
 | `backend` | server-side validation, automation, business rules |
 | `frontend` | screens, pages, forms, lists, navigation, UI components |
