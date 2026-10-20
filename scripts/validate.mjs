@@ -100,7 +100,7 @@ for (const name of readdirSync(pluginsDir).sort()) {
     if (/~\/\.(claude|copilot|cursor|codex|gemini)\b/.test(body))
       err(skillFile, "references a host-specific home path — skills must stay host-agnostic");
     if (/dotnet tool (install|update)|--version\b.*must succeed|Toolchain check/i.test(body))
-      err(skillFile, "contains toolchain install/check prose — that's txc doctor's job (TOOLING-BACKLOG T1)");
+      err(skillFile, "contains toolchain install/check prose — agentbox owns tools (see the init skill)");
 
     // Every reference file must justify its existence and name its removal condition.
     const refsDir = join(skillDir, "references");

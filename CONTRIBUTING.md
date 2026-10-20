@@ -17,8 +17,8 @@
   sequence → invariants → references. Target ≤ ~70 lines.
 - No `--param` enumerations in SKILL.md — `parameter list` is the authority. A
   specific parameter may appear only when it encodes an invariant.
-- Zero toolchain prose: no version checks, installs, or updates (that's `txc doctor`,
-  T1). Machine-checked.
+- Zero toolchain prose: no version checks, installs, or updates. The `init`
+  skill points to `agentbox`, which owns them. Machine-checked.
 - Frontmatter: single-line `name:` (= directory name) and `description:` (≤ 1024
   chars, contains "Use when …", platform-agnostic vocabulary with Dataverse/Power
   Platform as trigger keywords only).
