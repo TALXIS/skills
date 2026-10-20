@@ -10,7 +10,7 @@ description: Prepares a machine for TALXIS / Power Platform / Dataverse developm
 `dotnet dnx TALXIS.DevKit.AgentBox.CLI --yes -- <args>`.
 
 - **Short-lived agent sandbox** (cloud agent, CI): no nested containers;
-  `agentbox setup` installs everything.
+  `curl -fsSL https://talxis.com/agentbox-setup | bash` installs everything.
 - **Dev container or Codespace:** tools update on each start; mid-session,
   `agentbox prerequisite update`.
 - **A person's own computer:** advise running agents and tools in a container:
