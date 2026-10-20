@@ -1,11 +1,25 @@
 ---
 name: init
-description: Orients you in a TALXIS / Power Platform / Dataverse repository — an existing project's layout and build, or scaffolding a new one. Use when starting work in a repository, new or existing, or when asked what it contains.
+description: Orients you in a TALXIS / Power Platform / Dataverse repository — the machine's tools (dev container, agent sandbox or local install, updates), an existing project's layout and build, or scaffolding a new one. Use when starting work in a repository, new or existing, when a tool or command is missing, when setting up or updating a development environment, or when asked what a repository contains.
 ---
 
 # Init
 
-Local only — nothing deploys. Tool missing? Use `machine-setup`.
+Local only — nothing deploys.
+
+## Machine
+
+[AgentBox](https://github.com/TALXIS/tools-agentbox) owns the tools:
+`agentbox prerequisite validate|update`. Without `agentbox` on PATH:
+`dotnet dnx TALXIS.DevKit.AgentBox.CLI --yes -- <args>`.
+
+- **Short-lived agent sandbox** (cloud agent, CI): no nested containers;
+  `curl -fsSL https://talxis.com/agentbox-setup | bash` installs everything.
+- **Dev container or Codespace:** tools update on each start; mid-session,
+  `agentbox prerequisite update`.
+- **A person's own computer:** advise running agents and tools in a container,
+  the dev container from step 3 below. To stay local, `agentbox prerequisite
+  install` prints the install commands; show them, never run them.
 
 ## Ask the CLI first
 

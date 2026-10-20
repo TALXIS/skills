@@ -7,7 +7,6 @@ issue; when it ships, the corresponding skill prose gets deleted.
 
 | # | Improvement | Replaces | Status |
 |---|---|---|---|
-| T1 | `txc doctor` — machine-checkable auth/profile check with fix hints (tool prerequisites: `agentbox prerequisite validate`, shipped in [tools-agentbox](https://github.com/TALXIS/tools-agentbox) 1.4.0) | Per-skill toolchain-check prose (CP01) | proposed |
 | T2 | `txc workspace init` — one command: `.slnx` + NuGet.config + Packages.Main (+ optional segmented solutions) | Most of the `init-repo` skill body (CP02 + 03a) | proposed |
 | T3 | `pp-entity-view` accepts a columns parameter and emits complete `layoutxml` + `fetchxml` | alm-lab's `Add-ViewColumns` post-patch (05d) | proposed |
 | T4 | Component-create commands print created artifacts (incl. GUIDs) as JSON; accept `--param FormId` consistently | PowerShell GUID pre-generation choreography (05c/05d) | proposed |
