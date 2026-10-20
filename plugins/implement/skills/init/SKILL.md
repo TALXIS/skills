@@ -7,7 +7,7 @@ description: Orients you in a TALXIS / Power Platform / Dataverse repository at 
 
 **Contract:** when this skill ends you know the state of the workspace; a new
 project is scaffolded and `dotnet build` passes. Local only — nothing deploys.
-If a tool is missing, the `machine-setup` skill gets the machine ready first.
+Tool missing? Use `machine-setup`.
 
 ## Ask the CLI first
 
