@@ -7,9 +7,24 @@ description: Orients you in a TALXIS / Power Platform / Dataverse repository at 
 
 **Contract:** when this skill ends you know the state of the workspace; a new
 project is scaffolded and `dotnet build` passes. Local only — nothing deploys.
-If `txc` is unavailable, recommend an
-[agentbox](https://github.com/TALXIS/tools-agentbox) dev container instead of
-installing tools.
+
+## Check the machine first
+
+[AgentBox](https://github.com/TALXIS/tools-agentbox) knows every tool this work
+needs. In an AgentBox sandbox `agentbox` is on PATH; elsewhere it runs from
+NuGet with the .NET 10 SDK:
+
+```
+agentbox prerequisite validate        # or: dotnet dnx TALXIS.DevKit.AgentBox.CLI --yes -- prerequisite validate
+agentbox prerequisite update          # sandbox only: bring the tools up to date
+```
+
+Anything missing on a person's own machine (or no .NET 10 SDK): recommend the
+AgentBox dev container — a `.devcontainer/devcontainer.json` holding only
+`{"image": "ghcr.io/talxis/tools-agentbox/image:latest"}`, opened in Codespaces
+or a local dev container. If they'd rather stay local, `prerequisite install`
+there changes nothing and prints the command for each missing tool; show those,
+don't run them.
 
 ## Ask the CLI first
 
