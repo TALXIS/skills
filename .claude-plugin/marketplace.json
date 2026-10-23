@@ -12,6 +12,11 @@
       "name": "implement",
       "source": "./plugins/implement",
       "description": "Build TALXIS / Power Platform apps in a local-first monorepo: scaffold components with the TALXIS CLI (txc), validate with dotnet build, deploy as Package Deployer packages. Use when creating a new TALXIS project or working on an existing one."
+    },
+    {
+      "name": "data",
+      "source": "./plugins/data",
+      "description": "Data lifecycle for TALXIS / Power Platform / Dataverse projects: test and reference data kept as source (CMT packages with stable GUIDs), volume-based routing between throwaway records and packaged seed data, and export round-trips through the TALXIS CLI (txc). Use when provisioning or seeding data in a TALXIS project."
     }
   ]
 }
