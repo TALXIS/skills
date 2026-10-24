@@ -13,13 +13,68 @@ the registration. The assembly is a build artifact; when and where it runs is
 Dataverse configuration — each belongs to its own project. The plugin project must
 already exist and build (see the `plugin-development` skill).
 
-## Ordering invariant
+## How registration works
 
-Build before steps — the first build of `Solutions.Logic` registers the plugin
-assembly (`pp-solution` defaults to `GeneratePluginAssembly=true`), and steps reference
-that assembly, so scaffold `pp-plugin-assembly-step` only after that build. Never also
-run `pp-plugin-assembly`: it appends a second PluginAssembly root component and the
-next build fails with "root components are not defined in customizations".
+An assembly registration is two files in `Solutions.Logic` that must agree on one id:
+`PluginAssemblies/<AssemblyName>.dll.data.xml` (the `PluginAssemblyId` and the list of
+plugin classes) and a type-91 `RootComponent` with that same id in `Other/Solution.xml`.
+A root without its data file, or two roots for one assembly, fails the build with
+"root components are not defined in customizations".
+
+Two ways to produce them, chosen by the MSBuild property `GeneratePluginAssembly` in
+`Solutions.Logic.csproj` (the `pp-solution` template sets it; its default is `true`):
+
+| Mode | Who writes the registration | Use when |
+|---|---|---|
+| **Generated** (`true`, default) | Every build of `Solutions.Logic`, for each referenced plugin project | New work, and any solution that does not need a fixed id |
+| **Manual** (`false`) | You, with `pp-plugin-assembly`, after building the plugin project (it needs the built DLL) and with a fresh lowercase GUID as `AssemblyId`; the solution build leaves both files alone | You must control the id or the file contents by hand |
+
+How the generated build behaves:
+
+- It looks for `PluginAssemblies/**/<AssemblyName>.dll.data.xml` (`AssemblyName` from the
+  plugin csproj, else the project file name). Found: it **reuses that file's id** and
+  adds an entry for each new plugin class — it never removes entries, so delete a
+  removed class's `PluginType` by hand. Not found: it creates the file with a new GUID
+  and adds the root.
+- The root is matched by id alone, so the data file and the root can drift apart.
+- It fails with "Plugins not found" if the assembly has no public, non-abstract `IPlugin`
+  class, and needs a strong-name-signed assembly (the template's `.snk`).
+
+**Order:** build before steps. Steps reference the assembly, so scaffold
+`pp-plugin-assembly-step` only after the registration exists — after the first build
+in generated mode, after `pp-plugin-assembly` in manual mode.
+
+## Avoiding duplicate registrations
+
+Each of these leaves two roots, or a root with no data file:
+
+- running `pp-plugin-assembly` in a **generated** solution (it writes a new GUID next to
+  the one the build made) — pick one mode and stay in it;
+- editing the id in only one of the two files;
+- renaming the assembly — a new name is a new data file and a new GUID, so remove the
+  old file and root, or keep `AssemblyName` stable;
+- a data file not named `<AssemblyName>.dll.data.xml`, which the build cannot find and
+  so registers again.
+
+Before and after any change to registration, check the two agree:
+
+```
+grep -o 'RootComponent type="91" id="[^"]*"' src/Solutions.Logic/Other/Solution.xml
+grep -o 'PluginAssemblyId="[^"]*"' src/Solutions.Logic/PluginAssemblies/*.data.xml
+```
+
+## Adding registration to an existing solution
+
+- **The solution already holds the registration** (from `solution pull` or an earlier
+  manual setup): leave generation on. The build finds the data file by name, reuses its
+  id and adds new classes — no second root. Switching a manual solution to generated
+  is just removing `GeneratePluginAssembly=false`. Run the two checks above first.
+- **The assembly already lives in an environment under an id the source doesn't have:**
+  Dataverse matches components by id, so set that id in both files before the first
+  build (or create the manual registration with that `AssemblyId`). Do not let the build
+  mint a new one.
+- **Nothing registered yet:** the generated mode above — reference the plugin project and
+  build; don't scaffold the assembly by hand.
 
 ## Step 1 — Gather inputs (once)
 
@@ -41,10 +96,9 @@ dotnet sln add src/Solutions.Logic
 ## Step 3 — Reference the plugin project and build
 
 The solution packages the assembly it registers, so it needs a `ProjectReference`
-to the plugin project. The build then generates the assembly registration itself
-(`PluginAssemblies/*.dll.data.xml` and one PluginAssembly root component in
-`Solution.xml`); set `GeneratePluginAssembly=false` on `pp-solution` only for a
-solution that references no plugin project:
+to the plugin project. The build then generates the registration (see "How
+registration works"); for manual mode, create `Solutions.Logic` with
+`GeneratePluginAssembly=false` instead and follow the manual row:
 
 ```
 dotnet add "src/Solutions.Logic/Solutions.Logic.csproj" reference "src/Plugins.<Name>/Plugins.<Name>.csproj"

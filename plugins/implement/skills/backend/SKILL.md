@@ -30,7 +30,9 @@ txc docs get plugin-development                    # long-form guide
    C# classes, `dotnet build`.
 2. Registration lives in a logic solution project (conventionally
    `src/Solutions.Logic`), which takes a `ProjectReference` to the plugin project.
-3. Register the assembly first, then its steps — **assembly before steps, always**.
+3. The logic solution's build registers the assembly itself; add the steps after that
+   build — **registration before steps, always**. Never also scaffold the assembly type
+   into a solution that generates it: that duplicates the registration.
 4. `dotnet build`.
 
 ## Invariants
@@ -40,6 +42,9 @@ txc docs get plugin-development                    # long-form guide
 - Reject invalid input in a **Pre-validation** step (cheapest, runs before the
   database transaction); make related writes atomic in a **Post-operation** step
   (inside the transaction).
+- One registration per assembly, one id: the generated and the manual way
+  (`GeneratePluginAssembly`) must never be mixed — see the registration reference,
+  including how to add registration to an existing solution.
 - Code lives in the plugin project; *when and where it runs* is platform
   configuration and lives in the logic solution.
 
