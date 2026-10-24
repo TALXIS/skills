@@ -1,5 +1,6 @@
-> **Needed because:** the assembly-before-steps sequence is not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in help/docs (T12).
+> **Needed because:** the build-registers-the-assembly sequence is not surfaced by txc help.
+> **Remove when:** txc surfaces sequences in help/docs (T12), and the `pp-solution`
+> template describes its `GeneratePluginAssembly` parameter (tools-devkit-templates#106).
 
 # Register plugin assemblies and steps
 
@@ -14,9 +15,11 @@ already exist and build (see the `plugin-development` skill).
 
 ## Ordering invariant
 
-Assembly before steps — steps reference the assembly, so `pp-plugin-assembly` must
-run before any `pp-plugin-assembly-step`. And the plugin project must be built before
-the assembly is registered.
+Build before steps — the first build of `Solutions.Logic` registers the plugin
+assembly (`pp-solution` defaults to `GeneratePluginAssembly=true`), and steps reference
+that assembly, so scaffold `pp-plugin-assembly-step` only after that build. Never also
+run `pp-plugin-assembly`: it appends a second PluginAssembly root component and the
+next build fails with "root components are not defined in customizations".
 
 ## Step 1 — Gather inputs (once)
 
@@ -38,23 +41,17 @@ dotnet sln add src/Solutions.Logic
 ## Step 3 — Reference the plugin project and build
 
 The solution packages the assembly it registers, so it needs a `ProjectReference`
-to the plugin project, and the assembly must be built before registration:
+to the plugin project. The build then generates the assembly registration itself
+(`PluginAssemblies/*.dll.data.xml` and one PluginAssembly root component in
+`Solution.xml`); set `GeneratePluginAssembly=false` on `pp-solution` only for a
+solution that references no plugin project:
 
 ```
 dotnet add "src/Solutions.Logic/Solutions.Logic.csproj" reference "src/Plugins.<Name>/Plugins.<Name>.csproj"
 dotnet build src/Solutions.Logic
 ```
 
-## Step 4 — Register the assembly (once per plugin project)
-
-Generate a fresh GUID for `AssemblyId` (`uuidgen`, lowercase).
-`PluginProjectRootPath` is relative to the solution project:
-
-```
-txc workspace component create pp-plugin-assembly --output "src/Solutions.Logic" --param "AssemblyId=<new-guid>" --param "PluginProjectRootPath=../Plugins.<Name>"
-```
-
-## Step 5 — Register the steps
+## Step 4 — Register the steps
 
 One command per plugin class. `PluginName` is the plugin class name; `Stage` is
 `Pre-validation` or `Post-operation`; `SdkMessage` is `Create`, `Update`, or `Delete`:
@@ -69,7 +66,7 @@ cheapest place to reject bad input with `InvalidPluginExecutionException`.
 so the plugin's related writes commit or roll back together with the triggering
 record. Match the stage each class was written for.
 
-## Step 6 — Validate
+## Step 5 — Validate
 
 ```
 dotnet build
@@ -78,7 +75,7 @@ dotnet build
 Must pass at the repository root. `TALXISXSD001` = schema validation failed (fix the
 reported XML); `TALXISGUID001` = duplicate GUID (regenerate the reported id).
 
-## Step 7 — Summary
+## Step 6 — Summary
 
 Report the assembly and steps registered (entity, message, stage per step), that
 `Packages.Main` references `Solutions.Logic`, that `dotnet build` passed, and that

@@ -54,6 +54,8 @@ txc workspace component create pp-security-role-privilege --output "src/Solution
 - Full CRUD for a manager-style persona:
   `[{ PrivilegeType: Read, Level: Global }, { PrivilegeType: Write, Level: Global }, { PrivilegeType: Create, Level: Global }, { PrivilegeType: Delete, Level: Global }, { PrivilegeType: Append, Level: Global }, { PrivilegeType: AppendTo, Level: Global }]`
 - Grant `Append`/`AppendTo` wherever the persona sets lookups between the tables.
+- When a table is added later, extend the existing roles with it — a new table has no
+  privileges in any role until you grant them, so personas silently can't use it.
 - A deliberate matrix beats uniform grants: e.g. a worker reads everything (`Read`
   Global) but edits only records they own (`Write` Basic).
 
