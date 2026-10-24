@@ -83,6 +83,7 @@ txc workspace component create pp-plugin-assembly-step --output "<logic solution
 
 Stage choice: **Pre-validation** runs before the database transaction starts — the
 cheapest place to reject bad input with `InvalidPluginExecutionException`.
+**Pre-operation** (the third stage) runs inside the transaction before the write.
 **Post-operation** runs after the record is written but still inside the transaction,
 so the plugin's related writes commit or roll back together with the triggering
 record. Match the stage each class was written for.

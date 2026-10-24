@@ -67,8 +67,9 @@ Things the scaffold already does, so do not repeat them:
   a "name" column with it instead of adding another.
 - A Lookup column creates its relationship (`Other/Relationships/`); no separate
   relationship step.
-- A local choice is the `OptionSet(Local)` column type with its options inline; a
-  separate option-set component is only for a shared (global) list.
+- A local choice is the `OptionSet(Local)` column type with its options inline in
+  `OptionSetOptions` (comma-separated labels — without it a placeholder option is
+  written); a separate option-set component is only for a shared (global) list.
 - Date and time needs `DateTimeFormat=datetime`; the default is date-only.
 - Default forms, views and a ribbon file are generated with the table.
 

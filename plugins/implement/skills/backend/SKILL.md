@@ -22,7 +22,7 @@ txc docs get plugin-development                    # long-form guide
 | You want | Component type |
 |---|---|
 | a C# project for server-side logic | plugin project template (`create --help`) |
-| register the compiled logic in the platform | plugin assembly type |
+| register the compiled logic in the platform | none to scaffold — the logic solution's build registers the assembly |
 | run it on a specific event (create/update/…) | plugin step type |
 
 ## Sequence
@@ -32,7 +32,8 @@ txc docs get plugin-development                    # long-form guide
    `dotnet build`.
 2. Registration lives in the logic solution project (default `src/Solutions.Logic`;
    resolve roles per the `init` skill's `workspace-layout` reference), which takes a
-   `ProjectReference` to the plugin project.
+   `ProjectReference` to the plugin project; the registration reference has the steps
+   to create it.
 3. The logic solution's build registers the assembly itself; add the steps after that
    build — **registration before steps, always**. Never also scaffold the assembly type
    into a solution that generates it: that duplicates the registration.

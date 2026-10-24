@@ -27,7 +27,7 @@ No `Features/` folder exists yet.
 One per feature under test, PascalCase name — scaffold `pp-test-ui-feature` into
 `<ui test project>` with `--param "name=<FeatureName>"` (`parameter list` shows no
 parameters for this template). It creates an empty `Feature: <FeatureName>` stub in
-`<ui test project>/Features/` — write the real scenarios into it. The first run also
+`<ui test project>/Features/` — write the real scenarios into it. The same command also
 drops a `Calculator.feature` sample there (and its `.feature.cs`); delete it, its steps
 are unbound. Reqnroll generates the `.feature.cs` designer
 file from it at build time; nothing else to create.
