@@ -68,9 +68,7 @@ npm run dev
 
 Vite serves the app locally for iterating on pages against the typed services.
 
-Running the deployed app, or the app against a live environment, additionally needs
-code apps enabled on that environment — it is off by default. Setting it is a cloud
-operation, so it belongs to the `deploy` skill's environment setup, not here.
+Running against a live environment needs code apps enabled there (`deploy` skill, environments).
 
 ## Step 5 — Validate
 
