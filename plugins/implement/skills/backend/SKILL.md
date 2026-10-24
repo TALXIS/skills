@@ -31,8 +31,10 @@ txc docs get plugin-development                    # long-form guide
 2. Registration lives in a logic solution project (conventionally
    `src/Solutions.Logic`), which takes a `ProjectReference` to the plugin project.
 3. The logic solution's build registers the assembly itself; add the steps after that
-   build — **registration before steps, always**. Never also scaffold the assembly type
-   into a solution that generates it: that duplicates the registration.
+   build — **registration before steps, always**. Scaffold the assembly type only in
+   manual mode, or before the first build with the plugin project already built (to fix
+   the id; the build then reuses it). Once a build has registered the assembly, never
+   scaffold it again: that duplicates the registration.
 4. `dotnet build`.
 
 ## Invariants
