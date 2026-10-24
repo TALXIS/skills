@@ -34,7 +34,7 @@ option …", "Unrecognized argument …") go to stderr only, so with `2>/dev/nul
 call looks like empty output — read stderr when a command prints nothing. Local `txc workspace …`
 commands log `Resolved target environment … using profile …` when the machine has a
 txc profile; they still only touch files — that line does not mean an environment was
-contacted.
+contacted (tools-cli#229).
 
 Undoing a scaffold: deleting a scaffolded component's file leaves its entry in the
 solution's `Other/Solution.xml` (root components) and the build fails (TXM001) until you

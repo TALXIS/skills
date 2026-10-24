@@ -30,7 +30,8 @@ The zip is `<project file name>.zip` in the project's output folder, `<solution 
 (`dotnet msbuild <solution project> -p:Configuration=Debug -getProperty:OutDir` prints the folder; `TargetPath` names a
 `.dll` that does not exist). Why the second row: Package Deployer skips every solution whose version is already
 installed, and local builds always have the same version, so a changed package imports "successfully" and changes
-nothing; `env pkg import` prints nothing on stdout (the log on stderr only says it completed). Debug packs
+nothing; `env pkg import` prints nothing on stdout (the log on stderr only says it completed); `solution export|unpack|pack|pull|clone`
+print packager progress text before the JSON, so do not parse their stdout as one JSON document (tools-cli#217). Debug packs
 unmanaged — right for Dev.
 
 **Publish after a solution zip import.** The import stores forms, views, ribbon and app changes but does not make them

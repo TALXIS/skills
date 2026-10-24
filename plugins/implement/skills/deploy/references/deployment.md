@@ -90,7 +90,8 @@ txc env solution pull <solution project> --profile <profile>
 passed as the positional argument; `--output` overrides
 the solution root folder it syncs into. It overwrites the files in source with the
 environment's state, so a source change that was never pushed is deleted — push or
-commit first. A bare solution unique name needs `--output`. `txc env solution clone <name> -o <dir>` (a
+commit first. A bare solution unique name needs `--output`. The help text also says "merges changes"; in practice the solution's own
+files take the environment's state (tools-cli#230). `txc env solution clone <name> -o <dir>` (a
 new project from an environment's solution) must be run where a solution file is found
 (a `.sln`/`.slnx` in or above the working directory), otherwise it fails and leaves a
 half-written project (tools-cli#216). Later builds of a solution with an app may print

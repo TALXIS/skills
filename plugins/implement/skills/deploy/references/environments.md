@@ -34,7 +34,10 @@ txc config auth login --device-code
 ```
 
 Device-code flow: a code is shown, the user opens https://aka.ms/devicelogin and
-pastes it. Note the auth id from `txc config auth list --format json` — Step 4
+pastes it. Start it only while the user is present and give them the code at once: it expires after about
+5 minutes (start again with a new code). In a session without a terminal the command refuses
+(stdin/stdout redirected); a pseudo-terminal works (`script -qec "txc config auth login --device-code" /dev/null`,
+tools-cli#224; sign-in is always a deliberate human action, PR #173). Note the auth id from `txc config auth list --format json` — Step 4
 binds it to the connection.
 
 ## Step 3 — Create the environment (only if none exists)

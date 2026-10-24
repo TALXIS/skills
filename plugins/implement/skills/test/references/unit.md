@@ -98,7 +98,7 @@ dotnet test "<script test project>" --nologo
 Must pass — `dotnet test` invokes Jest through the `RunJest` target, so one command
 covers both C# and JS suites in CI and locally. A script-only test project also prints
 "No test is available in …dll" and still exits 0; a failing Jest test is what fails the
-run. The scaffolded csproj writes Windows-style backslash paths; they still worked on Linux.
+run. The scaffolded csproj writes Windows-style backslash paths; they still worked on Linux (tools-devkit-templates#191).
 
 ## Summary
 

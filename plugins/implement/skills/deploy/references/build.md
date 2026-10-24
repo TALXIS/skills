@@ -62,11 +62,13 @@ Current quirk (tooling-backlog T6): the `.pdpkg.zip` lands next to the project,
 not in the publish output, and is named after the project — find it at:
 
 ```
-<package project>/bin/Release/*.pdpkg.zip
+<package project>/bin/<Configuration>/*.pdpkg.zip
 ```
 
 (In CI the same applies — publish, then copy from `<package project>/bin/Release/`
-into the artifact drop.)
+into the artifact drop.) Every build of the package project prints a warning that the
+PDPackage targets are "not verified" with the installed .NET SDK; it is harmless
+(tools-devkit-build#128).
 
 ## Summary
 

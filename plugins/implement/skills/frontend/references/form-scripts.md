@@ -44,7 +44,7 @@ dotnet build "<scripts project>"
 ```
 
 A successful build can print `where: not found` (a Windows-only command in the build)
-and `CS2008: No source files specified`; both are harmless. `npm` leaves a
+and `CS2008: No source files specified`; both are harmless (tools-devkit-build#135). `npm` leaves a
 `package-lock.json` — commit it.
 
 ## Register event handlers
