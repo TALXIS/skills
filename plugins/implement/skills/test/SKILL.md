@@ -38,7 +38,7 @@ txc workspace component parameter list <type>      # every parameter, typed
 - BDD scenarios: Given sets context, When is one action, Then is an observable
   outcome — 3–5 steps. Selectors and waits live in step definitions, never in
   feature files; prefer test-id selectors; never hard-sleep.
-- Unit test projects target modern .NET while the tested assembly stays net462 —
+- Unit test projects target modern .NET while the tested assembly stays on .NET Framework —
   the resulting NU1702 warning is expected.
 
 Details: [references/unit.md](references/unit.md) ·

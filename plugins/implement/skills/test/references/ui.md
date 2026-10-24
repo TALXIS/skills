@@ -4,8 +4,8 @@
 # UI testing with Playwright + Reqnroll
 
 **Contract:** when this skill ends, `<ui test project>` exists with at least one feature
-file, `dotnet build "<ui test project>"` passes, and Playwright browsers
-are installed. Scaffolding and building are local; `dotnet test` runs against the
+file, and `dotnet build "<ui test project>"` passes. Where the machine allows it,
+Playwright browsers are installed too. Scaffolding and building are local; `dotnet test` runs against the
 live environment configured in `appsettings.json`.
 
 **What the template covers.** `pp-test-ui` ships frozen step bindings (under
@@ -19,14 +19,17 @@ and navigation. They navigate via the model-driven URL shape
 
 Resolve `<ui test project>` per the `init` skill's `workspace-layout` reference
 (default `src/Tests.UI`; an existing repository's names win). Scaffold `pp-test-ui`
-into it and `dotnet sln add` it. Delete the
-`Calculator.feature` sample (and its `.feature.cs`) the template ships.
+into it and `dotnet sln add` it (the template does not add itself).
+No `Features/` folder exists yet.
 
 ## Step 2 — Add a feature file
 
 One per feature under test, PascalCase name — scaffold `pp-test-ui-feature` into
-`<ui test project>`. It creates an empty `Feature: <FeatureName>` stub in `<ui test project>/Features/` —
-write the real scenarios into it. Reqnroll generates the `.feature.cs` designer
+`<ui test project>` with `--param "name=<FeatureName>"` (`parameter list` shows no
+parameters for this template). It creates an empty `Feature: <FeatureName>` stub in
+`<ui test project>/Features/` — write the real scenarios into it. The first run also
+drops a `Calculator.feature` sample there (and its `.feature.cs`); delete it, its steps
+are unbound. Reqnroll generates the `.feature.cs` designer
 file from it at build time; nothing else to create.
 
 ## Step 3 — Write scenarios (BDD discipline)
@@ -63,7 +66,8 @@ playwright-cli state-save <ui test project>/auth-state.json
 playwright-cli close
 ```
 
-Never commit `auth-state.json` — it holds live session cookies; gitignore it.
+Never commit `auth-state.json` — it holds live session cookies. The template's
+`.gitignore` only covers `playwright-auth-state.encrypted`, so add this file to it.
 
 ## Step 5 — Build and install browsers
 

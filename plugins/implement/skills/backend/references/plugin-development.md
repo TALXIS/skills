@@ -11,9 +11,10 @@ This skill covers the code side only. Registering the assembly and its SDK messa
 processing steps happens in `<logic solution>` — see the `plugin-registration` reference.
 The assembly is a build artifact; when and where it runs is Dataverse configuration.
 
-## Hard constraint — net462
+## Hard constraint — stay on .NET Framework
 
-The plugin project targets `net462` because the Dataverse plugin sandbox still runs
+The plugin project targets .NET Framework (the build SDK sets the version; `net472` today)
+because the Dataverse plugin sandbox still runs
 .NET Framework. Never "upgrade" or retarget it to modern .NET — the assembly would be
 rejected at import. Test projects reference it across that gap without moving it (see
 the `test` skill's unit reference).
@@ -34,10 +35,10 @@ Skip if the plugin project already exists. From the repository root:
 
 ```
 txc workspace component create pp-plugin --output "<plugin project>" --param "PublisherName=<PublisherName>" --param "Company=<PublisherName>"
-dotnet sln add "<plugin project>"
 ```
 
-The template creates the `net462` project with a strong-name signing key — Dataverse
+The template adds the project to the solution file and creates a .NET Framework project
+(the target is set by the build SDK) with a strong-name signing key — Dataverse
 requires signed plugin assemblies, so keep the key file in the project.
 
 ## Step 3 — Write the plugin classes

@@ -35,25 +35,42 @@ level, display name.
 
 Skip if the workspace already has a data-model solution. This is the pattern every
 solution project follows — create it with `pp-solution` (in a new repository at the
-default `src/Solutions.DataModel`), reference it from the package project, add it to
-the solution file:
+default `src/Solutions.DataModel`) and reference it from the package project:
 
 ```
 txc workspace component create pp-solution --output "<data-model solution>" --param "PublisherName=<PublisherName>" --param "PublisherPrefix=<PublisherPrefix>"
 dotnet add "<package project>" reference "<data-model solution>"
-dotnet sln add "<data-model solution>"
 ```
 
-The `ProjectReference` puts the solution into the package (`.pdpkg.zip`) and drives import
-order; `dotnet sln add` puts it under the root `dotnet build`.
+`pp-solution` already adds the project to the solution file. The `ProjectReference` puts
+the solution into the package (`.pdpkg.zip`) and drives import order; to confirm it ships,
+look for it in the package project's generated `ImportConfig.g.xml` (under `obj/`).
 
 ## Step 3 — Create entities and columns
 
 One `pp-entity` per table, then one `pp-entity-attribute` per column
 (`txc workspace component parameter list <type>` has the parameters, defaults and
 choices — including the `AttributeType` values and the extra parameters each takes).
-`EntitySchemaName` on a column is the prefixed table name `<PublisherPrefix>_<entity>`;
-a lookup's `LookupTarget` is the prefixed name of a table that already exists.
+A table needs `Behavior` and an explicit `PublisherPrefix` (it defaults to a
+placeholder):
+
+```
+txc workspace component create pp-entity --output "<data-model solution>" --param "EntityType=Standard" --param "Behavior=New" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<entity>" --param "LogicalNamePlural=<entities>" --param "DisplayName=<Display Name>" --param "DisplayNamePlural=<Display Names>"
+```
+
+On a column, `EntitySchemaName` is the prefixed table name `<PublisherPrefix>_<entity>`
+and a lookup's `LookupTarget` is the prefixed name of a table that already exists.
+
+Things the scaffold already does, so do not repeat them:
+
+- Every new table has a required primary name column `<PublisherPrefix>_name`; satisfy
+  a "name" column with it instead of adding another.
+- A Lookup column creates its relationship (`Other/Relationships/`); no separate
+  relationship step.
+- A local choice is the `OptionSet(Local)` column type with its options inline; a
+  separate option-set component is only for a shared (global) list.
+- Date and time needs `DateTimeFormat=datetime`; the default is date-only.
+- Default forms, views and a ribbon file are generated with the table.
 
 To reference a table owned by another solution (or a standard Dataverse table) without
 duplicating its schema, create it with `Behavior=Existing` — that makes a reference

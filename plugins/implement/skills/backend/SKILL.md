@@ -40,7 +40,7 @@ txc docs get plugin-development                    # long-form guide
 
 ## Invariants
 
-- The plugin assembly targets **net462** (the platform sandbox is .NET
+- The plugin assembly targets **.NET Framework**, as the template sets it (the platform sandbox is .NET
   Framework) — never "upgrade" the target framework.
 - Reject invalid input in a **Pre-validation** step (cheapest, runs before the
   database transaction); make related writes atomic in a **Post-operation** step

@@ -34,7 +34,7 @@ dotnet sln add "<plugin test project>"
 
 ## Plugin tests — Step 2: reference the plugin project
 
-The test project targets modern .NET while the plugin assembly stays `net462` (the
+The test project targets modern .NET while the plugin assembly stays on .NET Framework (the
 Dataverse sandbox is .NET Framework — never retarget either side). `dotnet add
 reference` refuses to link across that gap, so add the `ProjectReference` to
 `<plugin test project>`'s csproj by editing the XML directly:

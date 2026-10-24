@@ -24,8 +24,9 @@ project's csproj has them). For each role: a persona name. For each role × enti
 ## Step 2 — Create the solution (first time only)
 
 Skip if the workspace already has a security solution. Create it like any solution
-project (default `src/Solutions.Security`) — `pp-solution`, a `ProjectReference` from
-`<package project>`, `dotnet sln add` (the `data-model` reference shows the commands).
+project (default `src/Solutions.Security`) — `pp-solution` (it adds itself to the solution
+file) and a `ProjectReference` from `<package project>` (the `data-model` reference shows
+the commands).
 
 ## Step 3 — Create roles
 
@@ -42,7 +43,11 @@ txc workspace component create pp-security-role-privilege --output "<security so
 
 - `PrivilegeType`: `Read`, `Write`, `Create`, `Delete`, `Append`, `AppendTo`.
 - `Level` (depth — how far the privilege reaches): `Basic` = own records, `Local` =
-  own business unit, `Deep` = BU plus child BUs, `Global` = whole organization.
+  own business unit, `Deep` = BU plus child BUs, `Global` = whole organization. These
+  four are the only valid names: the scaffold writes any string, but the build rejects
+  others — including `User`, `BusinessUnit`, `ParentChild` and `None` as listed in
+  `txc docs get security-roles`. Leave a privilege out instead of granting `None`.
+- `RoleName` must match the role's name exactly in the role and privilege commands.
 - Grant `Append`/`AppendTo` wherever the persona sets lookups between the tables.
 - When a table is added later, extend the existing roles with it — a new table has no
   privileges in any role until you grant them, so personas silently can't use it.
