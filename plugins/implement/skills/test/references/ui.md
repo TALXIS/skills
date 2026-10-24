@@ -17,28 +17,13 @@ and navigation. They navigate via the model-driven URL shape
 
 ## Step 1 — Scaffold the test project
 
-From the repository root:
-
-```
-txc workspace component create pp-test-ui --output "src/Tests.UI"
-dotnet sln add src/Tests.UI/Tests.UI.csproj
-```
-
-Remove the Calculator sample the template ships:
-
-```
-rm -f src/Tests.UI/Features/Calculator.feature src/Tests.UI/Features/Calculator.feature.cs
-```
+Scaffold `pp-test-ui` into `src/Tests.UI` and `dotnet sln add` it. Delete the
+`Calculator.feature` sample (and its `.feature.cs`) the template ships.
 
 ## Step 2 — Add a feature file
 
-One per feature under test, PascalCase name:
-
-```
-txc workspace component create pp-test-ui-feature --param "name=<FeatureName>" --output "src/Tests.UI"
-```
-
-This scaffolds an empty `Feature: <FeatureName>` stub in `src/Tests.UI/Features/` —
+One per feature under test, PascalCase name — scaffold `pp-test-ui-feature` into
+`src/Tests.UI`. It creates an empty `Feature: <FeatureName>` stub in `src/Tests.UI/Features/` —
 write the real scenarios into it. Reqnroll generates the `.feature.cs` designer
 file from it at build time; nothing else to create.
 
@@ -61,9 +46,8 @@ the same rules.
 ## Step 4 — Configure
 
 `src/Tests.UI/appsettings.json` holds the environment URL, app name, and Playwright
-options. Every setting can be overridden per run via environment variables:
-`TXC_ENVIRONMENT_URL`, `TXC_APP_NAME`, `TXC_HEADLESS`, `TXC_SLOWMO`, `TXC_TIMEOUT`,
-`TXC_STORAGE_STATE_PATH`, `TXC_SCREENSHOT_ON_FAILURE`, `TXC_TRACING_ENABLED`.
+options. Every setting can be overridden per run with a `TXC_`-prefixed environment
+variable (the keys are in the file).
 
 `StorageStatePath` must be an **absolute** path — relative paths resolve from the
 test binary output directory (`bin/Debug/<tfm>/`) and are silently ignored by

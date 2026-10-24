@@ -22,13 +22,9 @@ keep general-purpose CRUD in the model-driven app.
 
 ## Step 2 — Scaffold and wire into the build
 
-From the repository root:
-
-```
-txc workspace component create pp-app-code --output "src/Apps.<Name>" --param "DisplayName=<Display Name>" --param "AppName=<appname>"
-dotnet sln add src/Apps.<Name>
-dotnet add "src/Solutions.UI/Solutions.UI.csproj" reference "src/Apps.<Name>/Apps.<Name>.csproj"
-```
+Scaffold `pp-app-code` into `src/Apps.<Name>` with `DisplayName` and `AppName`, then
+`dotnet sln add` it and add a `ProjectReference` to it from
+`src/Solutions.UI/Solutions.UI.csproj`.
 
 A plain `ProjectReference` is all the wiring: the TALXIS build discovers any
 `ProjectType=CodeApp` reference regardless of which solution carries it — no dedicated

@@ -40,8 +40,7 @@ come from the PCF at call time, so nothing from these packages ends up in the bu
 
 ```
 cd src/Scripts.UI
-npm pkg set "devDependencies.@talxis/client-libraries=^1.2606.5" "devDependencies.@types/powerapps-component-framework=^1.3.15" "devDependencies.@microsoft/microsoft-graph-types=^2.40.0"
-npm install --no-audit --no-fund
+npm install --save-dev @talxis/client-libraries @types/powerapps-component-framework @microsoft/microsoft-graph-types
 ```
 
 **onLoad handler on the form** — the template's post-scripts add the library to

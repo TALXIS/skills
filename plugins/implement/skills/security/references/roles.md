@@ -23,21 +23,13 @@ unsure). For each role: a persona name. For each role × entity: the privilege m
 
 ## Step 2 — Create the solution (first time only)
 
-Skip if `src/Solutions.Security/Solutions.Security.csproj` exists. From the root:
-
-```
-txc workspace component create pp-solution --output "src/Solutions.Security" --param "PublisherName=<PublisherName>" --param "PublisherPrefix=<PublisherPrefix>"
-dotnet add "src/Packages.Main/Packages.Main.csproj" reference "src/Solutions.Security/Solutions.Security.csproj"
-dotnet sln add src/Solutions.Security/Solutions.Security.csproj
-```
+Skip if `src/Solutions.Security/Solutions.Security.csproj` exists. Create it like any
+`Solutions.<Concern>` project — `pp-solution`, a `ProjectReference` from
+`Packages.Main`, `dotnet sln add` (the `data-model` reference shows the commands).
 
 ## Step 3 — Create roles
 
-One command per persona:
-
-```
-txc workspace component create pp-security-role --output "src/Solutions.Security" --param "RoleName=<Persona name>"
-```
+One `pp-security-role` per persona (`RoleName`).
 
 ## Step 4 — Grant privileges
 
@@ -51,8 +43,6 @@ txc workspace component create pp-security-role-privilege --output "src/Solution
 - `PrivilegeType`: `Read`, `Write`, `Create`, `Delete`, `Append`, `AppendTo`.
 - `Level` (depth — how far the privilege reaches): `Basic` = own records, `Local` =
   own business unit, `Deep` = BU plus child BUs, `Global` = whole organization.
-- Full CRUD for a manager-style persona:
-  `[{ PrivilegeType: Read, Level: Global }, { PrivilegeType: Write, Level: Global }, { PrivilegeType: Create, Level: Global }, { PrivilegeType: Delete, Level: Global }, { PrivilegeType: Append, Level: Global }, { PrivilegeType: AppendTo, Level: Global }]`
 - Grant `Append`/`AppendTo` wherever the persona sets lookups between the tables.
 - When a table is added later, extend the existing roles with it — a new table has no
   privileges in any role until you grant them, so personas silently can't use it.

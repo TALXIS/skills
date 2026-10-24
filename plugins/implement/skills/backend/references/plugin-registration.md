@@ -11,7 +11,7 @@ root. Local only — nothing is deployed and no cloud environment is touched.
 The split is deliberate: the plugin project holds the code, `Solutions.Logic` holds
 the registration. The assembly is a build artifact; when and where it runs is
 Dataverse configuration — each belongs to its own project. The plugin project must
-already exist and build (see the `plugin-development` skill).
+already exist and build (see the `plugin-development` reference).
 
 ## How registration works
 
@@ -56,13 +56,9 @@ plugin class name, the target entity's prefixed logical name, the SDK message
 
 ## Step 2 — Create Solutions.Logic (first time only)
 
-Skip if `src/Solutions.Logic/Solutions.Logic.csproj` exists. From the root:
-
-```
-txc workspace component create pp-solution --output "src/Solutions.Logic" --param "PublisherName=<PublisherName>" --param "PublisherPrefix=<PublisherPrefix>"
-dotnet add "src/Packages.Main/Packages.Main.csproj" reference "src/Solutions.Logic/Solutions.Logic.csproj"
-dotnet sln add src/Solutions.Logic
-```
+Skip if `src/Solutions.Logic/Solutions.Logic.csproj` exists. Create it like any
+`Solutions.<Concern>` project — `pp-solution`, a `ProjectReference` from
+`Packages.Main`, `dotnet sln add` (the `data-model` reference shows the commands).
 
 ## Step 3 — Reference the plugin project and build
 
@@ -77,8 +73,8 @@ dotnet build src/Solutions.Logic
 
 ## Step 4 — Register the steps
 
-One command per plugin class. `PluginName` is the plugin class name; `Stage` is
-`Pre-validation` or `Post-operation`; `SdkMessage` is `Create`, `Update`, or `Delete`:
+One `pp-plugin-assembly-step` per plugin class — `PluginName` is the class name; `Stage` and
+`SdkMessage` take the choices `parameter list` shows:
 
 ```
 txc workspace component create pp-plugin-assembly-step --output "src/Solutions.Logic" --param "PrimaryEntity=<PublisherPrefix>_<entity>" --param "PluginProjectName=Plugins.<Name>" --param "PluginName=<PluginClassName>" --param "Stage=Pre-validation" --param "SdkMessage=Create"
@@ -104,4 +100,4 @@ reported XML); `TALXISGUID001` = duplicate GUID (regenerate the reported id).
 Report the assembly and steps registered (entity, message, stage per step), that
 `Packages.Main` references `Solutions.Logic`, that `dotnet build` passed, and that
 nothing was deployed. Next step in one line: cover the plugin logic with local unit
-tests (`testing-unit` skill).
+tests (`test` skill).

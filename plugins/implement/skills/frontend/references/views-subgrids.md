@@ -12,14 +12,8 @@ subgrid, the parent form exists and you have its GUID (see the `forms` skill).
 
 ## Create a view
 
-```
-txc workspace component create pp-entity-view --output src/Solutions.UI \
-  --param "EntitySchemaName=<prefix>_<entity>" \
-  --param "DisplayName=Active <Entities>" \
-  --param "PublisherPrefix=<prefix>"
-```
-
-The view file lands at
+Scaffold `pp-entity-view` (entity schema name, display name, publisher prefix) into
+`src/Solutions.UI`. The view file lands at
 `src/Solutions.UI/Entities/<prefix>_<entity>/SavedQueries/{<view-guid>}.xml` —
 the filename (braces stripped) **is** the view GUID; record it for subgrids.
 

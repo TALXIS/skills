@@ -8,7 +8,7 @@ and `dotnet build` + `dotnet publish` pass in that project. Local only — nothi
 deployed and no cloud environment is touched.
 
 This skill covers the code side only. Registering the assembly and its SDK message
-processing steps happens in `Solutions.Logic` — see the `plugin-registration` skill.
+processing steps happens in `Solutions.Logic` — see the `plugin-registration` reference.
 The assembly is a build artifact; when and where it runs is Dataverse configuration.
 
 ## Hard constraint — net462
@@ -16,7 +16,7 @@ The assembly is a build artifact; when and where it runs is Dataverse configurat
 The plugin project targets `net462` because the Dataverse plugin sandbox still runs
 .NET Framework. Never "upgrade" or retarget it to modern .NET — the assembly would be
 rejected at import. Test projects reference it across that gap without moving it (see
-the `testing-unit` skill).
+the `test` skill's unit reference).
 
 ## Step 1 — Gather inputs (once)
 
@@ -99,4 +99,4 @@ Both must pass. `dotnet publish` produces the assembly layout that registration
 
 Report the plugin classes created, their intended entity/message/stage, that build
 and publish passed, and that nothing was deployed. Next step in one line: register
-the assembly and steps in `Solutions.Logic` (`plugin-registration` skill).
+the assembly and steps in `Solutions.Logic` (`plugin-registration` reference).

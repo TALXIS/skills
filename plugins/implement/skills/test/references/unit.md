@@ -11,7 +11,7 @@ environment is contacted and nothing is deployed.
 Two independent layers — scaffold only the ones the repository needs:
 
 - **Tests.Plugins** — plugin logic tested as plain C# against FakeXrmEasy 3.x.
-  Requires an existing plugin project (`plugin-development` skill).
+  Requires an existing plugin project (`plugin-development` reference).
 - **Tests.Scripts** — form/ribbon scripts tested as plain JavaScript; Jest loads the
   built web-resource bundle, and `dotnet test` drives Jest via the csproj's `RunJest`
   target. Requires an existing `Scripts.UI` project.

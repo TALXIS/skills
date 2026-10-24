@@ -11,14 +11,8 @@ Prerequisite: the target form exists and you have its GUID (see the `forms` skil
 
 ## Create the script library (once per workspace)
 
-```
-txc workspace component create pp-script-library \
-  --param "LibraryName=main" \
-  --param "PublisherPrefix=<prefix>" \
-  --output "src/Scripts.UI"
-
-dotnet sln add src/Scripts.UI
-```
+Scaffold `pp-script-library` (`LibraryName=main`, plus the publisher prefix) into
+`src/Scripts.UI` and `dotnet sln add` it.
 
 This scaffolds a TypeScript project compiled by `dotnet build` (rollup under the
 hood). The bundle output is `src/Scripts.UI/build/<prefix>_main.js`, deployed as the

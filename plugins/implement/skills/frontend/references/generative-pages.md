@@ -22,11 +22,8 @@ summary cards, tables, whatever the page needs); there is no direct WebApi clien
 
 ## Step 2 — Scaffold
 
-From the repository root:
-
-```
-txc workspace component create pp-page-generative --output "src/GenPages.<Name>" --param "Name=<pagename>" --param "DisplayName=<Display Name>"
-```
+Scaffold `pp-page-generative` into `src/GenPages.<Name>` (`txc workspace component
+parameter list pp-page-generative` has the inputs; `Name` is the lowercase page name).
 
 The template names the `.csproj` after the `Name` param, not the folder — locate it
 with a glob rather than assuming (`src/GenPages.<Name>/*.csproj`), and read the

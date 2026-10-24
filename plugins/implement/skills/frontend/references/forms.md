@@ -17,9 +17,8 @@ Prerequisite: the entity and every attribute the form will show already exist in
 one GUID per form up front and reuse it in every later command — subgrids, event
 handlers, and app components must all reference it:
 
-```
-FORM_GUID=$(uuidgen)
-```
+Use whatever GUID generator the machine has (`uuidgen`, `[guid]::NewGuid()`, …) and
+keep it as `FORM_GUID`.
 
 Record it (e.g. in your task notes) before scaffolding. Losing it means grepping
 `src/Solutions.UI/Entities/<prefix>_<entity>/FormXml/main/` for the filename later.
@@ -58,25 +57,9 @@ txc workspace component create pp-form-tab --output src/Solutions.UI \
   --param "RemoveDefaultTab=True"
 ```
 
-**4. Column**, **5. Section**, **6. Row** — identical parameter shape; run
-`pp-form-row` once per field the section will hold:
-
-```
-txc workspace component create pp-form-column --output src/Solutions.UI \
-  --param "FormType=main" \
-  --param "FormId=$FORM_GUID" \
-  --param "EntitySchemaName=<prefix>_<entity>"
-
-txc workspace component create pp-form-section --output src/Solutions.UI \
-  --param "FormType=main" \
-  --param "FormId=$FORM_GUID" \
-  --param "EntitySchemaName=<prefix>_<entity>"
-
-txc workspace component create pp-form-row --output src/Solutions.UI \
-  --param "FormType=main" \
-  --param "FormId=$FORM_GUID" \
-  --param "EntitySchemaName=<prefix>_<entity>"
-```
+**4. Column**, **5. Section**, **6. Row** — `pp-form-column`, `pp-form-section` and
+`pp-form-row` take the same `FormType`, `FormId` and `EntitySchemaName` as the tab;
+run `pp-form-row` once per field the section will hold.
 
 **7. Cell** — one per row; `RowIndex` is 1-based and `DisplayName` is the field label:
 

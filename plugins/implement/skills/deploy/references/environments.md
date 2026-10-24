@@ -41,12 +41,11 @@ binds it to the connection.
 Ask once for: environment type (`Sandbox` for Dev/Test), display name, and a
 domain unique in the tenant (e.g. suffix with initials or a random id).
 
-```
-txc env create --type Sandbox --name "<DisplayName>" --domain <domain> --region <region> --currency <currency> --language <lcid> --wait
-```
+`txc env create --help` lists the flags (type, name, domain, region, currency,
+language); pass `--wait` so it blocks until the environment is ready.
 
 The environment URL is `https://<domain>.crm4.dynamics.com` (region-dependent
-suffix). Creation takes minutes — `--wait` blocks until ready.
+suffix). Creation takes minutes.
 
 ## Step 4 — Bind connection and profile (no extra sign-in)
 

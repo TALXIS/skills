@@ -22,52 +22,31 @@ the navigation layout: areas → groups → subareas (one subarea per entity).
 
 ## Step 2 — Create the solution (first time only)
 
-Skip if `src/Solutions.UI/Solutions.UI.csproj` exists. From the root:
+Skip if `src/Solutions.UI/Solutions.UI.csproj` exists. Create it like any
+`Solutions.<Concern>` project — `pp-solution`, a `ProjectReference` from
+`Packages.Main`, `dotnet sln add` (the data-model reference shows the commands).
+
+## Step 3 — Reference the entities, create the app, add the entities to it
+
+In this order (`txc workspace component parameter list <type>` for each):
+
+1. `pp-entity` with `Behavior=Existing`, once per entity the app uses — a reference,
+   not a table.
+2. `pp-app-model` — the app. Its full name is `<PublisherPrefix>_<app>`, and every
+   later command takes it as `AppName`.
+3. `pp-app-model-component`, once per entity, to add it to the app.
+
+## Step 4 — Build the sitemap
+
+Area first, then its groups, then subareas — `pp-sitemap-area`, `pp-sitemap-group`,
+`pp-sitemap-subarea`. Each child references its parent **by title**, and every command
+takes `AppName`; repeat `pp-sitemap-subarea` per entity in the group:
 
 ```
-txc workspace component create pp-solution --output "src/Solutions.UI" --param "PublisherName=<PublisherName>" --param "PublisherPrefix=<PublisherPrefix>"
-dotnet add "src/Packages.Main/Packages.Main.csproj" reference "src/Solutions.UI/Solutions.UI.csproj"
-dotnet sln add src/Solutions.UI/Solutions.UI.csproj
-```
-
-## Step 3 — Reference the entities
-
-One command per entity the app uses — a reference, not a table:
-
-```
-txc workspace component create pp-entity --output "src/Solutions.UI" --param "Behavior=Existing" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<entity>" --param "DisplayName=<Display Name>"
-```
-
-## Step 4 — Create the app
-
-```
-txc workspace component create pp-app-model --output "src/Solutions.UI" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<app>"
-```
-
-The app's full name is `<PublisherPrefix>_<app>` — every later command uses it as
-`AppName`.
-
-## Step 5 — Add entities to the app
-
-One command per entity:
-
-```
-txc workspace component create pp-app-model-component --output "src/Solutions.UI" --param "EntityLogicalName=<PublisherPrefix>_<entity>" --param "AppName=<PublisherPrefix>_<app>"
-```
-
-## Step 6 — Build the sitemap
-
-Area first, then its groups, then subareas — each references its parent by title:
-
-```
-txc workspace component create pp-sitemap-area --output "src/Solutions.UI" --param "AreaTitle=<Area>" --param "AppName=<PublisherPrefix>_<app>"
-txc workspace component create pp-sitemap-group --output "src/Solutions.UI" --param "GroupTitle=<Group>" --param "GroupDisplayName=<Group>" --param "AreaTitle=<Area>" --param "AppName=<PublisherPrefix>_<app>"
 txc workspace component create pp-sitemap-subarea --output "src/Solutions.UI" --param "Title=<Subarea Title>" --param "EntityLogicalName=<PublisherPrefix>_<entity>" --param "GroupTitle=<Group>" --param "AreaTitle=<Area>" --param "AppName=<PublisherPrefix>_<app>"
 ```
 
-Repeat `pp-sitemap-subarea` per entity in the group.
-
-## Step 7 — Validate
+## Step 5 — Validate
 
 ```
 dotnet build
@@ -76,9 +55,9 @@ dotnet build
 Must pass. `TALXISXSD001` = schema validation failed (fix the reported XML);
 `TALXISGUID001` = duplicate GUID (regenerate the reported id).
 
-## Step 8 — Summary
+## Step 6 — Summary
 
 Report the app name, referenced entities, and the sitemap tree, that `Packages.Main`
 references the solution, that `dotnet build` passed, and that nothing was deployed.
-Suggest the next steps, one line each: forms and views for each entity (`forms`
-skill), then deploy the package (`deploy` skill).
+Suggest the next steps, one line each: forms and views for each entity (`forms` and
+`views-subgrids` references), then deploy the package (`deploy` skill).
