@@ -31,6 +31,7 @@ words. Here, unless a sentence says otherwise:
 | reference | a `ProjectReference` between projects; a `Behavior=Existing` entity reference (a table defined in another solution project); a skill's reference file (`references/*.md`) | each other |
 | publish | `dotnet publish`; Dataverse "publish customizations" is always spelled out | each other |
 | workflow | a GitHub Actions workflow (`build.yml`); a Dataverse workflow is always called that | each other |
+| logical name | the name you pass to a template (`LogicalName`): lowercase, **without** the publisher prefix; the template adds it, so the result (schema or unique name) is `<prefix>_<name>` | a name that already carries the prefix |
 | table, column | the same as txc's `Entity`, `EntityAttribute` types | |
 | feature | a Reqnroll `.feature` file | a product feature |
 | skill | one of the skills of this plugin (`init`, `backend`, ...); a reference is a file inside one | an entry of `txc docs` (`txc docs list` calls them skills) |
@@ -106,7 +107,7 @@ once and reuse them.
 Defaults for a new repository; an existing repository's convention or an explicit
 instruction wins (a publisher prefix already in use is never changed).
 
-- Logical names lowercase with the publisher prefix; display names Proper Case.
+- Logical names lowercase, passed to txc without the publisher prefix (the result carries it: `<prefix>_<name>`); display names Proper Case.
 - Publisher prefix: lowercase alphanumeric, 5 characters or fewer (the template's guidance).
 - Trunk-based topic branches `users/<name>/<topic>` (`deploy` skill, CI/CD reference).
 - CI definitions live where the host requires them (GitHub Actions: `.github/workflows/`).

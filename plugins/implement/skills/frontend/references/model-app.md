@@ -22,7 +22,7 @@ an existing repository's layout and naming win.
 ## Step 1 — Gather inputs (once)
 
 `<PublisherName>`, `<PublisherPrefix>` from the workspace (an existing solution
-project's csproj has them). App logical name (lowercase, no prefix). Which entities the app shows, and
+project's csproj has them). App logical name (lowercase, no prefix — `pp-app-model` adds it, so `evapp` under prefix `ev` becomes `ev_evapp`). Which entities the app shows, and
 the navigation layout: areas → groups → subareas (one subarea per entity).
 
 ## Step 2 — Create the Dataverse solution (first time only)
