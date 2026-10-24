@@ -69,6 +69,7 @@ on:
 permissions:
   id-token: write
   contents: read
+  actions: read
 jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -105,6 +106,9 @@ Notes:
 
 - `permissions: id-token: write` is what lets the job request an OIDC token from
   GitHub; without it `txc config auth add-federated` has nothing to exchange.
+  `actions: read` is what lets `download-artifact` fetch the artifact of another
+  workflow run (`run-id`). The workflows could not be run in the test environment
+  (YAML and ruleset JSON parse; names, placeholders and `txc` flags were checked).
 - The txc chain is auth → connection → profile: the `ci` profile binds the federated
   auth to the `test` connection, and every `txc env pkg import` runs `--profile ci`.
 - `<dependency package>` is the NuGet package id of a package this repository does not

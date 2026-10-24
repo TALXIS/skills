@@ -82,7 +82,11 @@ SDK recognises the referenced type).
 
 A solution project keeps its component folders (`Other/`, `Entities/`, ...) in its
 `SolutionRootPath` (default: the project folder). Paths like `<ui solution>/Entities/...`
-are relative to that root. A repository may split a concern across several solutions or
+are relative to that root. If the project's csproj sets a `SolutionRootPath` other than
+the project folder, pass `--param "SolutionRootPath=<value>"` to **every** `txc workspace
+component create` for that project: the templates do not read it from the csproj, and
+without it the files land at the project folder, the registration step fails, and the
+rollback leaves the files behind (tested; tools-cli#93). A repository may split a concern across several solutions or
 combine concerns in one; route a component to the solution that holds that concern in
 that repository, by what the solutions contain ([layering](../../deploy/references/layering.md)).
 Create a new solution project only when asked or when the repository has no home for

@@ -24,7 +24,7 @@ txc docs get solution-layering   # managed/unmanaged Dataverse solutions
 Bootstrap order is fixed: **auth → connection → profile → select**
 (`txc config auth login`, `txc config connection create`,
 `txc config profile create`, `txc config profile select`). Verify with
-`txc config profile validate` before any environment operation. Default setup:
+`txc config profile validate <name>` (the name is required) before any environment operation. Default setup:
 environments are cheap and ephemeral (source control is the source of truth) and each
 developer has their own Dev environment; follow the team's existing setup if it
 differs ([references/environments.md](references/environments.md)).
@@ -40,9 +40,13 @@ zip composing all Dataverse solutions the package project references, in depende
 
 1. Import dependency packages first (e.g. the NuGet package of a PCF control the app
    uses), then the repository's own Package Deployer package:
-   `txc environment package import`.
+   `txc environment package import`. A success exit code is not proof: Package Deployer
+   skips a solution whose version is already installed, and local builds always produce
+   the same version — verify the content landed, and push a local change to a Dev
+   environment as a solution zip instead (`deployment` reference).
 2. After edits made directly in a live dev environment, pull them back into
-   source: `txc environment solution pull` — then commit. CMT data packages
+   source: `txc environment solution pull` — then commit. The pull overwrites source
+   with the environment's state: push or commit your own changes first. CMT data packages
    (records, not components) round-trip the same way (`txc data package export` / `import`).
 3. On failure: check the latest deployment record, then component layers, then
    missing dependencies — never retry more than twice without diagnosing.

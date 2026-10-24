@@ -72,6 +72,13 @@ concept.
 
 ## Uninstall safety
 
-Before uninstalling a Dataverse solution, check its dependencies first; resolve them
+Before uninstalling a Dataverse solution, check its dependencies first
+(`txc env solution uninstall-check <name>` lists blocking dependencies); resolve them
 before removing. If a data-loss warning appears, get explicit user confirmation.
 Never uninstall in production without checking.
+
+Uninstalling an **unmanaged** Dataverse solution (`env solution uninstall|delete`,
+`env pkg uninstall`) removes only the solution container — tested: the tables, roles,
+app, plugin assembly and steps and web resources stay in the environment, and each
+needs its own delete (`txc env entity delete`, `txc env data record delete`). (Uninstalling
+a managed solution removes its components — Dataverse behaviour, not tested here.)
