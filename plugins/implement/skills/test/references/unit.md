@@ -48,10 +48,12 @@ benign; do not "fix" it.
 
 ## Plugin tests — Step 3: write tests
 
-One `<PluginClassName>Tests.cs` per plugin class in `src/Tests.Plugins/`. Pattern:
-build an `IXrmFakedContext`, seed records with `Initialize`, execute the plugin with
-`ExecutePluginWithTarget`, assert on the faked data or on the thrown
-`InvalidPluginExecutionException`. Attribute logical names carry the
+One `<PluginClassName>Tests.cs` per plugin class in `src/Tests.Plugins/`. Derive each
+from the template's `FakeXrmEasyTestBase`: it builds `_context` (the `IXrmFakedContext`)
+and `_service`, and sets the FakeXrmEasy license — `Commercial` by default, change it in
+the base class if that is not yours. Pattern: seed records with `_context.Initialize`,
+execute the plugin with `ExecutePluginWithTarget`, assert on the faked data or on the
+thrown `InvalidPluginExecutionException`. Attribute logical names carry the
 `<PublisherPrefix>_` prefix.
 
 ## Plugin tests — Step 4: run

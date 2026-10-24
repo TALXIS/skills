@@ -57,11 +57,12 @@ layer back into the source tree — this is the bidirectional inner loop, and th
 only sanctioned way portal changes reach source control:
 
 ```
-txc env solution pull --folder <solution path> --profile <profile>
+txc env solution pull <solution project> --profile <profile>
 ```
 
-`<solution path>` is the solution's folder in the repo (e.g.
-`src/Solutions.Security`). Then `git status -- src/` to show what changed. Pull
+`<solution project>` is the solution project's folder in the repo (e.g.
+`src/Solutions.Security`), passed as the positional argument; `--output` overrides
+the solution root folder it syncs into. Then `git status -- src/` to show what changed. Pull
 only from Dev — the place where humans edit; pipelines only ship built packages
 forward.
 

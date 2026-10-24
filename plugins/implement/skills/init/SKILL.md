@@ -42,7 +42,8 @@ anything broken.
 Ask once: project name, publisher name, publisher prefix.
 
 1. `git init -b main`, `dotnet new gitignore`
-2. `dotnet new sln --name <Name>`, `dotnet sln <Name>.sln migrate`, delete the `.sln`
+2. `dotnet new sln --name <Name>` — it writes `<Name>.slnx` on current SDKs; only if
+   it wrote a `<Name>.sln` instead, `dotnet sln <Name>.sln migrate` and delete the `.sln`
 3. Root keeps only the solution, `README.md`, `.gitignore`, `NuGet.config`
    (nuget.org), and `.devcontainer/devcontainer.json` with
    `{"image": "ghcr.io/talxis/tools-agentbox/image:latest"}`; projects go in `src/`

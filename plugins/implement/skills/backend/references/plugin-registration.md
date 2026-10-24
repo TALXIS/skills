@@ -1,5 +1,6 @@
-> **Needed because:** the assembly-before-steps sequence is not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in help/docs (T12).
+> **Needed because:** the build-registers-the-assembly sequence is not surfaced by txc help.
+> **Remove when:** txc surfaces sequences in help/docs (T12), and the `pp-solution`
+> template describes its `GeneratePluginAssembly` parameter (tools-devkit-templates#106).
 
 # Register plugin assemblies and steps
 
@@ -12,11 +13,41 @@ the registration. The assembly is a build artifact; when and where it runs is
 Dataverse configuration — each belongs to its own project. The plugin project must
 already exist and build (see the `plugin-development` skill).
 
-## Ordering invariant
+## How registration works
 
-Assembly before steps — steps reference the assembly, so `pp-plugin-assembly` must
-run before any `pp-plugin-assembly-step`. And the plugin project must be built before
-the assembly is registered.
+A registration is two files in `Solutions.Logic` that share one id:
+`PluginAssemblies/<AssemblyName>.dll.data.xml` and a type-91 `RootComponent` in
+`Other/Solution.xml`. The `GeneratePluginAssembly` property in `Solutions.Logic.csproj`
+(template default `true`) decides who writes them:
+
+- **Generated** (`true`): every build writes them for each referenced plugin project.
+  It finds an existing `<AssemblyName>.dll.data.xml` by name and reuses its id (it adds
+  new classes, never removes any); otherwise it mints a new id. It needs a signed
+  assembly with at least one public, non-abstract `IPlugin` class.
+- **Manual** (`false`): you scaffold `pp-plugin-assembly` (fresh lowercase GUID as
+  `AssemblyId`) after building the plugin project; the solution build leaves both files
+  alone. Use it only when you need a fixed id. With generation left on, running it
+  before the first solution build (plugin project already built) also works: the build
+  reuses that id. Never after a generated build has registered the assembly.
+
+**Registering in the wrong order can create duplicates.** Running `pp-plugin-assembly`
+after a generated build, renaming the assembly, or editing the id in only one of the two
+files leaves two roots, and the next build fails with "root components are not defined
+in customizations". Nothing guards against this yet, so after every build that touches
+registration, check there is exactly one registration and the ids match:
+
+```
+grep -o 'RootComponent type="91" id="[^"]*"' src/Solutions.Logic/Other/Solution.xml
+grep -o 'PluginAssemblyId="[^"]*"' src/Solutions.Logic/PluginAssemblies/*.data.xml
+```
+
+**Order:** steps reference the assembly, so scaffold `pp-plugin-assembly-step` only
+after the registration exists (after the first build in generated mode).
+
+**Retrofitting an existing solution:** if it already holds the registration, leave
+generation on — the build reuses the existing id by file name. If the assembly already
+lives in an environment under another id, set that id in both files before the first
+build. Run the checks above before and after.
 
 ## Step 1 — Gather inputs (once)
 
@@ -38,23 +69,15 @@ dotnet sln add src/Solutions.Logic
 ## Step 3 — Reference the plugin project and build
 
 The solution packages the assembly it registers, so it needs a `ProjectReference`
-to the plugin project, and the assembly must be built before registration:
+to the plugin project. The build then generates the registration (see "How
+registration works"):
 
 ```
 dotnet add "src/Solutions.Logic/Solutions.Logic.csproj" reference "src/Plugins.<Name>/Plugins.<Name>.csproj"
 dotnet build src/Solutions.Logic
 ```
 
-## Step 4 — Register the assembly (once per plugin project)
-
-Generate a fresh GUID for `AssemblyId` (`uuidgen`, lowercase).
-`PluginProjectRootPath` is relative to the solution project:
-
-```
-txc workspace component create pp-plugin-assembly --output "src/Solutions.Logic" --param "AssemblyId=<new-guid>" --param "PluginProjectRootPath=../Plugins.<Name>"
-```
-
-## Step 5 — Register the steps
+## Step 4 — Register the steps
 
 One command per plugin class. `PluginName` is the plugin class name; `Stage` is
 `Pre-validation` or `Post-operation`; `SdkMessage` is `Create`, `Update`, or `Delete`:
@@ -69,7 +92,7 @@ cheapest place to reject bad input with `InvalidPluginExecutionException`.
 so the plugin's related writes commit or roll back together with the triggering
 record. Match the stage each class was written for.
 
-## Step 6 — Validate
+## Step 5 — Validate
 
 ```
 dotnet build
@@ -78,7 +101,7 @@ dotnet build
 Must pass at the repository root. `TALXISXSD001` = schema validation failed (fix the
 reported XML); `TALXISGUID001` = duplicate GUID (regenerate the reported id).
 
-## Step 7 — Summary
+## Step 6 — Summary
 
 Report the assembly and steps registered (entity, message, stage per step), that
 `Packages.Main` references `Solutions.Logic`, that `dotnet build` passed, and that
