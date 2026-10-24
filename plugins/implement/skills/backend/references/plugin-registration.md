@@ -26,7 +26,9 @@ A registration is two files in `<logic solution>` that share one id:
   assembly with at least one public, non-abstract `IPlugin` class.
 - **Manual** (`false`): you scaffold `pp-plugin-assembly` (fresh lowercase GUID as
   `AssemblyId`) after building the plugin project; the solution build leaves both files
-  alone. Use it only when you need a fixed id.
+  alone. Use it only when you need a fixed id. With generation left on, running it
+  before the first solution build (plugin project already built) also works: the build
+  reuses that id. Never after a generated build has registered the assembly.
 
 **Registering in the wrong order can create duplicates.** Running `pp-plugin-assembly`
 after a generated build, renaming the assembly, or editing the id in only one of the two
