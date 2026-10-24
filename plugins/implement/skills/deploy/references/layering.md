@@ -1,5 +1,7 @@
 > **Needed because:** managed/unmanaged doctrine and destructive-vs-safe semantics are invisible in txc help.
-> **Remove when:** destructive/read-only annotations reach --help (T13) and doctrine lands in help/docs (T12).
+> **Remove when:** destructive/read-only annotations reach --help (T13), doctrine
+> lands in help/docs (T12), and `txc workspace validate` fails on an undeclared
+> subcomponent (T7) — the counting method below is a static check done by hand.
 
 # Solution layering and routing
 
@@ -41,6 +43,17 @@ conflicts, unclear ownership) and never schema changes in UI diffs.
 
 If the repository already uses different solution names, its convention wins —
 route by concern into the existing structure, do not invent new solutions.
+
+## Subcomponents pack only where declared
+
+Entities register in `Solution.xml` with `behavior="1"` — no subcomponents ride
+along automatically. A view or form added under an entity's folder packs only if
+the entity itself is declared in that same solution (an `Entity.xml` in the
+layer); registering the entity in `<RootComponents>` alone is not enough. The
+failure is silent: the build is clean, the import succeeds, and the component is
+simply absent from the target. If a shipped component never appears, count the
+files on disk against their occurrences in the packed `customizations.xml`
+before touching layers.
 
 ## Layer conflict triage
 
