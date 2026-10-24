@@ -1,16 +1,28 @@
-# support (planned)
+# support
 
-Operations and troubleshooting skills for TALXIS / Power Platform projects — not yet
-installable. Supersedes [TALXIS/tools-opskit-cli](https://github.com/TALXIS/tools-opskit-cli),
-reimplemented on the TALXIS CLI (`txc`) instead of bundled Python.
+Operations and troubleshooting skills for TALXIS / Power Platform projects.
+Supersedes [TALXIS/tools-opskit-cli](https://github.com/TALXIS/tools-opskit-cli),
+reimplemented on the [TALXIS CLI (`txc`)](https://github.com/TALXIS/tools-cli)
+instead of bundled Python. Installing this plugin also registers the `txc` MCP
+server.
 
-Planned scope:
+| Skill | Use when… |
+|---|---|
+| `troubleshoot` | investigating a support ticket, incident, or unexplained behavior — evidence-first and read-only: ticket → identifiers → targeted queries → `findings.md`, with gated `rca.md` / `action-plan.md` |
 
-- **troubleshoot** — evidence-first investigation methodology: ticket → identifiers →
-  targeted queries → `findings.md`, with gated `rca.md` / `action-plan.md`. Read-only,
-  no speculative content.
+Planned:
+
 - **environment-logs** — Dataverse log sources (`flowrun`, `plugintracelog`, `audit`,
   `asyncoperation`) as canned `txc env data query` recipes.
 - **troubleshooting-patterns** — symptom → first diagnostic tool routing.
 
-This plugin is added to the marketplace when its first skill lands.
+Each skill's `references/` holds detailed recipes that exist only because of a
+current `txc` gap — every file names the fix that deletes it
+(see [TOOLING-BACKLOG.md](../../TOOLING-BACKLOG.md)).
+
+## Install
+
+```
+/plugin marketplace add TALXIS/skills
+/plugin install support@talxis
+```
