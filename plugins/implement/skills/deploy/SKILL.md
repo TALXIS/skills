@@ -38,6 +38,9 @@ zip composing all Dataverse solutions the package project references, in depende
 
 ## Deploy and round-trip
 
+The everyday loop (change → push to Dev → verify it landed → pull back) is in
+[references/inner-loop.md](references/inner-loop.md); the steps below are the details.
+
 1. Import dependency packages first (e.g. the NuGet package of a PCF control the app
    uses), then the repository's own Package Deployer package:
    `txc environment package import`. A success exit code is not proof: Package Deployer
@@ -61,5 +64,5 @@ zip composing all Dataverse solutions the package project references, in depende
   ([references/ci-cd.md](references/ci-cd.md); GitHub Actions is the default host, an
   existing pipeline or another host is kept).
 
-Details: [references/](references/) — environments, build, deployment, layering,
+Details: [references/](references/) — inner-loop, environments, build, deployment, layering,
 ci-cd (+ workflow, ruleset and application-user files)

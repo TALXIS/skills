@@ -79,7 +79,8 @@ On a column, `EntitySchemaName` is the prefixed table name `<PublisherPrefix>_<e
 and a lookup's `LookupTarget` is the prefixed name of a table that already exists.
 
 Expected outcome of the scaffold. Check it after the command, and repair by hand only
-what is missing:
+what is missing (a scaffold can also drop the byte-order mark of `Other/Solution.xml`:
+noise in `git diff`, harmless):
 
 - Every new table has a required primary name column `<PublisherPrefix>_name`; satisfy
   a "name" column with it instead of adding another.

@@ -6,7 +6,7 @@ description: Implements server-side logic in a TALXIS / Power Platform / Dataver
 # Backend logic
 
 **Contract:** code and its registration are scaffolded locally and
-`dotnet build` passes. Local only — nothing deploys.
+`dotnet build` passes. Local only — nothing deploys; to try the change in a Dev environment when the user asks, use the `deploy` skill (`inner-loop` reference).
 
 ## Ask the CLI first
 

@@ -104,7 +104,9 @@ needs a column, a column needs a tab.
 Do not re-scaffold. Instead:
 
 1. Locate the form XML: `txc workspace explain`, then read
-   `<ui solution>/Entities/<prefix>_<entity>/FormXml/main/{<form-guid>}.xml`.
+   `<ui solution>/Entities/<prefix>_<entity>/FormXml/main/{<form-guid>}.xml`. The default forms
+   of a table are created with the table, so they usually sit in `<data-model solution>`: edit the form
+   where it lives (the `--output` of the commands below is that project), not in `<ui solution>`.
 2. Find the insertion point at the right hierarchy level (tab → column → section →
    row → cell → control).
 3. Adding a **field**: prefer the `pp-form-row` / `pp-form-cell` / `pp-form-control`

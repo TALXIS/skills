@@ -62,8 +62,8 @@ import it can still show the old metadata — once, re-check after a few seconds
 import record (`txc env deployment list`, then `deployment get` with the run id from
 the list; `--latest` can return a child step such as PublishAll).
 
-**Iterating on a Dev environment: use the solution zip as the default, not the package.**
-To push a local change to a Dev environment, import the built solution zip —
+**Solution already installed in the Dev environment (iterating): use the solution zip, not the package** (the package is
+for the first install or when several solutions changed). To push a local change, import the built solution zip —
 the zip is written under the Dataverse solution project's `bin/<Configuration>/` (find
 it, the target-framework folder name varies):
 
@@ -93,7 +93,9 @@ environment's state, so a source change that was never pushed is deleted — pus
 commit first. A bare solution unique name needs `--output`. `txc env solution clone <name> -o <dir>` (a
 new project from an environment's solution) must be run where a solution file is found
 (a `.sln`/`.slnx` in or above the working directory), otherwise it fails and leaves a
-half-written project (tools-cli#216). Then `git status` to show
+half-written project (tools-cli#216). Later builds of a solution with an app may print
+`TXVAL002 … id.uniquename` warnings from a `<MissingDependencies>` block the pull writes into `Other/Solution.xml`
+(platform setting `AppChannel`); they are harmless (tools-cli PR #174). Then `git status` to show
 what changed: after one environment-side edit, expect exactly that edit (the first pull
 after a fresh scaffold also normalises XML formatting, tools-cli#54). Pull
 only from Dev — the place where humans edit; pipelines only ship built packages
@@ -110,6 +112,7 @@ cause.
 | Component error | Inspect the component's solution layers, resolve the conflict (see `solution-layering`) |
 | Missing dependency | Import the dependency package first (Step 1) |
 | Version conflict, or import succeeded but nothing changed | Same version installed → skipped (see Step 3): import the solution zip, or raise the version in CI builds |
+| Zip import succeeded (`path: update`) but a form, view, app or ribbon change is not visible | Not published: `txc env solution publish --entities <table>` (see the `inner-loop` reference) |
 | Managed/unmanaged mismatch | Dataverse rejects importing managed over unmanaged ("already installed … as an unmanaged solution … attempting to install it in managed mode") — uninstall first or rebuild with the matching configuration |
 | Changed a deployed column's type or schema name | Rejected ("Attribute … is a Integer, but a Decimal type was specified") — delete the column in the environment first (`data-model` skill) |
 | `Sql Number: 10936` / "request limit for the elastic pool" | Platform throttling; the operation may have applied anyway — check the state, then retry once |
