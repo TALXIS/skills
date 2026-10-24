@@ -41,9 +41,11 @@ requires signed plugin assemblies, so keep the key file in the project.
 
 One `.cs` file per plugin class in `src/Plugins.<Name>/`. The `pp-plugin` template ships
 a `PluginBase` (tracing and fault wrapping) — derive from it and override
-`ExecuteDataversePlugin` with the `(string unsecure, string secure)` constructor the
-template uses. A plain `IPlugin.Execute(IServiceProvider)` class also works, but the
-scaffolded project and its tests assume the base class. Skeleton:
+`ExecuteDataversePlugin`. Its constructor takes the plugin's `Type`; a
+`(string unsecure, string secure)` constructor on the derived class is the convention
+for receiving step configuration, and is optional. A plain
+`IPlugin.Execute(IServiceProvider)` class also works, but the scaffolded project and
+its tests assume the base class. Skeleton:
 
 ```csharp
 using System;
