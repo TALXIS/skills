@@ -42,9 +42,12 @@ txc workspace component create pp-solution --output "<data-model solution>" --pa
 dotnet add "<package project>" reference "<data-model solution>"
 ```
 
-`pp-solution` already adds the project to the solution file. The `ProjectReference` puts
-the solution into the package (`.pdpkg.zip`) and drives import order; to confirm it ships,
-look for it in the package project's generated `ImportConfig.g.xml` (under `obj/`).
+**Expected outcome — check it, template post-actions can fail without an error
+(TALXIS/tools-devkit-templates#177):** the new project is in the solution file
+(`dotnet sln list` shows it; `pp-solution` registers it itself when run from the folder
+with the solution file, otherwise run `dotnet sln add`), and it ships in the package —
+the `ProjectReference` puts it into the `.pdpkg.zip` and drives import order, and the
+package project's generated `ImportConfig.g.xml` (under `obj/`) lists it.
 
 ## Step 3 — Create entities and columns
 
@@ -61,17 +64,18 @@ txc workspace component create pp-entity --output "<data-model solution>" --para
 On a column, `EntitySchemaName` is the prefixed table name `<PublisherPrefix>_<entity>`
 and a lookup's `LookupTarget` is the prefixed name of a table that already exists.
 
-Things the scaffold already does, so do not repeat them:
+Expected outcome of the scaffold. Check it after the command, and repair by hand only
+what is missing:
 
 - Every new table has a required primary name column `<PublisherPrefix>_name`; satisfy
   a "name" column with it instead of adding another.
-- A Lookup column creates its relationship (`Other/Relationships/`); no separate
-  relationship step.
+- A Lookup column creates its relationship: `Other/Relationships/<target>.xml` lists it.
+  If it is missing, create the relationship component yourself.
+- Default forms, views and a ribbon file exist under `Entities/<prefix>_<entity>/`.
 - A local choice is the `OptionSet(Local)` column type with its options inline in
   `OptionSetOptions` (comma-separated labels — without it a placeholder option is
   written); a separate option-set component is only for a shared (global) list.
 - Date and time needs `DateTimeFormat=datetime`; the default is date-only.
-- Default forms, views and a ribbon file are generated with the table.
 
 To reference a table owned by another solution (or a standard Dataverse table) without
 duplicating its schema, create it with `Behavior=Existing` — that makes a reference

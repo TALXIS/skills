@@ -1,5 +1,5 @@
 > **Needed because:** txc has no command that lists a workspace's projects by role, and `txc workspace explain` / `project explain` print a fixed string instead of inspecting the repository.
-> **Remove when:** those commands inspect the workspace and carry this default (TOOLING-BACKLOG T14, T17).
+> **Remove when:** those commands inspect the workspace and carry this default (TOOLING-BACKLOG T14; TALXIS/tools-cli#204, #210).
 
 # Layout, naming and project roles
 

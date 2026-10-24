@@ -1,5 +1,6 @@
 > **Needed because:** the BDD scaffold/run sequence and binding scope are not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in help/docs (T12).
+> **Remove when:** txc surfaces sequences in help/docs (T12), and the UI test templates are fixed
+> (TALXIS/tools-devkit-templates#182, TALXIS/tools-cli#207).
 
 # UI testing with Playwright + Reqnroll
 

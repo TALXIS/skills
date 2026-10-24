@@ -1,5 +1,6 @@
 > **Needed because:** privilege depth semantics and the role/privilege sequence are not surfaced by txc help.
-> **Remove when:** txc surfaces sequences and privilege semantics in help/docs (T12).
+> **Remove when:** txc surfaces sequences and privilege semantics in help/docs (T12), and the
+> docs and the scaffold agree on the valid depths (TALXIS/tools-cli#208).
 
 # Implement security roles
 
@@ -24,9 +25,9 @@ project's csproj has them). For each role: a persona name. For each role × enti
 ## Step 2 — Create the solution (first time only)
 
 Skip if the workspace already has a security solution. Create it like any solution
-project (default `src/Solutions.Security`) — `pp-solution` (it adds itself to the solution
-file) and a `ProjectReference` from `<package project>` (the `data-model` reference shows
-the commands).
+project (default `src/Solutions.Security`) — `pp-solution` and a `ProjectReference` from
+`<package project>`; the `data-model` reference shows the commands and the outcome to
+check (project listed by `dotnet sln list`, shipped in the package).
 
 ## Step 3 — Create roles
 

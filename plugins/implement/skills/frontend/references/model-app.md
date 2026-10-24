@@ -1,6 +1,6 @@
 > **Needed because:** the app/sitemap composition sequence is not surfaced by txc help.
 > **Remove when:** txc surfaces sequences in help/docs (T12), and `pp-app-model` /
-> `pp-sitemap-area` emit the display name and the area title (T18).
+> `pp-sitemap-area` emit the display name and the area title (TALXIS/tools-devkit-templates#181).
 
 # Implement a model-driven app
 
@@ -26,8 +26,9 @@ the navigation layout: areas → groups → subareas (one subarea per entity).
 ## Step 2 — Create the solution (first time only)
 
 Skip if the workspace already has a UI solution. Create it like any solution project
-(default `<ui solution>`) — `pp-solution` (it adds itself to the solution file) and a
-`ProjectReference` from `<package project>` (the data-model reference shows the commands).
+(default `<ui solution>`) — `pp-solution` and a `ProjectReference` from
+`<package project>`; the data-model reference shows the commands and the outcome to check
+(project listed by `dotnet sln list`, shipped in the package).
 
 ## Step 3 — Reference the entities, create the app, add the entities to it
 

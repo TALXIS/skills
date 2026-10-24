@@ -37,8 +37,9 @@ Skip if the plugin project already exists. From the repository root:
 txc workspace component create pp-plugin --output "<plugin project>" --param "PublisherName=<PublisherName>" --param "Company=<PublisherName>"
 ```
 
-The template adds the project to the solution file and creates a .NET Framework project
-(the target is set by the build SDK) with a strong-name signing key — Dataverse
+Expected outcome: the project is in the solution file (`dotnet sln list` shows it; if
+not, `dotnet sln add` — the template's post-action can fail without an error) and is a
+.NET Framework project (the target is set by the build SDK) with a strong-name signing key — Dataverse
 requires signed plugin assemblies, so keep the key file in the project.
 
 ## Step 3 — Write the plugin classes

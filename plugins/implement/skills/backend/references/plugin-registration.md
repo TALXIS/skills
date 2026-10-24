@@ -59,9 +59,9 @@ plugin class name, the target entity's prefixed logical name, the SDK message
 ## Step 2 — Create the logic solution (first time only)
 
 Skip if the workspace already has a logic solution. Create it like any solution
-project (default `src/Solutions.Logic`) — `pp-solution`, a `ProjectReference` from
-`<package project>` (the `data-model` reference shows the commands; `pp-solution` adds
-itself to the solution file).
+project (default `src/Solutions.Logic`) — `pp-solution` and a `ProjectReference` from
+`<package project>`; the `data-model` reference shows the commands and the outcome to
+check (project listed by `dotnet sln list`, shipped in the package).
 
 ## Step 3 — Reference the plugin project and build
 
