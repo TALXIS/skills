@@ -6,7 +6,7 @@ description: Ships a TALXIS / Power Platform / Dataverse app — connects enviro
 # Deploy
 
 **Contract:** this is the one skill that touches the cloud — creating and
-connecting environments, and importing packages. Deploy only when the user asked.
+connecting environments, and importing the package. Deploy only when the user asked.
 Everything else in this workspace stays local-first: build components locally and
 deploy them; never edit a live environment as a substitute for local work.
 
@@ -31,18 +31,19 @@ differs ([references/environments.md](references/environments.md)).
 
 ## Build the artifact
 
-`dotnet build` validates; publishing the deployment package project in
+`dotnet build` validates; `dotnet publish` of the package project in
 **Release** packs **managed** solutions (test/prod), **Debug** packs
-**unmanaged** (dev). The package artifact is a single deployable zip composing
-all Dataverse solutions the package project references, in dependency order.
+**unmanaged** (dev). The Package Deployer package (`.pdpkg.zip`) is a single deployable
+zip composing all Dataverse solutions the package project references, in dependency order.
 
 ## Deploy and round-trip
 
-1. Import dependency packages first (e.g. a packaged UI control the app
-   references), then the app package: `txc environment package import`.
+1. Import dependency packages first (e.g. the NuGet package of a PCF control the app
+   uses), then the repository's own Package Deployer package:
+   `txc environment package import`.
 2. After edits made directly in a live dev environment, pull them back into
-   source: `txc environment solution pull` — then commit. Data packages
-   round-trip the same way (`txc data package export` / `import`).
+   source: `txc environment solution pull` — then commit. CMT data packages
+   (records, not components) round-trip the same way (`txc data package export` / `import`).
 3. On failure: check the latest deployment record, then component layers, then
    missing dependencies — never retry more than twice without diagnosing.
 
@@ -50,11 +51,11 @@ all Dataverse solutions the package project references, in dependency order.
 
 - Production contains **managed** Dataverse solutions only; the unmanaged working state
   lives in dev and in source control.
-- A managed package cannot overwrite an existing unmanaged Dataverse solution (or
+- A managed (Release) package cannot overwrite an existing unmanaged Dataverse solution (or
   vice versa) — uninstall first.
 - CI/CD uses OIDC federation — identifiers only, no stored secrets
   ([references/ci-cd.md](references/ci-cd.md); GitHub Actions is the default host, an
   existing pipeline or another host is kept).
 
 Details: [references/](references/) — environments, build, deployment, layering,
-ci-cd (+ workflow, ruleset, and application-user templates)
+ci-cd (+ workflow, ruleset and application-user files)

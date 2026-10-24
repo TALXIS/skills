@@ -4,18 +4,18 @@
 
 # Implement a model-driven app
 
-**Contract:** when this skill ends, `<ui solution>` contains the app, its entity
+**Contract:** when this task ends, `<ui solution>` contains the app, its entity
 components, and sitemap navigation, is referenced by `<package project>`, and
 `dotnet build` passes at the repository root. Local only — no cloud environment is
 touched.
 
 In the default split the UI solution does not own tables: it references them
-(`Behavior=Existing`) from `<data-model solution>` and only layers UI on top. A
+(`Behavior=Existing` entity references) from `<data-model solution>` and only layers UI on top. A
 reference carries just enough metadata to attach UI components without duplicating
 schema, so the table stays defined in one project. If `<ui solution>` and
 `<data-model solution>` are the same project (a single solution, or tables and UI
-together), the table is already defined there: skip the references in Step 3. Tables
-must already exist (see the `data-model` skill). Terms, project roles and their defaults
+together), the table is already defined there: skip the entity references in Step 3. Tables
+must already exist (see the `data-model` skill). Terms, project slots and their defaults
 (`<ui solution>`, ...): [workspace-layout](../../init/references/workspace-layout.md);
 an existing repository's layout and naming win.
 
@@ -30,17 +30,18 @@ the navigation layout: areas → groups → subareas (one subarea per entity).
 Skip if the workspace already has a Dataverse solution for UI (in a single-solution
 repository, its one solution). Otherwise create it like any solution project
 (default `<ui solution>`) — `pp-solution` and a `ProjectReference` from
-`<package project>`; the data-model reference shows the commands and the outcome to check
-(project listed by `dotnet sln list`, shipped in the package).
+`<package project>`; the `data-model` skill's `scaffolding` reference file shows the commands and the outcome to check
+(project listed by `dotnet sln list`, shipped in the Package Deployer package).
 
-## Step 3 — Create the app and add the entities to it (reference foreign tables first)
+## Step 3 — Create the app and add the entities to it (entity references for other projects' tables first)
 
 In this order (`txc workspace component parameter list <type>` for each):
 
 1. Only for a table defined in another solution project: `pp-entity` with
-   `Behavior=Existing`, once per such entity — a reference, not a table (`DisplayName` is
+   `Behavior=Existing`, once per such entity — an entity reference, not a table (`DisplayName` is
    still required). Not for a table in `<ui solution>` itself: a reference there
-   fails the build with a duplicate root component (TXM004).
+   fails the build with a duplicate root component (TXM004,
+   TALXIS/tools-devkit-templates#185).
 
    ```
    txc workspace component create pp-entity --output "<ui solution>" --param "Behavior=Existing" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<entity>" --param "DisplayName=<Display Name>"
@@ -51,6 +52,13 @@ In this order (`txc workspace component parameter list <type>` for each):
    `AppModuleSiteMap.xml` if the app needs a readable name.
 3. `pp-app-model-component`, once per entity, to add it to the app (works for a table
    defined in the same project and for a referenced one).
+
+The scaffolded `AppModule.xml` has a hard-coded role id in `<AppModuleRoleMaps>` that
+does not exist in the solution (TALXIS/tools-devkit-templates#78). To make the app
+visible to a security role, replace it by hand with the role's id from the role file
+`Roles/<name>.xml` in the solution that holds roles (`id="{...}"`).
+`pp-app-security-role` is the intended template but currently fails and breaks the
+next build (TALXIS/tools-devkit-templates#184), so do not use it.
 
 ## Step 4 — Build the sitemap
 

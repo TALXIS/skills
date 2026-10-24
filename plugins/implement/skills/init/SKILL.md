@@ -1,6 +1,6 @@
 ---
 name: init
-description: Orients you in a TALXIS / Power Platform / Dataverse repository — the machine's tools (dev container, agent sandbox or local install, updates), an existing project's layout and build, or scaffolding a new one. Use when starting work in a repository, new or existing, when a tool or command is missing, when setting up or updating a development environment, or when asked what a repository contains.
+description: Orients you in a TALXIS / Power Platform / Dataverse repository — the machine's tools (dev container, agent sandbox or local install, updates), an existing repository's layout and build, or scaffolding a new one. Use when starting work in a repository, new or existing, when a tool or command is missing, when setting up or updating the development tools on a machine, or when asked what a repository contains.
 ---
 
 # Init
@@ -34,7 +34,7 @@ Piped txc output is JSON; every command answers `--help`.
 ## Existing repository
 
 Find the solution file (`*.slnx` or `*.sln`: the file listing the projects, not a
-Dataverse solution) and resolve the projects by role, not by folder name
+Dataverse solution) and resolve the projects by slot, not by folder name
 ([references/workspace-layout.md](references/workspace-layout.md), which also defines
 the terms). Run `dotnet build` before changing anything; report the projects, the
 Dataverse solutions and what each contains, and anything broken.
@@ -45,12 +45,12 @@ The repository's existing convention wins (including how it splits components ac
 Dataverse solutions); otherwise an explicit instruction from the user (for example one
 solution for everything); otherwise the default layout in
 [references/workspace-layout.md](references/workspace-layout.md), which the other
-skills refer to through role placeholders (`<data-model solution>`,
-`<plugin project>`, ...). Several roles may be the same project.
+skills refer to through slot placeholders (`<data-model solution>`,
+`<plugin project>`, ...). Several slots may be the same project.
 
 ## New repository
 
-Ask once: project name, publisher name, publisher prefix.
+Ask once: name (the repository and the solution file), publisher name, publisher prefix.
 
 1. `git init -b main`, `dotnet new gitignore`
 2. `dotnet new sln --name <Name>` — it writes `<Name>.slnx` on current SDKs; only if
@@ -59,7 +59,7 @@ Ask once: project name, publisher name, publisher prefix.
    (nuget.org), and `.devcontainer/devcontainer.json` with
    `{"image": "ghcr.io/talxis/tools-agentbox/image:latest"}`; projects go in `src/`
    (the default layout)
-4. Deployment package project: find its template in
+4. Package project (builds the Package Deployer package): find its template in
    `txc workspace component create --help`, its inputs with
    `txc workspace component parameter list <template>`, create it with
    `txc workspace component create <template> --output <package project>`, `dotnet sln add` it

@@ -3,12 +3,12 @@
 
 # Forms
 
-**Contract:** when this skill ends, the form XML exists under `<ui solution>` and
+**Contract:** when this task ends, the form XML exists under `<ui solution>` and
 `dotnet build` passes at the repository root. Local only — nothing is deployed.
 
 Prerequisite: the entity and every attribute the form will show already exist in
-`<data-model solution>` (never create forms before attributes). Project roles resolve per
-the `init` skill's `workspace-layout` reference. Placeholders:
+`<data-model solution>` (never create forms before attributes). Project slots resolve per
+the `init` skill's `workspace-layout` reference file. Placeholders:
 `<prefix>` = publisher prefix, `<entity>` = entity name, so the schema name is
 `<prefix>_<entity>`.
 
@@ -73,7 +73,7 @@ txc workspace component create pp-form-cell --output "<ui solution>" \
   --param "EntitySchemaName=<prefix>_<entity>"
 ```
 
-**8. Control** — one per cell, same `RowIndex` as the cell it fills.
+**8. Control** (the field's form control, not a PCF control) — one per cell, same `RowIndex` as the cell it fills.
 `ControlType` matches the attribute's type: `Text`, `MultilineText`, `WholeNumber`,
 `Decimal`, `Currency`, `DateTime`, `OptionSet` (also for booleans), `Lookup`:
 
@@ -103,7 +103,7 @@ Do not re-scaffold. Instead:
    commands above with the existing form's GUID; they append into the form XML.
    Adding a **section** or **tab**: use `pp-form-section` / `pp-form-tab` the same way.
    Only edit the XML by hand when the commands cannot target the right spot (e.g. a
-   non-last section) — then copy an existing sibling element as the template.
+   non-last section) — then copy an existing sibling element as the pattern.
 4. Validate before finishing: no skipped hierarchy levels, every `datafieldname`
    exists as an attribute of the entity in `<data-model solution>`, and all GUIDs in
    the file are unique.

@@ -6,7 +6,7 @@
 Copy each block into the named file under `.github/workflows/` and substitute the
 placeholders: `<solution file>` (the solution file at the repository root, `.slnx` or
 `.sln`) and `<package project>` (the folder of the project with `ProjectType`
-PDPackage; resolve it per the `init` skill's `workspace-layout` reference). `main`
+PDPackage; resolve it per the `init` skill's `workspace-layout` reference file). `main`
 stands for the default branch. The `build` job and `drop` artifact names are defaults
 that other files depend on — the branch ruleset's required status check matches the
 `build` job name, and `deploy.yml` downloads the artifact by name from the triggering
@@ -81,7 +81,7 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install txc
+      - name: Install txc (a .NET tool)
         run: dotnet tool install --global TALXIS.CLI
 
       - name: Configure txc WIF auth
@@ -107,6 +107,6 @@ Notes:
   GitHub; without it `txc config auth add-federated` has nothing to exchange.
 - The txc chain is auth → connection → profile: the `ci` profile binds the federated
   auth to the `test` connection, and every `txc env pkg import` runs `--profile ci`.
-- `<dependency package>` is an external package the app references (e.g. a PCF
-  control's package id) — one step per package, before the main import; drop the step
+- `<dependency package>` is the NuGet package id of a package this repository does not
+  build (e.g. a PCF control's) — one step per package, before the main import; drop the step
   when there are none.

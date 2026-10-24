@@ -3,9 +3,9 @@
 
 # Deploy to an environment
 
-**Contract:** this skill touches the cloud — run it only when the user asked to
+**Contract:** this reference touches the cloud — run it only when the user asked to
 deploy or sync. It requires a valid txc profile; it never creates environments
-(that is the `environment-setup` skill).
+(that is the `environments` reference).
 
 ## Step 0 — Verify the profile
 
@@ -14,22 +14,22 @@ txc config profile list --format json
 ```
 
 The target profile must exist on this machine — a cached name from another
-machine or session is not enough. If missing, route to `environment-setup`
+machine or session is not enough. If missing, route to the `environments` reference
 before anything else. Never guess a target; deploy to Dev unless the user named
 another environment. Never deploy directly to production — always Dev/Test first.
 
 ## Step 1 — Import dependency packages first
 
-Any external package the app references (e.g. a PCF control) must already exist
-in the target environment — importing the app package first fails Dataverse's
-missing-dependency check. Example (package pulled from nuget.org by name, latest
-version):
+Any dependency package — one this repository does not build, e.g. a PCF control's NuGet
+package — must already exist in the target environment; importing the repository's own
+package first fails Dataverse's missing-dependency check. Example (pulled from nuget.org
+by NuGet package name, latest version):
 
 ```
 txc env pkg import TALXIS.Controls.Grid.Package --profile <profile>
 ```
 
-## Step 2 — Build the deployment package
+## Step 2 — Build the Package Deployer package
 
 ```
 dotnet publish <package project> -c Release
@@ -38,7 +38,7 @@ dotnet publish <package project> -c Release
 Deliberately no `-o` — an explicit output dir leaks a global `PublishDir` into
 nested plugin builds and breaks them (tools-devkit-build#109). The `.pdpkg.zip`
 lands at `<package project>/bin/Release/<project name>.pdpkg.zip` (tooling-backlog
-T6; `<package project>` per the `init` skill's `workspace-layout` reference). Release packs managed (Test/prod); Debug packs unmanaged (Dev). The build
+T6; `<package project>` per the `init` skill's `workspace-layout` reference file). Release packs managed (Test/prod); Debug packs unmanaged (Dev). The build
 must be clean — never deploy a broken build.
 
 ## Step 3 — Import the package
@@ -83,5 +83,5 @@ cause.
 
 ## Summary
 
-Report: target profile and URL, packages imported (dependencies + app), whether
+Report: target profile and URL, packages imported (dependency packages + the repository's own), whether
 managed or unmanaged, any solutions pulled back, and the resulting `git status`.

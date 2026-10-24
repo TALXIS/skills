@@ -3,12 +3,12 @@
 
 # Attach a packaged PCF control
 
-**Contract:** when this skill ends, the control overlay is written into the form's
+**Contract:** when this task ends, the control overlay is written into the form's
 FormXml under `<ui solution>` and `dotnet build` passes. Nothing is deployed —
 local only. Cloud only enters at deploy time (see the deployment-order rule at the end).
 
 `txc workspace control attach` is manifest-driven: the CLI pulls the control's Package
-Deployer package from nuget.org (latest version, nothing downloaded by hand), reads the
+Deployer package from nuget.org by its NuGet package id (latest version, nothing downloaded by hand), reads the
 parameter schema straight from the control's own `ControlManifest.xml`, validates the
 values you pass, and writes a `controlDescriptions` overlay into the form — one
 `customControl` block per form factor. Unspecified parameters keep the manifest defaults.
@@ -21,10 +21,10 @@ No per-control template is needed.
    persisted elsewhere): the file at
    `<ui solution>/Entities/<prefix>_<entity>/FormXml/main/{<guid>}.xml`,
    base name with braces trimmed.
-3. **Target control** — the control id on the form to overlay, e.g. `subgrid`
+3. **Target control** — the id of the form control to overlay, e.g. `subgrid`
    (a subgrid created by `pp-form-subgrid` keeps its binding — view and
    `RelationshipName` are copied into the attached control, nothing patched by hand).
-4. **Package** — the control's NuGet package id, e.g. `TALXIS.Controls.Grid.Package`.
+4. **NuGet package** — the control's package id, e.g. `TALXIS.Controls.Grid.Package`.
 5. **Parameters** — from the control's manifest. For the TALXIS Grid the common ones
    are `Columns` (JSON), `EnableGrouping`, `EnableAggregation`, `EnableOptionSetColors`,
    and the Client API pair (Step 2).
@@ -36,14 +36,14 @@ renames), the PCF calls a function in a web resource once its dataset exists. Tw
 pieces make that work.
 
 **Typings in the scripts project** — typings only (`import type`); the runtime objects
-come from the PCF at call time, so nothing from these packages ends up in the bundle:
+come from the PCF at call time, so nothing from these npm packages ends up in the bundle:
 
 ```
 cd <scripts project>
 npm install --save-dev @talxis/client-libraries @types/powerapps-component-framework @microsoft/microsoft-graph-types
 ```
 
-**onLoad handler on the form** — the template's post-scripts add the library to
+**onLoad handler on the form** — the template's post-scripts add the web resource to the form's
 `<formLibraries>`, which is required: the form must load the web resource before the
 PCF can call into it:
 
@@ -85,7 +85,7 @@ dotnet build
 
 ## Step 5 — Deployment order (do not skip in the summary)
 
-The patched form now references the control, so at deploy time the control's package
+The patched form now references the control, so at deploy time the control's NuGet package
 (e.g. `TALXIS.Controls.Grid.Package`) must be imported into the environment **before**
-the app's own package — importing by name, no version pinned. Record this dependency
+the repository's own Package Deployer package — importing by name, no version pinned. Record this dependency
 now; the `deploy` skill honors it when the time comes. Nothing was deployed here.

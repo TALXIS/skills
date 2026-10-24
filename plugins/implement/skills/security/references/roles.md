@@ -4,7 +4,7 @@
 
 # Implement security roles
 
-**Contract:** when this skill ends, `<security solution>` contains the requested
+**Contract:** when this task ends, `<security solution>` contains the requested
 roles and privileges, is referenced by `<package project>`, and `dotnet build` passes at
 the repository root. Local only — no cloud environment is touched.
 
@@ -15,7 +15,7 @@ automated test users a least-privileged role too, never an admin account. In the
 default split security config lives in its own Dataverse solution, so access changes
 do not hide inside schema or UI diffs; in a repository split differently, or with a
 single solution, `<security solution>` is the project that holds roles there (possibly
-the same one as tables and UI; terms and roles:
+the same one as tables and UI; terms and slots:
 [workspace-layout](../../init/references/workspace-layout.md)).
 
 ## Step 1 — Gather inputs (once)
@@ -30,8 +30,8 @@ project's csproj has them). For each role: a persona name. For each role × enti
 Skip if the workspace already has a Dataverse solution that holds roles (in a
 single-solution repository, its one solution). Otherwise create it like any solution
 project (default `src/Solutions.Security`) — `pp-solution` and a `ProjectReference` from
-`<package project>`; the `data-model` reference shows the commands and the outcome to
-check (project listed by `dotnet sln list`, shipped in the package).
+`<package project>`; the `data-model` skill's `scaffolding` reference file shows the commands and the outcome to
+check (project listed by `dotnet sln list`, shipped in the Package Deployer package).
 
 ## Step 3 — Create roles
 
@@ -54,6 +54,10 @@ txc workspace component create pp-security-role-privilege --output "<security so
   `txc docs get security-roles`. Leave a privilege out instead of granting `None`.
 - `RoleName` must match the role's name exactly in the role and privilege commands.
 - Grant `Append`/`AppendTo` wherever the persona sets lookups between the tables.
+- Privileges on a table owned by another solution project need no `Behavior=Existing`
+  entity reference in `<security solution>` (a role scaffolded with no entity references
+  built fine). A `Behavior=Existing` reference for a table defined in the same solution
+  project fails the build with TXM004 (TALXIS/tools-devkit-templates#185).
 - When a table is added later, extend the existing roles with it — a new table has no
   privileges in any role until you grant them, so personas silently can't use it.
 - A deliberate matrix beats uniform grants: e.g. a worker reads everything (`Read`

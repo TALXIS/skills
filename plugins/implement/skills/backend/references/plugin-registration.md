@@ -4,8 +4,8 @@
 
 # Register plugin assemblies and steps
 
-**Contract:** when this skill ends, `<logic solution>` contains the assembly
-registration and one step per plugin, and `dotnet build` passes at the repository
+**Contract:** when this task ends, `<logic solution>` contains the assembly
+registration and one plugin step per plugin class, and `dotnet build` passes at the repository
 root. Local only — nothing is deployed and no cloud environment is touched.
 
 The plugin project holds the code, a Dataverse solution holds the registration. The
@@ -13,7 +13,7 @@ assembly is a build artifact; when and where it runs is Dataverse configuration 
 belongs to its own project. `<logic solution>` is the solution that holds registrations
 in this repository: the default split has its own (`src/Solutions.Logic`); a repository
 split differently, or with a single solution, uses the project that already holds (or
-should hold) them, possibly the same one as the tables and UI. Terms and roles:
+should hold) them, possibly the same one as the tables and UI. Terms and slots:
 [workspace-layout](../../init/references/workspace-layout.md). The plugin project must
 already exist and build (see the `plugin-development` reference).
 
@@ -45,7 +45,7 @@ grep -o 'RootComponent type="91" id="[^"]*"' <logic solution>/Other/Solution.xml
 grep -o 'PluginAssemblyId="[^"]*"' <logic solution>/PluginAssemblies/*.data.xml
 ```
 
-**Order:** steps reference the assembly, so scaffold `pp-plugin-assembly-step` only
+**Order:** plugin steps reference the assembly, so scaffold `pp-plugin-assembly-step` only
 after the registration exists (after the first build in generated mode).
 
 **Retrofitting an existing Dataverse solution:** if it already holds the registration, leave
@@ -56,7 +56,7 @@ build. Run the checks above before and after.
 ## Step 1 — Gather inputs (once)
 
 From the existing workspace: `<PublisherName>`, `<PublisherPrefix>`, the
-`<plugin project>` and its project name (`<plugin project name>`). For each step: the
+`<plugin project>` and its project name (`<plugin project name>`). For each plugin step: the
 plugin class name, the target entity's prefixed logical name, the SDK message
 (Create/Update/Delete), and the stage (Pre-validation / Post-operation).
 
@@ -65,8 +65,8 @@ plugin class name, the target entity's prefixed logical name, the SDK message
 Skip if the workspace already has a Dataverse solution that holds registrations (in a
 single-solution repository, its one solution); only otherwise create one like any solution
 project (default `src/Solutions.Logic`) — `pp-solution` and a `ProjectReference` from
-`<package project>`; the `data-model` reference shows the commands and the outcome to
-check (project listed by `dotnet sln list`, shipped in the package).
+`<package project>`; the `data-model` skill's `scaffolding` reference file shows the commands and the outcome to
+check (project listed by `dotnet sln list`, shipped in the Package Deployer package).
 
 ## Step 3 — Reference the plugin project and build
 
@@ -79,7 +79,7 @@ dotnet add "<logic solution>" reference "<plugin project>"
 dotnet build "<logic solution>"
 ```
 
-## Step 4 — Register the steps
+## Step 4 — Register the plugin steps
 
 One `pp-plugin-assembly-step` per plugin class — `PluginName` is the class name; `Stage` and
 `SdkMessage` take the choices `parameter list` shows:
@@ -106,7 +106,7 @@ reported XML); `TALXISGUID001` = duplicate GUID (regenerate the reported id).
 
 ## Step 6 — Summary
 
-Report the assembly and steps registered (entity, message, stage per step), that
+Report the assembly and plugin steps registered (entity, message, stage per plugin step), that
 `<package project>` references `<logic solution>`, that `dotnet build` passed, and that
 nothing was deployed. Next step in one line: cover the plugin logic with local unit
 tests (`test` skill).

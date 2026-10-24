@@ -3,7 +3,7 @@
 
 # Dataverse solution layers and routing
 
-**Contract:** a decision skill — routing and triage rules only. Local inspection
+**Contract:** a decision reference — routing and triage rules only. Local inspection
 is free; layer inspection needs a live environment and a valid profile.
 
 ## Managed vs unmanaged doctrine
@@ -42,7 +42,7 @@ recommendation, not a requirement.
 | Component | Solution (default name in a new repository) |
 |---|---|
 | Table, column, relationship, option set | `<data-model solution>` (`Solutions.DataModel`) |
-| Plugin registration, workflow, business rule | `<logic solution>` (`Solutions.Logic`) |
+| Plugin registration, Dataverse workflow, business rule | `<logic solution>` (`Solutions.Logic`) |
 | Form, view, model-driven app, sitemap | `<ui solution>` (`Solutions.UI`) |
 | Security role, field-level security | `<security solution>` (`Solutions.Security`) |
 | Unsure | `txc workspace explain` — inspect the workspace and follow the repo's own convention |
@@ -52,8 +52,8 @@ its convention wins; so does an explicit user choice (a single solution, a split
 domain or feature, tables and UI together). Put each component in the solution project
 that holds that concern in that repository, resolved by what the projects contain;
 several concerns may be the same project. Do not create a new solution project unless
-asked or the repository has no home for the component (precedence and role
-resolution: the `init` skill's `workspace-layout` reference).
+asked or the repository has no home for the component (precedence and slot
+resolution: the `init` skill's `workspace-layout` reference file).
 
 ## Layer conflict triage
 

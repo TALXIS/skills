@@ -4,7 +4,7 @@
 
 # Implement the data model
 
-**Contract:** when this skill ends, `<data-model solution>` contains the requested
+**Contract:** when this task ends, `<data-model solution>` contains the requested
 tables and columns, is referenced by `<package project>`, and `dotnet build` passes at
 the repository root. Local only — no cloud environment is touched.
 
@@ -12,8 +12,8 @@ By default schema lives in its own Dataverse solution, apart from UI and logic, 
 schema changes stay out of UI diffs. In a repository split differently, or when the
 user wants another split (one solution for everything, split by domain, tables and UI
 together), `<data-model solution>` is whichever project holds the tables there, and may
-be the same project as the UI or logic role. The repository must already be initialized
-(see the `init` skill). Terms, project roles, their defaults (`src/Solutions.DataModel`,
+be the same project as the UI or logic slot. The repository must already be initialized
+(see the `init` skill). Terms, project slots, their defaults (`src/Solutions.DataModel`,
 ...) and how to resolve them: [workspace-layout](../../init/references/workspace-layout.md).
 The repository's own naming and layout win; the defaults apply only when it has none.
 
@@ -39,7 +39,7 @@ level, display name.
 Skip if the workspace already has a Dataverse solution for tables (in a single-solution
 repository, its one solution). This is the pattern every solution project follows —
 create it with `pp-solution` (in a new repository at the default `src/Solutions.DataModel`)
-and reference it from the package project:
+and add a `ProjectReference` to it from the package project:
 
 ```
 txc workspace component create pp-solution --output "<data-model solution>" --param "PublisherName=<PublisherName>" --param "PublisherPrefix=<PublisherPrefix>"
@@ -49,7 +49,7 @@ dotnet add "<package project>" reference "<data-model solution>"
 **Expected outcome — check it, template post-actions can fail without an error
 (TALXIS/tools-devkit-templates#177):** the new project is in the solution file
 (`dotnet sln list` shows it; `pp-solution` registers it itself when run from the folder
-with the solution file, otherwise run `dotnet sln add`), and it ships in the package —
+with the solution file, otherwise run `dotnet sln add`), and it ships in the Package Deployer package —
 the `ProjectReference` puts it into the `.pdpkg.zip` and drives import order, and the
 package project's generated `ImportConfig.g.xml` (under `obj/`) lists it.
 
@@ -82,8 +82,8 @@ what is missing:
 - Date and time needs `DateTimeFormat=datetime`; the default is date-only.
 
 To reference a table owned by another solution project (or a standard Dataverse table)
-without duplicating its schema, create it with `Behavior=Existing` — that makes a
-reference folder, not a table definition. Not for a table defined in the same project:
+without duplicating its schema, create it with `Behavior=Existing` — that makes an
+entity reference (a reference folder), not a table definition. Not for a table defined in the same project:
 tested, the build then fails (TXM004, two Entity root components with the same name).
 
 ## Step 4 — Validate

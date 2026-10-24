@@ -3,13 +3,13 @@
 
 # Form scripts
 
-**Contract:** when this skill ends, `<scripts project>` builds a JS bundle, the event
+**Contract:** when this task ends, `<scripts project>` builds a JS bundle, the event
 handlers are registered in the form XML, and `dotnet build` passes at the repository
 root. Local only — nothing is deployed.
 
-Prerequisite: the target form exists and you have its GUID (see the `forms` skill).
+Prerequisite: the target form exists and you have its GUID (see the `forms` reference).
 
-## Create the script library (once per workspace)
+## Create the script library (once per repository)
 
 Scaffold `pp-script-library` (`LibraryName=main`, plus the publisher prefix) into
 `<scripts project>` (default `src/Scripts.UI`) and `dotnet sln add` it.
@@ -18,7 +18,7 @@ This scaffolds a TypeScript project compiled by `dotnet build` (rollup under the
 hood). The bundle output is `<scripts project>/build/<prefix>_main.js`, deployed as the
 web resource `<prefix>_main.js`.
 
-Reference it from `<ui solution>` so the web resource ships with it:
+Add a `ProjectReference` to it from `<ui solution>` so the web resource ships with it:
 
 ```
 dotnet add "<ui solution>" reference "<scripts project>"

@@ -3,12 +3,12 @@
 
 # Views and subgrids
 
-**Contract:** when this skill ends, the view (and any subgrid) XML exists under
+**Contract:** when this task ends, the view (and any subgrid) XML exists under
 `<ui solution>` and `dotnet build` passes at the repository root. Local only —
 nothing is deployed.
 
 Prerequisites: the entity and its attributes exist in `<data-model solution>`; for a
-subgrid, the parent form exists and you have its GUID (see the `forms` skill).
+subgrid, the parent form exists and you have its GUID (see the `forms` reference).
 
 ## Create a view
 

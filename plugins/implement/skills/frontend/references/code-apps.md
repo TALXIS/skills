@@ -3,7 +3,7 @@
 
 # Create a code app
 
-**Contract:** when this skill ends, the `<code app project>` exists, its
+**Contract:** when this task ends, the `<code app project>` exists, its
 data sources are generated from local metadata, and `dotnet build` passes at the
 repository root. Nothing is deployed and no cloud environment is touched — local only.
 
@@ -38,7 +38,7 @@ Replace the demo pages with the real screens once data sources exist.
 
 A code app talks to Dataverse through declared data sources, and `txc` generates them
 **offline** from the table metadata already sitting in `<data-model solution>` — no
-live environment, no auth, no cloud connection. One invocation per table:
+live environment, no auth, no txc connection. One invocation per table:
 
 ```
 txc workspace component create pp-app-code-data --output "<code app project>" --param "EntityLogicalName=<prefix>_<entity>" --param "ModelSolutionPath=<relative path to the data-model solution>"

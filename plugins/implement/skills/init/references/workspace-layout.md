@@ -1,24 +1,48 @@
-> **Needed because:** txc has no command that lists a workspace's projects by role, and `txc workspace explain` / `project explain` print a fixed string instead of inspecting the repository.
+> **Needed because:** txc has no command that lists a repository's projects by slot, and `txc workspace explain` / `project explain` print a fixed string instead of inspecting the repository.
 > **Remove when:** those commands inspect the workspace and carry this default (TOOLING-BACKLOG T14; TALXIS/tools-cli#204, #210).
 
-# Layout, naming and project roles
+# Layout, naming and project slots
 
 ## Terms
 
-- **Solution file** — the `.slnx` (or `.sln`) at the repository root that lists the
-  projects for `dotnet build`. It is not deployed.
-- **Dataverse solution** (also "solution project") — a project with `ProjectType=Solution`,
-  created by `pp-solution`. It owns the components in its folders and is packed into a
-  solution zip imported into Dataverse; by default it is named `Solutions.*`.
-- Elsewhere in these skills a bare "solution" and every `<... solution>` placeholder mean a
-  Dataverse solution (a project path, never the solution file); the `.slnx` is always
-  the "solution file". `txc` command names (`txc env solution pull`, `pp-solution`) are fixed.
+The skills sit on .NET/MSBuild, NuGet, Dataverse, `txc` and GitHub, which reuse the same
+words. Here, unless a sentence says otherwise:
 
-Every skill speaks in **roles** (`<data-model solution>`, `<plugin project>`, ...).
-Resolve each role to a real project folder before running a command that names one.
-**Several roles may resolve to the same project** (one Dataverse solution holding
+| Word | Means | Not |
+|---|---|---|
+| repository (txc: "workspace") | the git checkout, the whole codebase | one project |
+| project | one `.csproj`/`.cdsproj` built by MSBuild, with a `ProjectType` | the repository |
+| solution file | the `.slnx` (or `.sln`) at the repository root listing the projects for `dotnet build`; not deployed | a Dataverse solution |
+| Dataverse solution (also "solution project"; a bare "solution" and every `<... solution>`) | a project with `ProjectType=Solution` (`pp-solution`): owns the components in its folders, packed into a solution zip imported into Dataverse; by default `Solutions.*` | the solution file |
+| slot | what a project is for in this layout: the placeholders `<data-model solution>`, `<plugin project>`, ... | a security role |
+| security role | a Dataverse permission set (`pp-security-role`) | a slot |
+| component | txc's word for anything scaffolded from a `pp-*` template or held in a Dataverse solution (table, form, plugin step, ...); "component type" is its txc type name | a PCF control |
+| Package Deployer package (a bare "package"; "package project" builds it) | the `.pdpkg.zip` that `dotnet publish` builds from the package project (`ProjectType` PDPackage, `pp-package`), imported with `txc env pkg import` | a NuGet or data package |
+| NuGet package | a `.nupkg`: a dependency (`PackageReference`, e.g. FakeXrmEasy), a .NET tool (`TALXIS.CLI`), or a PCF control's package (`TALXIS.Controls.Grid.Package`), which `txc env pkg import` also takes by NuGet name (a "dependency package": not built here, imported first) | the `.pdpkg.zip` you build |
+| CMT data package | records exported/imported with the Configuration Migration Tool (`txc data package`) | a deployable package |
+| PCF control | a packaged custom control, attached with `txc workspace control attach` | a form control |
+| form control | a field or subgrid on a form (`pp-form-control`) | a PCF control |
+| app | a model-driven app (`pp-app-model`) unless qualified; code app = the SPA project (`pp-app-code`, registered as a CanvasApp component) | an Entra app registration (the CI identity) |
+| application user | the Dataverse user for that app registration's service principal | a person |
+| environment | a live Dataverse environment (Dev, Test, ...) | an operating-system environment variable |
+| profile, connection | txc config objects: a connection is an environment URL, a profile binds an auth to a connection | a `pac` auth profile |
+| plugin, assembly, step | the C# class/project (`pp-plugin`); its compiled DLL, registered in a Dataverse solution; one registration of a class on a message and stage (`pp-plugin-assembly-step`) | a "Step N" heading, a BDD step |
+| script library, web resource | the scripts project (`pp-script-library`); its bundle as shipped in Dataverse (`<prefix>_main.js`) | an npm library |
+| reference | a `ProjectReference` between projects; a `Behavior=Existing` entity reference (a table defined in another solution project); a skill's reference file (`references/*.md`) | each other |
+| publish | `dotnet publish`; Dataverse "publish customizations" is always spelled out | each other |
+| workflow | a GitHub Actions workflow (`build.yml`); a Dataverse workflow is always called that | each other |
+| table, column | the same as txc's `Entity`, `EntityAttribute` types | |
+| feature | a Reqnroll `.feature` file | a product feature |
+| skill | one of the skills of this plugin (`init`, `backend`, ...); a reference is a file inside one | an entry of `txc docs` (`txc docs list` calls them skills) |
+
+`txc` command, template and parameter names (`txc env solution pull`, `pp-solution`,
+`ProjectType`) are fixed; the words above are the skills' own.
+
+Every skill speaks in **slots** (`<data-model solution>`, `<plugin project>`, ...).
+Resolve each slot to a real project folder before running a command that names one.
+**Several slots may resolve to the same project** (one Dataverse solution holding
 tables, UI and logic); then there is nothing to create, reference or cross-link between
-those roles. A repository with no package project keeps none unless asked; skip the
+those slots. A repository with no package project keeps none unless asked; skip the
 steps that reference one.
 
 ## Precedence
@@ -42,7 +66,7 @@ solutions, and that order drives import order. Solution projects are the hub: th
 `ProjectReference` the plugin, script, code app and page projects they ship (the build
 SDK recognises the referenced type).
 
-| Role (placeholder) | Default folder | Recognise it by |
+| Slot (placeholder) | Default folder | Recognise it by |
 |---|---|---|
 | `<package project>` | `src/Packages.Main` | `ProjectType` PDPackage; references the solutions |
 | `<data-model solution>` | `src/Solutions.DataModel` | Solution; tables, columns, relationships, option sets |
@@ -53,7 +77,7 @@ SDK recognises the referenced type).
 | `<scripts project>` | `src/Scripts.UI` | ScriptLibrary |
 | `<code app project>` | `src/Apps.<Name>` | CodeApp |
 | `<page project>` | `src/GenPages.<Name>` | GenPage |
-| `<plugin test project>`, `<script test project>`, `<ui test project>` | `src/Tests.Plugins`, `src/Tests.Scripts`, `src/Tests.UI` | no `ProjectType`; test packages (FakeXrmEasy, Jest, Reqnroll + Playwright) |
+| `<plugin test project>`, `<script test project>`, `<ui test project>` | `src/Tests.Plugins`, `src/Tests.Scripts`, `src/Tests.UI` | no `ProjectType`; test frameworks (FakeXrmEasy, Jest, Reqnroll + Playwright) |
 
 A solution project keeps its component folders (`Other/`, `Entities/`, ...) in its
 `SolutionRootPath` (default: the project folder). Paths like `<ui solution>/Entities/...`
@@ -63,17 +87,17 @@ that repository, by what the solutions contain ([layering](../../deploy/referenc
 Create a new solution project only when asked or when the repository has no home for
 the component.
 
-## Resolve the roles in an existing repository
+## Resolve the slots in an existing repository
 
 Read the workspace; a name such as `Solutions.UI` is a hint, not proof.
 
 ```
 dotnet sln list                                                   # all projects (.slnx or .sln)
-dotnet sln list | tail -n +3 | xargs grep -iH '<ProjectType>'     # role by project type
+dotnet sln list | tail -n +3 | xargs grep -iH '<ProjectType>'     # slot by project type
 dotnet list <package project> reference                           # solutions the package ships
 ```
 
-Test projects have no `ProjectType`; tell them apart by their package references and
+Test projects have no `ProjectType`; tell them apart by their `PackageReference`s and
 folder contents. Run these from the solution file's folder. Record the resolved folders
 once and reuse them.
 

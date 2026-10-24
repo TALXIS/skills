@@ -3,11 +3,11 @@
 
 # CI/CD with GitHub Actions and OIDC
 
-**Contract:** when this skill ends, `.github/workflows/build.yml` and `deploy.yml`
+**Contract:** when this task ends, `.github/workflows/build.yml` and `deploy.yml`
 are committed, `main` accepts changes only through pull requests that pass the
 `build` check, and every push to `main` deploys the package to the test environment
 via workload identity federation. No secret material is stored — only identifiers
-(client id, tenant id, environment URL). This skill talks to GitHub and Entra ID;
+(client id, tenant id, environment URL). This reference talks to GitHub and Entra ID;
 run it only when the user asked for CI/CD.
 
 **Defaults, not requirements:** GitHub Actions as the host, `main` as the default branch
@@ -31,11 +31,12 @@ az account show --query tenantId -o tsv
 gh repo view --json nameWithOwner -q .nameWithOwner
 ```
 
-1. **Repository** `<owner>/<repo>` — from `gh repo view` above (the origin remote,
+1. **GitHub repository** `<owner>/<repo>` — from `gh repo view` above (the origin remote,
    not an upstream parent).
 2. **Tenant id** — from `az account show` above.
 3. **Test environment URL** — e.g. `https://yourenv.crm4.dynamics.com`, no trailing slash.
-4. **Deploy app name** — Entra app registration display name, e.g. `<repo>-deploy`.
+4. **Deploy app name** — display name of the Entra app registration CI signs in as (not
+   the app being built), e.g. `<repo>-deploy`.
 5. **Required PR approvals** — 0 suits a solo repository; a real team requires >= 1.
 
 Pushing files under `.github/workflows` needs the `workflow` scope; if
@@ -86,7 +87,7 @@ interactive pac auth profile that is not available in CI or headless shells, whi
 [ci-cd-application-user.md](ci-cd-application-user.md).
 
 Least-privilege note: System Administrator is the simple default; in production give
-the deploy principal a custom role scoped to what package imports actually need, and
+the deploy principal a custom security role scoped to what package imports actually need, and
 never a tenant-level Power Platform admin role.
 
 ## Step 5 — Secrets and workflows

@@ -3,12 +3,13 @@
 
 # Ribbon buttons
 
-**Contract:** when this skill ends, the ribbon customization exists under
+**Contract:** when this task ends, the ribbon customization exists under
 `<ui solution>` and `dotnet build` passes at the repository root. Local only —
 nothing is deployed.
 
-Prerequisite: the script library exists and **builds** — the button invokes a function
-in the deployed bundle, so create the function (see the `form-scripts` skill) and run
+Prerequisite: the script library (`<scripts project>`) exists and **builds** — the button
+invokes a function in the deployed bundle, so create the function (see the `form-scripts`
+reference) and run
 `dotnet build "<scripts project>"` successfully before scaffolding the button.
 
 ## Create the button

@@ -3,12 +3,12 @@
 
 # Unit tests for plugins and scripts
 
-**Contract:** when this skill ends, the requested test projects exist and
+**Contract:** when this task ends, the requested test projects exist and
 `dotnet test` passes on each. Everything runs in-process on the local machine —
 FakeXrmEasy fakes the Dataverse pipeline in memory and Jest mocks `Xrm`; no
 environment is contacted and nothing is deployed.
 
-Two independent layers — scaffold only the ones the repository needs:
+Two independent kinds — scaffold only the ones the repository needs:
 
 - **Plugin tests** (`<plugin test project>`, default `src/Tests.Plugins`) — plugin logic tested as plain C# against FakeXrmEasy 3.x.
   Requires an existing plugin project (`plugin-development` reference).
@@ -16,7 +16,7 @@ Two independent layers — scaffold only the ones the repository needs:
   built web-resource bundle, and `dotnet test` drives Jest via the csproj's `RunJest`
   target. Requires an existing `<scripts project>`.
 
-Resolve project roles per the `init` skill's `workspace-layout` reference (an existing
+Resolve project slots per the `init` skill's `workspace-layout` reference file (an existing
 repository's names win over the defaults).
 
 ## Plugin tests — Step 1: scaffold (first time only)

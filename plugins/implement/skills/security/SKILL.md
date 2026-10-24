@@ -26,9 +26,9 @@ txc docs get security-roles                        # long-form guide
 
 ## Sequence
 
-1. Roles go in the Dataverse solution that holds roles in this repository (the default
+1. Security roles go in the Dataverse solution that holds them in this repository (the default
    split has its own, `src/Solutions.Security`; resolve it per the `init` skill's
-   `workspace-layout` reference, which also defines the terms). Create one only if the
+   `workspace-layout` reference file, which also defines the terms). Create one only if the
    repository has none.
 2. Create the role, then one privilege entry per table it touches.
 3. `dotnet build`.

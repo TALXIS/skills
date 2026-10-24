@@ -4,7 +4,7 @@
 
 # UI testing with Playwright + Reqnroll
 
-**Contract:** when this skill ends, `<ui test project>` exists with at least one feature
+**Contract:** when this task ends, `<ui test project>` exists with at least one feature
 file, and `dotnet build "<ui test project>"` passes. Where the machine allows it,
 Playwright browsers are installed too. Scaffolding and building are local; `dotnet test` runs against the
 live environment configured in `appsettings.json`.
@@ -18,14 +18,14 @@ and navigation. They navigate via the model-driven URL shape
 
 ## Step 1 — Scaffold the test project
 
-Resolve `<ui test project>` per the `init` skill's `workspace-layout` reference
+Resolve `<ui test project>` per the `init` skill's `workspace-layout` reference file
 (default `src/Tests.UI`; an existing repository's names win). Scaffold `pp-test-ui`
 into it and `dotnet sln add` it (the template does not add itself).
 No `Features/` folder exists yet.
 
 ## Step 2 — Add a feature file
 
-One per feature under test, PascalCase name — scaffold `pp-test-ui-feature` into
+One `.feature` file per product feature under test, PascalCase name — scaffold `pp-test-ui-feature` into
 `<ui test project>` with `--param "name=<FeatureName>"` (`parameter list` shows no
 parameters for this template). It creates an empty `Feature: <FeatureName>` stub in
 `<ui test project>/Features/` — write the real scenarios into it. The same command also
@@ -51,9 +51,9 @@ the same rules.
 
 ## Step 4 — Configure
 
-`<ui test project>/appsettings.json` holds the environment URL, app name, and Playwright
-options. Every setting can be overridden per run with a `TXC_`-prefixed environment
-variable (the keys are in the file).
+`<ui test project>/appsettings.json` holds the Dataverse environment URL, app name, and Playwright
+options. Every setting can be overridden per run with a `TXC_`-prefixed operating-system
+environment variable (the keys are in the file).
 
 `StorageStatePath` must be an **absolute** path — relative paths resolve from the
 test binary output directory (`bin/Debug/<tfm>/`) and are silently ignored by

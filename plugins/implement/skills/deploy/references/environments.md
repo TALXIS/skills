@@ -3,9 +3,9 @@
 
 # Set up runtime environments
 
-**Contract:** this is the one skill in this plugin that touches the cloud — it
-creates or connects environments and binds txc profiles to them. Every other
-skill in this plugin is local; deployment itself is the `deploy` skill.
+**Contract:** this reference touches the cloud — it creates or connects
+environments and binds txc profiles to them. Every other skill in this plugin is local;
+importing the package is the `deployment` reference.
 
 Default model (an existing team setup wins; a user may ask for another): source
 control is the single source of truth, so environments are cheap and ephemeral —

@@ -3,11 +3,11 @@
 
 # Develop Dataverse plugins
 
-**Contract:** when this skill ends, `<plugin project>` contains the plugin classes,
+**Contract:** when this task ends, `<plugin project>` contains the plugin classes,
 and `dotnet build` + `dotnet publish` pass in that project. Local only — nothing is
 deployed and no cloud environment is touched.
 
-This skill covers the code side only. Registering the assembly and its SDK message
+This reference covers the code side only. Registering the assembly and its SDK message
 processing steps happens in `<logic solution>` — see the `plugin-registration` reference.
 The assembly is a build artifact; when and where it runs is Dataverse configuration.
 
@@ -107,4 +107,4 @@ Both must pass. `dotnet publish` produces the assembly layout that registration
 
 Report the plugin classes created, their intended entity/message/stage, that build
 and publish passed, and that nothing was deployed. Next step in one line: register
-the assembly and steps in `<logic solution>` (`plugin-registration` reference).
+the assembly and plugin steps in `<logic solution>` (`plugin-registration` reference).
