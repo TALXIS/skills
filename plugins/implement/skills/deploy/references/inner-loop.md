@@ -51,6 +51,9 @@ included, and is for apps, sitemaps and web resources that belong to no table. `
 | plugin code | the assembly keeps its version, so a name check proves nothing. Test the behaviour: `txc env data record create --entity <table> --data '{…}' --apply` with a value the new code accepts and one it rejects (the rejection message appears in the result), then delete the test record with `env data record delete`. A zip import replaces the DLL at an unchanged version and needs no publish |
 | that the import ran at all | `txc env deployment list --since 1h` (package runs are named after the package's last solution), `txc env deployment get --solution-run-id <id>` for findings |
 
+SQL pitfalls in these checks: `LIKE 'skt_%'` treats `_` as a wildcard and ignores case (escape it as `[_]`), a `JOIN` returns
+`[]` instead of an error, and some tables (`systemform`, `sdkmessagefilter`, `sitemap`) answer BadRequest — use `odata` for those.
+
 A check that finds nothing means the change did not land: go to the failure table in
 [deployment](deployment.md) — do not push again unchanged.
 
@@ -92,4 +95,11 @@ appmodules --filter "uniquename eq '<app>'"`) — and delete the role.
 
 `txc env pkg uninstall <package> --yes` (or `env solution delete <name> --yes`) removes only the solution containers of
 unmanaged solutions — tables, roles, apps, plugin registrations and web resources stay until deleted as in step 5.
-Delete only what you created; never touch solutions you do not own.
+Delete only what you created; never touch solutions you do not own. Find what the repository left behind by
+reading it (tables = `Entities/`, app = `AppModules/`, plugin = `PluginAssemblies/` + `SdkMessageProcessingSteps/`, web
+resources, roles) and delete in this order: plugin step, plugin assembly, app, **its sitemap** (a separate record: deleting
+the app leaves it; `env data query odata sitemaps --filter "sitemapnameunique eq '<app unique name>'"` then
+`env data record delete <id> --entity sitemap`), web resources, tables (their forms, views and relationships go with them),
+the solution containers, and last the publisher (`txc env publisher delete <name> --yes`, only after no solution or
+component uses it). Forms and views need no separate check (`odata systemforms|savedqueries --filter "…id eq <guid>"`
+returns nothing once the table is gone). Confirm with the counts: `env solution list` back to the earlier number.
