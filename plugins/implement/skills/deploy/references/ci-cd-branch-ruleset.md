@@ -7,7 +7,7 @@ Both calls take JSON via `--input` — write the payload to a file first. Rulese
 idempotent by name: before creating, check whether one already exists:
 
 ```
-gh api "repos/<owner>/<repo>/rulesets" -q '.[] | select(.name=="<solutionname>-main-protection") | .id'
+gh api "repos/<owner>/<repo>/rulesets" -q '.[] | select(.name=="<repo>-main-protection") | .id'
 ```
 
 ## Create the ruleset (PRs only, no deletion, no force pushes)
@@ -17,7 +17,7 @@ the user (0 solo, >= 1 for a team):
 
 ```json
 {
-  "name": "<solutionname>-main-protection",
+  "name": "<repo>-main-protection",
   "target": "branch",
   "enforcement": "active",
   "conditions": { "ref_name": { "include": ["~DEFAULT_BRANCH"], "exclude": [] } },

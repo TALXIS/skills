@@ -1,84 +1,95 @@
 > **Needed because:** the app/sitemap composition sequence is not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in help/docs (T12).
+> **Remove when:** txc surfaces sequences in help/docs (T12), and `pp-app-model` /
+> `pp-sitemap-area` emit the display name and the area title (TALXIS/tools-devkit-templates#181).
 
 # Implement a model-driven app
 
-**Contract:** when this skill ends, `src/Solutions.UI` contains the app, its entity
-components, and sitemap navigation, is referenced by `Packages.Main`, and
+**Contract:** when this task ends, `<ui solution>` contains the app, its entity
+components, and sitemap navigation, is referenced by `<package project>`, and
 `dotnet build` passes at the repository root. Local only — no cloud environment is
 touched.
 
-`Solutions.UI` does not own tables: it references them (`Behavior=Existing`) from
-`Solutions.DataModel` and only layers UI on top. A reference carries just enough
-metadata to attach UI components without duplicating schema, keeping DataModel the
-single owner of every table definition. Tables must already exist (see the
-`data-model` skill).
+In the default split the UI solution does not own tables: it references them
+(`Behavior=Existing` entity references) from `<data-model solution>` and only layers UI on top. A
+reference carries just enough metadata to attach UI components without duplicating
+schema, so the table stays defined in one project. If `<ui solution>` and
+`<data-model solution>` are the same project (a single solution, or tables and UI
+together), the table is already defined there: skip the entity references in Step 3. Tables
+must already exist (see the `data-model` skill). Terms, project slots and their defaults
+(`<ui solution>`, ...): [workspace-layout](../../init/references/workspace-layout.md);
+an existing repository's layout and naming win.
 
 ## Step 1 — Gather inputs (once)
 
-`<PublisherName>`, `<PublisherPrefix>` from the workspace (`txc workspace explain` if
-unsure). App logical name (lowercase, no prefix). Which entities the app shows, and
+`<PublisherName>`, `<PublisherPrefix>` from the workspace (an existing solution
+project's csproj has them). App logical name (lowercase, no prefix — `pp-app-model` adds it, so `evapp` under prefix `ev` becomes `ev_evapp`). Which entities the app shows, and
 the navigation layout: areas → groups → subareas (one subarea per entity).
 
-## Step 2 — Create the solution (first time only)
+## Step 2 — Create the Dataverse solution (first time only)
 
-Skip if `src/Solutions.UI/Solutions.UI.csproj` exists. From the root:
+Skip if the workspace already has a Dataverse solution for UI (in a single-solution
+repository, its one solution). Otherwise create it like any solution project
+(default `<ui solution>`) — `pp-solution` and a `ProjectReference` from
+`<package project>`; the `data-model` skill's `scaffolding` reference file shows the commands and the outcome to check
+(project listed by `dotnet sln list`, shipped in the Package Deployer package).
+
+## Step 3 — Create the app and add the entities to it (entity references for other projects' tables first)
+
+In this order (`txc workspace component parameter list <type>` for each):
+
+1. Only for a table defined in another solution project: `pp-entity` with
+   `Behavior=Existing`, once per such entity — an entity reference, not a table (`DisplayName` is
+   still required). Not for a table in `<ui solution>` itself: a reference there
+   fails the build with a duplicate root component (TXM004,
+   TALXIS/tools-devkit-templates#185).
+
+   ```
+   txc workspace component create pp-entity --output "<ui solution>" --param "Behavior=Existing" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<entity>" --param "DisplayName=<Display Name>"
+   ```
+2. `pp-app-model` — the app. Its full name is `<PublisherPrefix>_<app>`, and every
+   later command takes it as `AppName`. It has no display-name parameter: the label is
+   the logical name, so set `LocalizedName` by hand in `AppModule.xml` and
+   `AppModuleSiteMap.xml` if the app needs a readable name.
+3. `pp-app-model-component`, once per entity, to add it to the app (works for a table
+   defined in the same project and for a referenced one).
+
+The scaffolded `AppModule.xml` has a hard-coded role id in `<AppModuleRoleMaps>` that
+does not exist in the solution (TALXIS/tools-devkit-templates#78). To make the app
+visible to a security role, replace it by hand with the role's id from the role file
+`Roles/<name>.xml` in the solution that holds roles (`id="{...}"`).
+`pp-app-security-role` is the intended template but currently fails and breaks the
+next build (TALXIS/tools-devkit-templates#184), so do not use it.
+
+## Step 4 — Build the sitemap
+
+Area first, then its groups, then subareas — `pp-sitemap-area`, `pp-sitemap-group`,
+`pp-sitemap-subarea`. Each child references its parent **by title**, and every command
+takes `AppName`; repeat `pp-sitemap-subarea` per entity in the group:
 
 ```
-txc workspace component create pp-solution --output "src/Solutions.UI" --param "PublisherName=<PublisherName>" --param "PublisherPrefix=<PublisherPrefix>"
-dotnet add "src/Packages.Main/Packages.Main.csproj" reference "src/Solutions.UI/Solutions.UI.csproj"
-dotnet sln add src/Solutions.UI/Solutions.UI.csproj
+txc workspace component create pp-sitemap-area --output "<ui solution>" --param "AreaTitle=<Area>" --param "AppName=<PublisherPrefix>_<app>"
+txc workspace component create pp-sitemap-group --output "<ui solution>" --param "GroupTitle=<Group>" --param "GroupDisplayName=<Group>" --param "AreaTitle=<Area>" --param "AppName=<PublisherPrefix>_<app>"
+txc workspace component create pp-sitemap-subarea --output "<ui solution>" --param "Title=<Subarea Title>" --param "EntityLogicalName=<PublisherPrefix>_<entity>" --param "GroupTitle=<Group>" --param "AreaTitle=<Area>" --param "AppName=<PublisherPrefix>_<app>"
 ```
 
-## Step 3 — Reference the entities
+The generated area has no `<Titles>` element (groups and subareas do), so its title
+does not show: add `<Titles><Title LCID="1033" Title="<Area>" /></Titles>` to the
+`Area` in `AppModuleSiteMap.xml`.
 
-One command per entity the app uses — a reference, not a table:
-
-```
-txc workspace component create pp-entity --output "src/Solutions.UI" --param "Behavior=Existing" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<entity>" --param "DisplayName=<Display Name>"
-```
-
-## Step 4 — Create the app
-
-```
-txc workspace component create pp-app-model --output "src/Solutions.UI" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<app>"
-```
-
-The app's full name is `<PublisherPrefix>_<app>` — every later command uses it as
-`AppName`.
-
-## Step 5 — Add entities to the app
-
-One command per entity:
-
-```
-txc workspace component create pp-app-model-component --output "src/Solutions.UI" --param "EntityLogicalName=<PublisherPrefix>_<entity>" --param "AppName=<PublisherPrefix>_<app>"
-```
-
-## Step 6 — Build the sitemap
-
-Area first, then its groups, then subareas — each references its parent by title:
-
-```
-txc workspace component create pp-sitemap-area --output "src/Solutions.UI" --param "AreaTitle=<Area>" --param "AppName=<PublisherPrefix>_<app>"
-txc workspace component create pp-sitemap-group --output "src/Solutions.UI" --param "GroupTitle=<Group>" --param "GroupDisplayName=<Group>" --param "AreaTitle=<Area>" --param "AppName=<PublisherPrefix>_<app>"
-txc workspace component create pp-sitemap-subarea --output "src/Solutions.UI" --param "Title=<Subarea Title>" --param "EntityLogicalName=<PublisherPrefix>_<entity>" --param "GroupTitle=<Group>" --param "AreaTitle=<Area>" --param "AppName=<PublisherPrefix>_<app>"
-```
-
-Repeat `pp-sitemap-subarea` per entity in the group.
-
-## Step 7 — Validate
+## Step 5 — Validate
 
 ```
 dotnet build
 ```
 
 Must pass. `TALXISXSD001` = schema validation failed (fix the reported XML);
-`TALXISGUID001` = duplicate GUID (regenerate the reported id).
+`TALXISGUID001` = duplicate GUID (regenerate the reported id). If the build keeps
+reporting an error in a file you already fixed, it is validating a stale copy under
+`obj/` — delete the solution project's `obj/` and `bin/` and build again.
 
-## Step 8 — Summary
+## Step 6 — Summary
 
-Report the app name, referenced entities, and the sitemap tree, that `Packages.Main`
-references the solution, that `dotnet build` passed, and that nothing was deployed.
-Suggest the next steps, one line each: forms and views for each entity (`forms`
-skill), then deploy the package (`deploy` skill).
+Report the app name, the entities (and which were referenced), and the sitemap tree, that
+`<package project>` references the Dataverse solution, that `dotnet build` passed, and that nothing was deployed.
+Suggest the next steps, one line each: forms and views for each entity (`forms` and
+`views-subgrids` references), then deploy the package (`deploy` skill).

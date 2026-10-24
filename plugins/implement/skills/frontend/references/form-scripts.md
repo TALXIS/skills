@@ -3,31 +3,25 @@
 
 # Form scripts
 
-**Contract:** when this skill ends, `src/Scripts.UI` builds a JS bundle, the event
+**Contract:** when this task ends, `<scripts project>` builds a JS bundle, the event
 handlers are registered in the form XML, and `dotnet build` passes at the repository
 root. Local only — nothing is deployed.
 
-Prerequisite: the target form exists and you have its GUID (see the `forms` skill).
+Prerequisite: the target form exists and you have its GUID (see the `forms` reference).
 
-## Create the script library (once per workspace)
+## Create the script library (once per repository)
 
-```
-txc workspace component create pp-script-library \
-  --param "LibraryName=main" \
-  --param "PublisherPrefix=<prefix>" \
-  --output "src/Scripts.UI"
-
-dotnet sln add src/Scripts.UI
-```
+Scaffold `pp-script-library` (`LibraryName=main`, plus the publisher prefix) into
+`<scripts project>` (default `src/Scripts.UI`) and `dotnet sln add` it.
 
 This scaffolds a TypeScript project compiled by `dotnet build` (rollup under the
-hood). The bundle output is `src/Scripts.UI/build/<prefix>_main.js`, deployed as the
+hood). The bundle output is `<scripts project>/build/<prefix>_main.js`, deployed as the
 web resource `<prefix>_main.js`.
 
-Reference it from the UI solution so the web resource ships with it:
+Add a `ProjectReference` to it from `<ui solution>` so the web resource ships with it:
 
 ```
-dotnet add src/Solutions.UI reference src/Scripts.UI/Scripts.UI.csproj
+dotnet add "<ui solution>" reference "<scripts project>"
 ```
 
 (Both paths relative to the repository root; `dotnet` stores the correct relative
@@ -35,25 +29,30 @@ dotnet add src/Solutions.UI reference src/Scripts.UI/Scripts.UI.csproj
 
 ## Write the handlers
 
-The rollup entry point is `src/Scripts.UI/src/index.ts`. Export the handlers through
-a namespace object, e.g. `MyScripts.EntityForm.onLoad(executionContext)`. The UMD
-global `name` in `src/Scripts.UI/rollup.config.mjs` defaults to `<prefix>_main` —
-it must equal the first segment of every `FunctionName` you register below, so either
-set it to your namespace (e.g. `MyScripts`) or name your functions
-`<prefix>_main.<...>`.
+The rollup entry point is `<scripts project>/src/index.ts` (replace the scaffold's
+sample `Main` class). The bundle is UMD: what `index.ts` exports becomes the properties
+of one global, so exporting `EntityForm` with an `onLoad` function is reached as
+`<global>.EntityForm.onLoad(executionContext)`. The global's `name` in
+`<scripts project>/rollup.config.mjs` defaults to `<prefix>_main` — it must equal the
+first segment of every `FunctionName` you register below, so either set it to your
+namespace (e.g. `MyScripts`) or name your functions `<prefix>_main.<...>`.
 
 Build the library — this is also the validation loop for the TypeScript:
 
 ```
-dotnet build src/Scripts.UI
+dotnet build "<scripts project>"
 ```
+
+A successful build can print `where: not found` (a Windows-only command in the build)
+and `CS2008: No source files specified`; both are harmless (tools-devkit-build#135). `npm` leaves a
+`package-lock.json` — commit it.
 
 ## Register event handlers
 
 **onLoad** (form-level):
 
 ```
-txc workspace component create pp-form-event-handler --output src/Solutions.UI \
+txc workspace component create pp-form-event-handler --output "<ui solution>" \
   --param "FormType=main" \
   --param "FormId=<form-guid>" \
   --param "EntityLogicalName=<prefix>_<entity>" \
@@ -65,7 +64,7 @@ txc workspace component create pp-form-event-handler --output src/Solutions.UI \
 **onChange** (field-level — adds `AttributeName`):
 
 ```
-txc workspace component create pp-form-event-handler --output src/Solutions.UI \
+txc workspace component create pp-form-event-handler --output "<ui solution>" \
   --param "FormType=main" \
   --param "FormId=<form-guid>" \
   --param "EntityLogicalName=<prefix>_<entity>" \

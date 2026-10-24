@@ -26,8 +26,10 @@ txc docs get security-roles                        # long-form guide
 
 ## Sequence
 
-1. Roles live in their own solution project (conventionally
-   `src/Solutions.Security`).
+1. Security roles go in the Dataverse solution that holds them in this repository (the default
+   split has its own, `src/Solutions.Security`; resolve it per the `init` skill's
+   `workspace-layout` reference file, which also defines the terms). Create one only if the
+   repository has none.
 2. Create the role, then one privilege entry per table it touches.
 3. `dotnet build`.
 
@@ -35,7 +37,7 @@ txc docs get security-roles                        # long-form guide
 
 - Privilege **depth**: Basic = own records · Local = business unit · Deep = unit
   + children · Global = whole organization. Grant the shallowest depth that works.
-- Model roles for **personas, not people**; test users get least-privilege roles,
-  never admin.
+- Default: model roles for **personas, not people** (an existing role scheme wins);
+  test users get least-privilege roles, never admin.
 
 Details: [references/roles.md](references/roles.md)

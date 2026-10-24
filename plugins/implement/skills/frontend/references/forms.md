@@ -3,11 +3,12 @@
 
 # Forms
 
-**Contract:** when this skill ends, the form XML exists under `src/Solutions.UI` and
+**Contract:** when this task ends, the form XML exists under `<ui solution>` and
 `dotnet build` passes at the repository root. Local only — nothing is deployed.
 
 Prerequisite: the entity and every attribute the form will show already exist in
-`src/Solutions.DataModel` (never create forms before attributes). Placeholders:
+`<data-model solution>` (never create forms before attributes). Project slots resolve per
+the `init` skill's `workspace-layout` reference file. Placeholders:
 `<prefix>` = publisher prefix, `<entity>` = entity name, so the schema name is
 `<prefix>_<entity>`.
 
@@ -17,21 +18,20 @@ Prerequisite: the entity and every attribute the form will show already exist in
 one GUID per form up front and reuse it in every later command — subgrids, event
 handlers, and app components must all reference it:
 
-```
-FORM_GUID=$(uuidgen)
-```
+Use whatever GUID generator the machine has (`uuidgen`, `[guid]::NewGuid()`, …) and
+keep it as `FORM_GUID`.
 
 Record it (e.g. in your task notes) before scaffolding. Losing it means grepping
-`src/Solutions.UI/Entities/<prefix>_<entity>/FormXml/main/` for the filename later.
+`<ui solution>/Entities/<prefix>_<entity>/FormXml/main/` for the filename later.
 
 ## The chain — strict order, no skipped levels
 
-Every command targets `--output src/Solutions.UI`. Run them in exactly this order.
+Every command targets `--output "<ui solution>"`. Run them in exactly this order.
 
 **1. Form**
 
 ```
-txc workspace component create pp-entity-form --output src/Solutions.UI \
+txc workspace component create pp-entity-form --output "<ui solution>" \
   --param "FormType=main" \
   --param "EntitySchemaName=<prefix>_<entity>" \
   --param "FormId=$FORM_GUID"
@@ -40,7 +40,7 @@ txc workspace component create pp-entity-form --output src/Solutions.UI \
 **2. Register the form in the model-driven app** (skip only if the workspace has no app):
 
 ```
-txc workspace component create pp-app-model-component --output src/Solutions.UI \
+txc workspace component create pp-app-model-component --output "<ui solution>" \
   --param "EntityType=Form" \
   --param "ComponentId=$FORM_GUID" \
   --param "AppName=<prefix>_<app>"
@@ -50,7 +50,7 @@ txc workspace component create pp-app-model-component --output src/Solutions.UI 
 (omit that param on subsequent tabs):
 
 ```
-txc workspace component create pp-form-tab --output src/Solutions.UI \
+txc workspace component create pp-form-tab --output "<ui solution>" \
   --param "FormType=main" \
   --param "FormId=$FORM_GUID" \
   --param "EntitySchemaName=<prefix>_<entity>" \
@@ -58,30 +58,19 @@ txc workspace component create pp-form-tab --output src/Solutions.UI \
   --param "RemoveDefaultTab=True"
 ```
 
-**4. Column**, **5. Section**, **6. Row** — identical parameter shape; run
-`pp-form-row` once per field the section will hold:
-
-```
-txc workspace component create pp-form-column --output src/Solutions.UI \
-  --param "FormType=main" \
-  --param "FormId=$FORM_GUID" \
-  --param "EntitySchemaName=<prefix>_<entity>"
-
-txc workspace component create pp-form-section --output src/Solutions.UI \
-  --param "FormType=main" \
-  --param "FormId=$FORM_GUID" \
-  --param "EntitySchemaName=<prefix>_<entity>"
-
-txc workspace component create pp-form-row --output src/Solutions.UI \
-  --param "FormType=main" \
-  --param "FormId=$FORM_GUID" \
-  --param "EntitySchemaName=<prefix>_<entity>"
-```
+**4. Column**, **5. Section**, **6. Row** — `pp-form-column`, `pp-form-section` and
+`pp-form-row` take the same `FormType`, `FormId` and `EntitySchemaName` as the tab;
+run `pp-form-row` once per field the section will hold. Each appends to the form's
+last tab/column/section by default; to target another one use the 1-based `TabIndex`,
+`ColumnIndex`, `SectionIndex` (`SectionId` with a GUID failed with "Target section not
+found" and rolled the command back). A new row is empty: its 1-based position in the
+section is the `RowIndex` of the cell and control that fill it — on a form that
+already has rows, count them (a section with one row gets `RowIndex=2`).
 
 **7. Cell** — one per row; `RowIndex` is 1-based and `DisplayName` is the field label:
 
 ```
-txc workspace component create pp-form-cell --output src/Solutions.UI \
+txc workspace component create pp-form-cell --output "<ui solution>" \
   --param "RowIndex=1" \
   --param "FormType=main" \
   --param "DisplayName=Name" \
@@ -89,15 +78,18 @@ txc workspace component create pp-form-cell --output src/Solutions.UI \
   --param "EntitySchemaName=<prefix>_<entity>"
 ```
 
-**8. Control** — one per cell, same `RowIndex` as the cell it fills.
+**8. Control** (the field's form control, not a PCF control) — one per cell, same `RowIndex` as the cell it fills.
 `ControlType` matches the attribute's type: `Text`, `MultilineText`, `WholeNumber`,
-`Decimal`, `Currency`, `DateTime`, `OptionSet` (also for booleans), `Lookup`:
+`Decimal`, `Currency`, `DateTime`, `OptionSet` (also for booleans), `Lookup`.
+`isUnbound` defaults to `true` (a control not bound to a column) — pass
+`isUnbound=false` for a field bound to `AttributeLogicalName`:
 
 ```
-txc workspace component create pp-form-control --output src/Solutions.UI \
+txc workspace component create pp-form-control --output "<ui solution>" \
   --param "ControlType=Text" \
   --param "RowIndex=1" \
   --param "AttributeLogicalName=<prefix>_name" \
+  --param "isUnbound=false" \
   --param "FormType=main" \
   --param "FormId=$FORM_GUID" \
   --param "EntitySchemaName=<prefix>_<entity>"
@@ -112,16 +104,18 @@ needs a column, a column needs a tab.
 Do not re-scaffold. Instead:
 
 1. Locate the form XML: `txc workspace explain`, then read
-   `src/Solutions.UI/Entities/<prefix>_<entity>/FormXml/main/{<form-guid>}.xml`.
+   `<ui solution>/Entities/<prefix>_<entity>/FormXml/main/{<form-guid>}.xml`. The default forms
+   of a table are created with the table, so they usually sit in `<data-model solution>`: edit the form
+   where it lives (the `--output` of the commands below is that project), not in `<ui solution>`.
 2. Find the insertion point at the right hierarchy level (tab → column → section →
    row → cell → control).
 3. Adding a **field**: prefer the `pp-form-row` / `pp-form-cell` / `pp-form-control`
    commands above with the existing form's GUID; they append into the form XML.
    Adding a **section** or **tab**: use `pp-form-section` / `pp-form-tab` the same way.
    Only edit the XML by hand when the commands cannot target the right spot (e.g. a
-   non-last section) — then copy an existing sibling element as the template.
+   non-last section) — then copy an existing sibling element as the pattern.
 4. Validate before finishing: no skipped hierarchy levels, every `datafieldname`
-   exists as an attribute of the entity in `src/Solutions.DataModel`, and all GUIDs in
+   exists as an attribute of the entity in `<data-model solution>`, and all GUIDs in
    the file are unique.
 
 ## Validate

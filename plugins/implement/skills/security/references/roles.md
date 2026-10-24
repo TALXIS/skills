@@ -1,43 +1,41 @@
 > **Needed because:** privilege depth semantics and the role/privilege sequence are not surfaced by txc help.
-> **Remove when:** txc surfaces sequences and privilege semantics in help/docs (T12).
+> **Remove when:** txc surfaces sequences and privilege semantics in help/docs (T12), and the
+> docs and the scaffold agree on the valid depths (TALXIS/tools-cli#208).
 
 # Implement security roles
 
-**Contract:** when this skill ends, `src/Solutions.Security` contains the requested
-roles and privileges, is referenced by `Packages.Main`, and `dotnet build` passes at
+**Contract:** when this task ends, `<security solution>` contains the requested
+roles and privileges, is referenced by `<package project>`, and `dotnet build` passes at
 the repository root. Local only — no cloud environment is touched.
 
-Doctrine: model roles for **personas** (e.g. "Warehouse worker", "Warehouse
-manager"), never for individual people. Least-privilege by design — grant each
-persona only what its workflow needs, and give automated test users a
-least-privileged role too, never an admin account. Security config lives in its own
-`Solutions.Security` solution (one solution per concern), so access changes never
-hide inside schema or UI diffs.
+Default approach (an existing role scheme or an explicit instruction wins): model roles
+for **personas** (e.g. "Sales rep", "Sales manager") rather than individual people.
+Least-privilege by design — grant each persona only what its workflow needs, and give
+automated test users a least-privileged role too, never an admin account. In the
+default split security config lives in its own Dataverse solution, so access changes
+do not hide inside schema or UI diffs; in a repository split differently, or with a
+single solution, `<security solution>` is the project that holds roles there (possibly
+the same one as tables and UI; terms and slots:
+[workspace-layout](../../init/references/workspace-layout.md)).
 
 ## Step 1 — Gather inputs (once)
 
-`<PublisherName>`, `<PublisherPrefix>` from the workspace (`txc workspace explain` if
-unsure). For each role: a persona name. For each role × entity: the privilege matrix
+`<PublisherName>`, `<PublisherPrefix>` from the workspace (an existing solution
+project's csproj has them). For each role: a persona name. For each role × entity: the privilege matrix
 (types + depth). The entities must already exist in the workspace (see the
 `data-model` skill).
 
-## Step 2 — Create the solution (first time only)
+## Step 2 — Create the Dataverse solution (first time only)
 
-Skip if `src/Solutions.Security/Solutions.Security.csproj` exists. From the root:
-
-```
-txc workspace component create pp-solution --output "src/Solutions.Security" --param "PublisherName=<PublisherName>" --param "PublisherPrefix=<PublisherPrefix>"
-dotnet add "src/Packages.Main/Packages.Main.csproj" reference "src/Solutions.Security/Solutions.Security.csproj"
-dotnet sln add src/Solutions.Security/Solutions.Security.csproj
-```
+Skip if the workspace already has a Dataverse solution that holds roles (in a
+single-solution repository, its one solution). Otherwise create it like any solution
+project (default `src/Solutions.Security`) — `pp-solution` and a `ProjectReference` from
+`<package project>`; the `data-model` skill's `scaffolding` reference file shows the commands and the outcome to
+check (project listed by `dotnet sln list`, shipped in the Package Deployer package).
 
 ## Step 3 — Create roles
 
-One command per persona:
-
-```
-txc workspace component create pp-security-role --output "src/Solutions.Security" --param "RoleName=<Persona name>"
-```
+One `pp-security-role` per persona (`RoleName`).
 
 ## Step 4 — Grant privileges
 
@@ -45,15 +43,21 @@ One command per role × entity. `PrivilegeTypeAndLevel` is a single-line array o
 `{ PrivilegeType: <type>, Level: <depth> }` pairs — copy the syntax exactly:
 
 ```
-txc workspace component create pp-security-role-privilege --output "src/Solutions.Security" --param "RoleName=<Persona name>" --param "PrivilegeTypeAndLevel=[{ PrivilegeType: Read, Level: Global }, { PrivilegeType: Write, Level: Basic }, { PrivilegeType: Create, Level: Basic }]" --param "EntityLogicalName=<PublisherPrefix>_<entity>"
+txc workspace component create pp-security-role-privilege --output "<security solution>" --param "RoleName=<Persona name>" --param "PrivilegeTypeAndLevel=[{ PrivilegeType: Read, Level: Global }, { PrivilegeType: Write, Level: Basic }, { PrivilegeType: Create, Level: Basic }]" --param "EntityLogicalName=<PublisherPrefix>_<entity>"
 ```
 
 - `PrivilegeType`: `Read`, `Write`, `Create`, `Delete`, `Append`, `AppendTo`.
 - `Level` (depth — how far the privilege reaches): `Basic` = own records, `Local` =
-  own business unit, `Deep` = BU plus child BUs, `Global` = whole organization.
-- Full CRUD for a manager-style persona:
-  `[{ PrivilegeType: Read, Level: Global }, { PrivilegeType: Write, Level: Global }, { PrivilegeType: Create, Level: Global }, { PrivilegeType: Delete, Level: Global }, { PrivilegeType: Append, Level: Global }, { PrivilegeType: AppendTo, Level: Global }]`
+  own business unit, `Deep` = BU plus child BUs, `Global` = whole organization. These
+  four are the only valid names: the scaffold writes any string, but the build rejects
+  others — including `User`, `BusinessUnit`, `ParentChild` and `None` as listed in
+  `txc docs get security-roles`. Leave a privilege out instead of granting `None`.
+- `RoleName` must match the role's name exactly in the role and privilege commands.
 - Grant `Append`/`AppendTo` wherever the persona sets lookups between the tables.
+- Privileges on a table owned by another solution project need no `Behavior=Existing`
+  entity reference in `<security solution>` (a role scaffolded with no entity references
+  built fine). A `Behavior=Existing` reference for a table defined in the same solution
+  project fails the build with TXM004 (TALXIS/tools-devkit-templates#185).
 - When a table is added later, extend the existing roles with it — a new table has no
   privileges in any role until you grant them, so personas silently can't use it.
 - A deliberate matrix beats uniform grants: e.g. a worker reads everything (`Read`
@@ -70,7 +74,7 @@ Must pass. `TALXISXSD001` = schema validation failed (fix the reported XML);
 
 ## Step 6 — Summary
 
-Report the roles and the privilege matrix per entity, that `Packages.Main` references
-the solution, that `dotnet build` passed, and that nothing was deployed. Suggest the
+Report the roles and the privilege matrix per entity, that `<package project>` references
+the Dataverse solution, that `dotnet build` passed, and that nothing was deployed. Suggest the
 next step in one line: build the app and navigation (`model-app` skill), or deploy
 the package (`deploy` skill).

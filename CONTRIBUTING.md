@@ -11,6 +11,11 @@
    limitation, add the gap to [TOOLING-BACKLOG.md](TOOLING-BACKLOG.md) instead and
    keep the workaround in a reference file that names it.
 
+   Scaffold templates run post-actions that can fail without an error
+   (TALXIS/tools-devkit-templates#177): for each command a reference says what the
+   outcome should be and how to check it (`dotnet sln list`, a generated file, an entry
+   in `Solution.xml`), so the agent can verify it and repair what is missing.
+
 ## Skill standard (enforced by `scripts/validate.mjs` on every PR)
 
 - Body skeleton: contract line → "ask the CLI first" → intent→type mapping →

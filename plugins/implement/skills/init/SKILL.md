@@ -1,6 +1,6 @@
 ---
 name: init
-description: Orients you in a TALXIS / Power Platform / Dataverse repository — the machine's tools (dev container, agent sandbox or local install, updates), an existing project's layout and build, or scaffolding a new one. Use when starting work in a repository, new or existing, when a tool or command is missing, when setting up or updating a development environment, or when asked what a repository contains.
+description: Orients you in a TALXIS / Power Platform / Dataverse repository — the machine's tools (dev container, agent sandbox or local install, updates), an existing repository's layout and build, or scaffolding a new one. Use when starting work in a repository, new or existing, when a tool or command is missing, when setting up or updating the development tools on a machine, or when asked what a repository contains.
 ---
 
 # Init
@@ -29,31 +29,56 @@ txc workspace project explain   # project types and how they compose
 txc docs list                   # guides (txc docs get <id>)
 ```
 
-Piped txc output is JSON; every command answers `--help`.
+Piped txc output is JSON; every command answers `--help`. Usage errors ("Required
+option …", "Unrecognized argument …") go to stderr only, so with `2>/dev/null` a wrong
+call looks like empty output — read stderr when a command prints nothing. Local `txc workspace …`
+commands log `Resolved target environment … using profile …` when the machine has a
+txc profile; they still only touch files — that line does not mean an environment was
+contacted (tools-cli#229).
+
+Undoing a scaffold: deleting a scaffolded component's file leaves its entry in the
+solution's `Other/Solution.xml` (root components) and the build fails (TXM001) until you
+remove the entry (and any other reference to the component: grep the repository for its id and name, e.g. an app's role map);
+the build also keeps reporting the old ids until the solution
+project's `obj/` and `bin/` are deleted.
 
 ## Existing repository
 
-The root holds `*.slnx` (or `*.sln`) and `src/` with the projects. Run
-`dotnet build` before changing anything; report the projects, the solutions and
-anything broken.
+Find the solution file (`*.slnx` or `*.sln`: the file listing the projects, not a
+Dataverse solution) and resolve the projects by slot, not by folder name
+([references/workspace-layout.md](references/workspace-layout.md), which also defines
+the terms). Run `dotnet build` before changing anything; report the projects, the
+Dataverse solutions and what each contains, and anything broken.
+
+## Naming and layout precedence
+
+The repository's existing convention wins (including how it splits components across
+Dataverse solutions); otherwise an explicit instruction from the user (for example one
+solution for everything); otherwise the default layout in
+[references/workspace-layout.md](references/workspace-layout.md), which the other
+skills refer to through slot placeholders (`<data-model solution>`,
+`<plugin project>`, ...). Several slots may be the same project.
 
 ## New repository
 
-Ask once: project name, publisher name, publisher prefix.
+Ask once: name (the repository and the solution file), publisher name, publisher prefix.
 
 1. `git init -b main`, `dotnet new gitignore`
 2. `dotnet new sln --name <Name>` — it writes `<Name>.slnx` on current SDKs; only if
    it wrote a `<Name>.sln` instead, `dotnet sln <Name>.sln migrate` and delete the `.sln`
-3. Root keeps only the solution, `README.md`, `.gitignore`, `NuGet.config`
+3. Root keeps only the solution file, `README.md`, `.gitignore`, `NuGet.config`
    (nuget.org), and `.devcontainer/devcontainer.json` with
    `{"image": "ghcr.io/talxis/tools-agentbox/image:latest"}`; projects go in `src/`
-4. Deployment package project: find its type with
-   `txc component type list --search package`, its inputs with
-   `txc workspace component parameter list <type>`, create it with
-   `txc workspace component create <type> --output src/<name>`, `dotnet sln add` it
+   (the default layout)
+4. Package project (builds the Package Deployer package): find its template in
+   `txc workspace component create --help`, its inputs with
+   `txc workspace component parameter list <template>`, create it with
+   `txc workspace component create <template> --output <package project>`, `dotnet sln add` it
 5. `dotnet build` passes
 
-Other projects come later, from `data-model`, `backend` and `frontend`: one
-solution per concern keeps schema changes out of UI diffs.
+Other projects come later, from `data-model`, `backend` and `frontend`. The default
+is one Dataverse solution per concern (data model, logic, UI, security), which keeps
+schema changes out of UI diffs; if the user wants a different split, create those
+instead.
 
 `dotnet build` at the root validates every change.
