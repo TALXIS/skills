@@ -4,7 +4,7 @@
 # Attach a packaged PCF control
 
 **Contract:** when this skill ends, the control overlay is written into the form's
-FormXml under `src/Solutions.UI` and `dotnet build` passes. Nothing is deployed —
+FormXml under `<ui solution>` and `dotnet build` passes. Nothing is deployed —
 local only. Cloud only enters at deploy time (see the deployment-order rule at the end).
 
 `txc workspace control attach` is manifest-driven: the CLI pulls the control's Package
@@ -19,7 +19,7 @@ No per-control template is needed.
 1. **Entity logical name** — e.g. `<prefix>_<entity>`
 2. **Form** — recover the form GUID from the FormXml file name (form GUIDs are not
    persisted elsewhere): the file at
-   `src/Solutions.UI/Entities/<prefix>_<entity>/FormXml/main/{<guid>}.xml`,
+   `<ui solution>/Entities/<prefix>_<entity>/FormXml/main/{<guid>}.xml`,
    base name with braces trimmed.
 3. **Target control** — the control id on the form to overlay, e.g. `subgrid`
    (a subgrid created by `pp-form-subgrid` keeps its binding — view and
@@ -39,7 +39,7 @@ pieces make that work.
 come from the PCF at call time, so nothing from these packages ends up in the bundle:
 
 ```
-cd src/Scripts.UI
+cd <scripts project>
 npm install --save-dev @talxis/client-libraries @types/powerapps-component-framework @microsoft/microsoft-graph-types
 ```
 
@@ -48,7 +48,7 @@ npm install --save-dev @talxis/client-libraries @types/powerapps-component-frame
 PCF can call into it:
 
 ```
-txc workspace component create pp-form-event-handler --output "src/Solutions.UI" --param "FormType=main" --param "FormId=<form-guid>" --param "EntityLogicalName=<prefix>_<entity>" --param "LibraryName=<prefix>_main" --param "FunctionName=<Namespace>.<Form>.onLoad" --param "EventType=onload"
+txc workspace component create pp-form-event-handler --output "<ui solution>" --param "FormType=main" --param "FormId=<form-guid>" --param "EntityLogicalName=<prefix>_<entity>" --param "LibraryName=<prefix>_main" --param "FunctionName=<Namespace>.<Form>.onLoad" --param "EventType=onload"
 ```
 
 Export the Client API entry point (e.g. `GridApi.onDatasetControlInitialized`) from the
@@ -60,7 +60,7 @@ Example: TALXIS Grid on a subgrid, grouped by one column, summing another, with 
 hidden column feeding a script rule:
 
 ```
-txc workspace control attach --output "src/Solutions.UI" --entity "<prefix>_<entity>" --form-id <form-guid> --target-control "subgrid" --package TALXIS.Controls.Grid.Package --param "Columns=<columns-json>" --param "EnableGrouping=true" --param "EnableAggregation=true" --param "EnableOptionSetColors=true" --param "ClientApiWebresourceName=<prefix>_main.js" --param "ClientApiFunctionName=<Namespace>.GridApi.onDatasetControlInitialized" --force
+txc workspace control attach --output "<ui solution>" --entity "<prefix>_<entity>" --form-id <form-guid> --target-control "subgrid" --package TALXIS.Controls.Grid.Package --param "Columns=<columns-json>" --param "EnableGrouping=true" --param "EnableAggregation=true" --param "EnableOptionSetColors=true" --param "ClientApiWebresourceName=<prefix>_main.js" --param "ClientApiFunctionName=<Namespace>.GridApi.onDatasetControlInitialized" --force
 ```
 
 `<columns-json>` shape (pass as one line, quoted for your shell):

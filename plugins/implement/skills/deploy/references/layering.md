@@ -31,16 +31,17 @@ is free; layer inspection needs a live environment and a valid profile.
 One solution per concern — never one mega-solution (slow deploys, merge
 conflicts, unclear ownership) and never schema changes in UI diffs.
 
-| Component | Solution |
+| Component | Solution (default name in a new repository) |
 |---|---|
-| Table, column, relationship, option set | `Solutions.DataModel` |
-| Plugin, workflow, business rule | `Solutions.Logic` |
-| Form, view, model-driven app, sitemap | `Solutions.UI` |
-| Security role, field-level security | `Solutions.Security` |
+| Table, column, relationship, option set | `<data-model solution>` (`Solutions.DataModel`) |
+| Plugin registration, workflow, business rule | `<logic solution>` (`Solutions.Logic`) |
+| Form, view, model-driven app, sitemap | `<ui solution>` (`Solutions.UI`) |
+| Security role, field-level security | `<security solution>` (`Solutions.Security`) |
 | Unsure | `txc workspace explain` — inspect the workspace and follow the repo's own convention |
 
-If the repository already uses different solution names, its convention wins —
-route by concern into the existing structure, do not invent new solutions.
+If the repository already uses different solution names or layering, its convention
+wins — route by concern into the existing structure, do not invent new solutions
+(precedence and role resolution: the `init` skill's `workspace-layout` reference).
 
 ## Layer conflict triage
 

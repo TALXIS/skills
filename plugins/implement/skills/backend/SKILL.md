@@ -11,7 +11,8 @@ description: Implements server-side logic in a TALXIS / Power Platform / Dataver
 ## Ask the CLI first
 
 ```
-txc component type list --search plugin            # code project + registration types
+txc component type list --search plugin            # registration types
+txc workspace component create --help              # project templates (plugin project)
 txc workspace component parameter list <type>      # every parameter, typed
 txc docs get plugin-development                    # long-form guide
 ```
@@ -20,16 +21,18 @@ txc docs get plugin-development                    # long-form guide
 
 | You want | Component type |
 |---|---|
-| a C# project for server-side logic | search: `--search plugin` (project type) |
+| a C# project for server-side logic | plugin project template (`create --help`) |
 | register the compiled logic in the platform | plugin assembly type |
 | run it on a specific event (create/update/…) | plugin step type |
 
 ## Sequence
 
-1. Create the plugin project under `src/`, add it to the solution file, write the
-   C# classes, `dotnet build`.
-2. Registration lives in a logic solution project (conventionally
-   `src/Solutions.Logic`), which takes a `ProjectReference` to the plugin project.
+1. Find the plugin project (`ProjectType` Plugin) or create one (default
+   `src/Plugins.<Name>`), add it to the solution file, write the C# classes,
+   `dotnet build`.
+2. Registration lives in the logic solution project (default `src/Solutions.Logic`;
+   resolve roles per the `init` skill's `workspace-layout` reference), which takes a
+   `ProjectReference` to the plugin project.
 3. The logic solution's build registers the assembly itself; add the steps after that
    build — **registration before steps, always**. Never also scaffold the assembly type
    into a solution that generates it: that duplicates the registration.

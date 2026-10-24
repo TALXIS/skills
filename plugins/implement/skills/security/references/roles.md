@@ -3,29 +3,29 @@
 
 # Implement security roles
 
-**Contract:** when this skill ends, `src/Solutions.Security` contains the requested
-roles and privileges, is referenced by `Packages.Main`, and `dotnet build` passes at
+**Contract:** when this skill ends, `<security solution>` contains the requested
+roles and privileges, is referenced by `<package project>`, and `dotnet build` passes at
 the repository root. Local only — no cloud environment is touched.
 
-Doctrine: model roles for **personas** (e.g. "Warehouse worker", "Warehouse
+Doctrine: model roles for **personas** (e.g. "Sales rep", "Sales
 manager"), never for individual people. Least-privilege by design — grant each
 persona only what its workflow needs, and give automated test users a
 least-privileged role too, never an admin account. Security config lives in its own
-`Solutions.Security` solution (one solution per concern), so access changes never
+security solution (one solution per concern), so access changes never
 hide inside schema or UI diffs.
 
 ## Step 1 — Gather inputs (once)
 
-`<PublisherName>`, `<PublisherPrefix>` from the workspace (`txc workspace explain` if
-unsure). For each role: a persona name. For each role × entity: the privilege matrix
+`<PublisherName>`, `<PublisherPrefix>` from the workspace (an existing solution
+project's csproj has them). For each role: a persona name. For each role × entity: the privilege matrix
 (types + depth). The entities must already exist in the workspace (see the
 `data-model` skill).
 
 ## Step 2 — Create the solution (first time only)
 
-Skip if `src/Solutions.Security/Solutions.Security.csproj` exists. Create it like any
-`Solutions.<Concern>` project — `pp-solution`, a `ProjectReference` from
-`Packages.Main`, `dotnet sln add` (the `data-model` reference shows the commands).
+Skip if the workspace already has a security solution. Create it like any solution
+project (default `src/Solutions.Security`) — `pp-solution`, a `ProjectReference` from
+`<package project>`, `dotnet sln add` (the `data-model` reference shows the commands).
 
 ## Step 3 — Create roles
 
@@ -37,7 +37,7 @@ One command per role × entity. `PrivilegeTypeAndLevel` is a single-line array o
 `{ PrivilegeType: <type>, Level: <depth> }` pairs — copy the syntax exactly:
 
 ```
-txc workspace component create pp-security-role-privilege --output "src/Solutions.Security" --param "RoleName=<Persona name>" --param "PrivilegeTypeAndLevel=[{ PrivilegeType: Read, Level: Global }, { PrivilegeType: Write, Level: Basic }, { PrivilegeType: Create, Level: Basic }]" --param "EntityLogicalName=<PublisherPrefix>_<entity>"
+txc workspace component create pp-security-role-privilege --output "<security solution>" --param "RoleName=<Persona name>" --param "PrivilegeTypeAndLevel=[{ PrivilegeType: Read, Level: Global }, { PrivilegeType: Write, Level: Basic }, { PrivilegeType: Create, Level: Basic }]" --param "EntityLogicalName=<PublisherPrefix>_<entity>"
 ```
 
 - `PrivilegeType`: `Read`, `Write`, `Create`, `Delete`, `Append`, `AppendTo`.
@@ -60,7 +60,7 @@ Must pass. `TALXISXSD001` = schema validation failed (fix the reported XML);
 
 ## Step 6 — Summary
 
-Report the roles and the privilege matrix per entity, that `Packages.Main` references
+Report the roles and the privilege matrix per entity, that `<package project>` references
 the solution, that `dotnet build` passed, and that nothing was deployed. Suggest the
 next step in one line: build the app and navigation (`model-app` skill), or deploy
 the package (`deploy` skill).

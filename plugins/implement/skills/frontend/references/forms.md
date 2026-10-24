@@ -3,11 +3,12 @@
 
 # Forms
 
-**Contract:** when this skill ends, the form XML exists under `src/Solutions.UI` and
+**Contract:** when this skill ends, the form XML exists under `<ui solution>` and
 `dotnet build` passes at the repository root. Local only — nothing is deployed.
 
 Prerequisite: the entity and every attribute the form will show already exist in
-`src/Solutions.DataModel` (never create forms before attributes). Placeholders:
+`<data-model solution>` (never create forms before attributes). Project roles resolve per
+the `init` skill's `workspace-layout` reference. Placeholders:
 `<prefix>` = publisher prefix, `<entity>` = entity name, so the schema name is
 `<prefix>_<entity>`.
 
@@ -21,16 +22,16 @@ Use whatever GUID generator the machine has (`uuidgen`, `[guid]::NewGuid()`, …
 keep it as `FORM_GUID`.
 
 Record it (e.g. in your task notes) before scaffolding. Losing it means grepping
-`src/Solutions.UI/Entities/<prefix>_<entity>/FormXml/main/` for the filename later.
+`<ui solution>/Entities/<prefix>_<entity>/FormXml/main/` for the filename later.
 
 ## The chain — strict order, no skipped levels
 
-Every command targets `--output src/Solutions.UI`. Run them in exactly this order.
+Every command targets `--output "<ui solution>"`. Run them in exactly this order.
 
 **1. Form**
 
 ```
-txc workspace component create pp-entity-form --output src/Solutions.UI \
+txc workspace component create pp-entity-form --output "<ui solution>" \
   --param "FormType=main" \
   --param "EntitySchemaName=<prefix>_<entity>" \
   --param "FormId=$FORM_GUID"
@@ -39,7 +40,7 @@ txc workspace component create pp-entity-form --output src/Solutions.UI \
 **2. Register the form in the model-driven app** (skip only if the workspace has no app):
 
 ```
-txc workspace component create pp-app-model-component --output src/Solutions.UI \
+txc workspace component create pp-app-model-component --output "<ui solution>" \
   --param "EntityType=Form" \
   --param "ComponentId=$FORM_GUID" \
   --param "AppName=<prefix>_<app>"
@@ -49,7 +50,7 @@ txc workspace component create pp-app-model-component --output src/Solutions.UI 
 (omit that param on subsequent tabs):
 
 ```
-txc workspace component create pp-form-tab --output src/Solutions.UI \
+txc workspace component create pp-form-tab --output "<ui solution>" \
   --param "FormType=main" \
   --param "FormId=$FORM_GUID" \
   --param "EntitySchemaName=<prefix>_<entity>" \
@@ -64,7 +65,7 @@ run `pp-form-row` once per field the section will hold.
 **7. Cell** — one per row; `RowIndex` is 1-based and `DisplayName` is the field label:
 
 ```
-txc workspace component create pp-form-cell --output src/Solutions.UI \
+txc workspace component create pp-form-cell --output "<ui solution>" \
   --param "RowIndex=1" \
   --param "FormType=main" \
   --param "DisplayName=Name" \
@@ -77,7 +78,7 @@ txc workspace component create pp-form-cell --output src/Solutions.UI \
 `Decimal`, `Currency`, `DateTime`, `OptionSet` (also for booleans), `Lookup`:
 
 ```
-txc workspace component create pp-form-control --output src/Solutions.UI \
+txc workspace component create pp-form-control --output "<ui solution>" \
   --param "ControlType=Text" \
   --param "RowIndex=1" \
   --param "AttributeLogicalName=<prefix>_name" \
@@ -95,7 +96,7 @@ needs a column, a column needs a tab.
 Do not re-scaffold. Instead:
 
 1. Locate the form XML: `txc workspace explain`, then read
-   `src/Solutions.UI/Entities/<prefix>_<entity>/FormXml/main/{<form-guid>}.xml`.
+   `<ui solution>/Entities/<prefix>_<entity>/FormXml/main/{<form-guid>}.xml`.
 2. Find the insertion point at the right hierarchy level (tab → column → section →
    row → cell → control).
 3. Adding a **field**: prefer the `pp-form-row` / `pp-form-cell` / `pp-form-control`
@@ -104,7 +105,7 @@ Do not re-scaffold. Instead:
    Only edit the XML by hand when the commands cannot target the right spot (e.g. a
    non-last section) — then copy an existing sibling element as the template.
 4. Validate before finishing: no skipped hierarchy levels, every `datafieldname`
-   exists as an attribute of the entity in `src/Solutions.DataModel`, and all GUIDs in
+   exists as an attribute of the entity in `<data-model solution>`, and all GUIDs in
    the file are unique.
 
 ## Validate

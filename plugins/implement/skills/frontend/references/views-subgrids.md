@@ -4,17 +4,17 @@
 # Views and subgrids
 
 **Contract:** when this skill ends, the view (and any subgrid) XML exists under
-`src/Solutions.UI` and `dotnet build` passes at the repository root. Local only —
+`<ui solution>` and `dotnet build` passes at the repository root. Local only —
 nothing is deployed.
 
-Prerequisites: the entity and its attributes exist in `src/Solutions.DataModel`; for a
+Prerequisites: the entity and its attributes exist in `<data-model solution>`; for a
 subgrid, the parent form exists and you have its GUID (see the `forms` skill).
 
 ## Create a view
 
 Scaffold `pp-entity-view` (entity schema name, display name, publisher prefix) into
-`src/Solutions.UI`. The view file lands at
-`src/Solutions.UI/Entities/<prefix>_<entity>/SavedQueries/{<view-guid>}.xml` —
+`<ui solution>`. The view file lands at
+`<ui solution>/Entities/<prefix>_<entity>/SavedQueries/{<view-guid>}.xml` —
 the filename (braces stripped) **is** the view GUID; record it for subgrids.
 
 ## Add columns (required post-patch — tooling backlog T3)
@@ -37,7 +37,7 @@ primary-name column), so every extra column must be patched into **both** the
   ```
 
 A column present in only one of the two renders empty or is dropped. Every `name`
-must exist as an attribute of the entity in `src/Solutions.DataModel`.
+must exist as an attribute of the entity in `<data-model solution>`.
 
 ## Add a subgrid to a parent form
 
@@ -47,12 +47,12 @@ A subgrid needs three identifiers gathered up front:
 - the **view GUID** (`ViewId`) — the SavedQueries filename above, for the target entity,
 - the **relationship name** — without it the subgrid shows ALL records of the target
   entity, not just the parent's related rows. Read it from
-  `src/Solutions.DataModel/Other/Relationships/<prefix>_<parententity>.xml`: the
+  `<data-model solution>/Other/Relationships/<prefix>_<parententity>.xml`: the
   `Name` of the `EntityRelationship` whose `ReferencingAttributeName` is the lookup
   column on the target entity.
 
 ```
-txc workspace component create pp-form-subgrid --output src/Solutions.UI \
+txc workspace component create pp-form-subgrid --output "<ui solution>" \
   --param "SubgridLabel=<Related Records>" \
   --param "FormType=main" \
   --param "FormId=<parent-form-guid>" \

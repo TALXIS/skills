@@ -4,17 +4,17 @@
 # Ribbon buttons
 
 **Contract:** when this skill ends, the ribbon customization exists under
-`src/Solutions.UI` and `dotnet build` passes at the repository root. Local only —
+`<ui solution>` and `dotnet build` passes at the repository root. Local only —
 nothing is deployed.
 
 Prerequisite: the script library exists and **builds** — the button invokes a function
 in the deployed bundle, so create the function (see the `form-scripts` skill) and run
-`dotnet build src/Scripts.UI` successfully before scaffolding the button.
+`dotnet build "<scripts project>"` successfully before scaffolding the button.
 
 ## Create the button
 
 ```
-txc workspace component create pp-ribbon-button --output src/Solutions.UI \
+txc workspace component create pp-ribbon-button --output "<ui solution>" \
   --param "Location=Form" \
   --param "EntityLogicalName=<prefix>_<entity>" \
   --param "ButtonLabel=<Button Label>" \
@@ -39,7 +39,7 @@ Without a command parameter the function is called with no arguments. Add
 `CrmPrimaryControl` so it receives the form context as its first parameter:
 
 ```
-txc workspace component create pp-ribbon-command-parameter --output src/Solutions.UI \
+txc workspace component create pp-ribbon-command-parameter --output "<ui solution>" \
   --param "EntityLogicalName=<prefix>_<entity>" \
   --param "PublisherPrefix=<prefix>" \
   --param "ParameterType=CrmPrimaryControl" \
@@ -48,7 +48,7 @@ txc workspace component create pp-ribbon-command-parameter --output src/Solution
 ```
 
 `ButtonLogicalName` is the button's label lowercased with spaces removed (e.g.
-"Check Stock Levels" → `checkstocklevels`); `FunctionName` must match the button's
+"Open Summary" → `opensummary`); `FunctionName` must match the button's
 `FunctionName` exactly so the parameter attaches to the right command.
 
 ## Validate

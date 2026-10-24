@@ -4,12 +4,15 @@
 
 # Implement the data model
 
-**Contract:** when this skill ends, `src/Solutions.DataModel` contains the requested
-tables and columns, is referenced by `Packages.Main`, and `dotnet build` passes at the
-repository root. Local only — no cloud environment is touched.
+**Contract:** when this skill ends, `<data-model solution>` contains the requested
+tables and columns, is referenced by `<package project>`, and `dotnet build` passes at
+the repository root. Local only — no cloud environment is touched.
 
-One solution per concern: schema lives in `Solutions.DataModel`, never in UI or logic
-solutions. The repository must already be initialized (see the `init` skill).
+One solution per concern: schema lives in the data-model solution, never in UI or
+logic solutions. The repository must already be initialized (see the `init` skill).
+Project roles, their defaults (`src/Solutions.DataModel`, ...) and how to resolve them
+in an existing repository: [workspace-layout](../../init/references/workspace-layout.md).
+The repository's own naming wins; the defaults apply only when it has none.
 
 ## Ordering invariant
 
@@ -23,24 +26,25 @@ on import. Editing the source alone does not fix a deployed environment.
 
 ## Step 1 — Gather inputs (once)
 
-From the existing workspace (`txc workspace explain` if unsure): `<PublisherName>`,
-`<PublisherPrefix>`. For each table: logical name (lowercase, no prefix — the CLI adds
+From the existing workspace (an existing solution project's csproj has
+`PublisherName` and `PublisherPrefix`; `txc workspace explain` if unsure): `<PublisherName>`, `<PublisherPrefix>`. For each table: logical name (lowercase, no prefix — the CLI adds
 it), plural logical name, display names. For each column: attribute type, required
 level, display name.
 
 ## Step 2 — Create the solution (first time only)
 
-Skip if `src/Solutions.DataModel/Solutions.DataModel.csproj` exists. This is the
-pattern every `Solutions.<Concern>` project follows — create it with `pp-solution`,
-reference it from the package project, add it to the solution file:
+Skip if the workspace already has a data-model solution. This is the pattern every
+solution project follows — create it with `pp-solution` (in a new repository at the
+default `src/Solutions.DataModel`), reference it from the package project, add it to
+the solution file:
 
 ```
-txc workspace component create pp-solution --output "src/Solutions.DataModel" --param "PublisherName=<PublisherName>" --param "PublisherPrefix=<PublisherPrefix>"
-dotnet add "src/Packages.Main/Packages.Main.csproj" reference "src/Solutions.DataModel/Solutions.DataModel.csproj"
-dotnet sln add src/Solutions.DataModel/Solutions.DataModel.csproj
+txc workspace component create pp-solution --output "<data-model solution>" --param "PublisherName=<PublisherName>" --param "PublisherPrefix=<PublisherPrefix>"
+dotnet add "<package project>" reference "<data-model solution>"
+dotnet sln add "<data-model solution>"
 ```
 
-The `ProjectReference` puts the solution into the `.pdpkg.zip` and drives import
+The `ProjectReference` puts the solution into the package (`.pdpkg.zip`) and drives import
 order; `dotnet sln add` puts it under the root `dotnet build`.
 
 ## Step 3 — Create entities and columns
@@ -66,7 +70,7 @@ Must pass. `TALXISXSD001` = schema validation failed (fix the reported XML);
 
 ## Step 5 — Summary
 
-Report the tables and columns created, that `Packages.Main` references the solution,
+Report the tables and columns created, that `<package project>` references the solution,
 that `dotnet build` passed, and that nothing was deployed. Natural next steps, one
 line each: security roles for the new tables (`security` skill), an app and
 navigation (`frontend` skill).

@@ -33,9 +33,18 @@ Piped txc output is JSON; every command answers `--help`.
 
 ## Existing repository
 
-The root holds `*.slnx` (or `*.sln`) and `src/` with the projects. Run
-`dotnet build` before changing anything; report the projects, the solutions and
+Find the solution file (`*.slnx` or `*.sln`) and resolve the projects by role, not
+by folder name ([references/workspace-layout.md](references/workspace-layout.md)).
+Run `dotnet build` before changing anything; report the projects, the solutions and
 anything broken.
+
+## Naming and layout precedence
+
+The repository's existing convention wins; otherwise an explicit instruction from
+the user; otherwise the default layout in
+[references/workspace-layout.md](references/workspace-layout.md), which the other
+skills refer to through role placeholders (`<data-model solution>`,
+`<plugin project>`, ...).
 
 ## New repository
 
@@ -47,10 +56,11 @@ Ask once: project name, publisher name, publisher prefix.
 3. Root keeps only the solution, `README.md`, `.gitignore`, `NuGet.config`
    (nuget.org), and `.devcontainer/devcontainer.json` with
    `{"image": "ghcr.io/talxis/tools-agentbox/image:latest"}`; projects go in `src/`
-4. Deployment package project: find its type with
-   `txc component type list --search package`, its inputs with
-   `txc workspace component parameter list <type>`, create it with
-   `txc workspace component create <type> --output src/<name>`, `dotnet sln add` it
+   (the default layout)
+4. Deployment package project: find its template in
+   `txc workspace component create --help`, its inputs with
+   `txc workspace component parameter list <template>`, create it with
+   `txc workspace component create <template> --output <package project>`, `dotnet sln add` it
 5. `dotnet build` passes
 
 Other projects come later, from `data-model`, `backend` and `frontend`: one

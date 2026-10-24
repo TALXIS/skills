@@ -32,13 +32,13 @@ txc env pkg import TALXIS.Controls.Grid.Package --profile <profile>
 ## Step 2 — Build the deployment package
 
 ```
-dotnet publish src/Packages.Main/Packages.Main.csproj -c Release
+dotnet publish <package project> -c Release
 ```
 
 Deliberately no `-o` — an explicit output dir leaks a global `PublishDir` into
 nested plugin builds and breaks them (tools-devkit-build#109). The `.pdpkg.zip`
-lands at `src/Packages.Main/bin/Release/Packages.Main.pdpkg.zip` (tooling-backlog
-T6). Release packs managed (Test/prod); Debug packs unmanaged (Dev). The build
+lands at `<package project>/bin/Release/<project name>.pdpkg.zip` (tooling-backlog
+T6; `<package project>` per the `init` skill's `workspace-layout` reference). Release packs managed (Test/prod); Debug packs unmanaged (Dev). The build
 must be clean — never deploy a broken build.
 
 ## Step 3 — Import the package
@@ -60,9 +60,10 @@ only sanctioned way portal changes reach source control:
 txc env solution pull <solution project> --profile <profile>
 ```
 
-`<solution project>` is the solution project's folder in the repo (e.g.
-`src/Solutions.Security`), passed as the positional argument; `--output` overrides
-the solution root folder it syncs into. Then `git status -- src/` to show what changed. Pull
+`<solution project>` is the folder of the solution project that owns the edited
+components (resolve it by what it contains, e.g. the security solution for roles),
+passed as the positional argument; `--output` overrides
+the solution root folder it syncs into. Then `git status` to show what changed. Pull
 only from Dev — the place where humans edit; pipelines only ship built packages
 forward.
 

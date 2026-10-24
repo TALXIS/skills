@@ -29,9 +29,10 @@ Never guess parameters — `parameter list` is the authority.
 
 ## Sequence
 
-1. Ensure a solution project for the data model exists (conventionally
-   `src/Solutions.DataModel`); if not, create one (`--search solution`), add it to
-   the solution file, and reference it from the deployment package project.
+1. Find the data-model solution project in the workspace (role resolution:
+   `init` skill, `workspace-layout` reference); if there is none, create one
+   (`--search solution`), add it to the solution file, and reference it from the
+   package project. A new repository's default is `src/Solutions.DataModel`.
 2. Create the table, then its columns — **always table before columns, and both
    before any form or view exists for them** (UI XML references break otherwise).
 3. Relationships require both tables to exist first.

@@ -10,23 +10,26 @@ environment is contacted and nothing is deployed.
 
 Two independent layers — scaffold only the ones the repository needs:
 
-- **Tests.Plugins** — plugin logic tested as plain C# against FakeXrmEasy 3.x.
+- **Plugin tests** (`<plugin test project>`, default `src/Tests.Plugins`) — plugin logic tested as plain C# against FakeXrmEasy 3.x.
   Requires an existing plugin project (`plugin-development` reference).
-- **Tests.Scripts** — form/ribbon scripts tested as plain JavaScript; Jest loads the
+- **Script tests** (`<script test project>`, default `src/Tests.Scripts`) — form/ribbon scripts tested as plain JavaScript; Jest loads the
   built web-resource bundle, and `dotnet test` drives Jest via the csproj's `RunJest`
-  target. Requires an existing `Scripts.UI` project.
+  target. Requires an existing `<scripts project>`.
+
+Resolve project roles per the `init` skill's `workspace-layout` reference (an existing
+repository's names win over the defaults).
 
 ## Plugin tests — Step 1: scaffold (first time only)
 
-Skip if `src/Tests.Plugins/Tests.Plugins.csproj` exists. From the repository root,
+Skip if the workspace already has a plugin test project. From the repository root,
 pre-create `.template.temp` first — the `pp-plugin-test` template's Cleanup
 post-action fails and rolls the whole scaffold back when it is missing
 (TOOLING-BACKLOG T5):
 
 ```
-mkdir -p src/Tests.Plugins/.template.temp
-txc workspace component create pp-plugin-test --output "src/Tests.Plugins"
-dotnet sln add src/Tests.Plugins
+mkdir -p "<plugin test project>/.template.temp"
+txc workspace component create pp-plugin-test --output "<plugin test project>"
+dotnet sln add "<plugin test project>"
 ```
 
 ## Plugin tests — Step 2: reference the plugin project
@@ -34,11 +37,11 @@ dotnet sln add src/Tests.Plugins
 The test project targets modern .NET while the plugin assembly stays `net462` (the
 Dataverse sandbox is .NET Framework — never retarget either side). `dotnet add
 reference` refuses to link across that gap, so add the `ProjectReference` to
-`src/Tests.Plugins/Tests.Plugins.csproj` by editing the XML directly:
+`<plugin test project>`'s csproj by editing the XML directly:
 
 ```xml
 <ItemGroup>
-  <ProjectReference Include="../Plugins.<Name>/Plugins.<Name>.csproj" />
+  <ProjectReference Include="<relative path to the plugin project's csproj>" />
 </ItemGroup>
 ```
 
@@ -48,7 +51,7 @@ benign; do not "fix" it.
 
 ## Plugin tests — Step 3: write tests
 
-One `<PluginClassName>Tests.cs` per plugin class in `src/Tests.Plugins/`. Derive each
+One `<PluginClassName>Tests.cs` per plugin class in `<plugin test project>`. Derive each
 from the template's `FakeXrmEasyTestBase`: it builds `_context` (the `IXrmFakedContext`)
 and `_service`, and sets the FakeXrmEasy license — `Commercial` by default, change it in
 the base class if that is not yours. Pattern: seed records with `_context.Initialize`,
@@ -59,25 +62,25 @@ thrown `InvalidPluginExecutionException`. Attribute logical names carry the
 ## Plugin tests — Step 4: run
 
 ```
-dotnet test src/Tests.Plugins/Tests.Plugins.csproj --nologo
+dotnet test "<plugin test project>" --nologo
 ```
 
 Must pass. This is the edit-run loop: change plugin or test, re-run.
 
 ## Script tests — Step 1: scaffold (first time only)
 
-Skip if `src/Tests.Scripts` exists. `ScriptLibraryPath` points at the bundle
-`Scripts.UI` builds — the same file that ships as the web resource is the file under
+Skip if the workspace already has a script test project. `ScriptLibraryPath` points
+(relative to the test project) at the bundle `<scripts project>` builds — the same file that ships as the web resource is the file under
 test:
 
 ```
-txc workspace component create pp-test-script --output "src/Tests.Scripts" --param "ScriptTestProjectName=Tests.Scripts" --param "ScriptLibraryPath=../Scripts.UI/build/<PublisherPrefix>_main.js"
-dotnet sln add src/Tests.Scripts
+txc workspace component create pp-test-script --output "<script test project>" --param "ScriptTestProjectName=<script test project name>" --param "ScriptLibraryPath=<relative path to the scripts project>/build/<PublisherPrefix>_main.js"
+dotnet sln add "<script test project>"
 ```
 
 ## Script tests — Step 2: write tests
 
-Test files go in `src/Tests.Scripts/tests/*.test.js`. Assign the `Xrm` functions a
+Test files go in `<script test project>/tests/*.test.js`. Assign the `Xrm` functions a
 test relies on as `jest.fn()` explicitly in `beforeEach` — Jest 30 does not expose
 `global.jest` to the template's `setupXrm`.
 
@@ -86,8 +89,8 @@ test relies on as `jest.fn()` explicitly in `beforeEach` — Jest 30 does not ex
 The bundle must exist before the tests can load it:
 
 ```
-dotnet build src/Scripts.UI/Scripts.UI.csproj --nologo
-dotnet test src/Tests.Scripts/Tests.Scripts.csproj --nologo
+dotnet build "<scripts project>" --nologo
+dotnet test "<script test project>" --nologo
 ```
 
 Must pass — `dotnet test` invokes Jest through the `RunJest` target, so one command

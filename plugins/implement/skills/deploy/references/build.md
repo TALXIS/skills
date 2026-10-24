@@ -48,21 +48,24 @@ configuration.
 ## Producing the deployable package
 
 ```
-dotnet publish src/Packages.Main/Packages.Main.csproj -c Release
+dotnet publish <package project> -c Release
 ```
+
+`<package project>` is the project with `ProjectType` PDPackage (the `init` skill's
+`workspace-layout` reference shows how to resolve it; default `src/Packages.Main`).
 
 Do not pass `-o`: an explicit output dir sets a global `PublishDir` that leaks
 into nested plugin project builds and breaks their auto-publish step
 (tools-devkit-build#109).
 
 Current quirk (tooling-backlog T6): the `.pdpkg.zip` lands next to the project,
-not in the publish output — find it at:
+not in the publish output, and is named after the project — find it at:
 
 ```
-src/Packages.Main/bin/Release/Packages.Main.pdpkg.zip
+<package project>/bin/Release/*.pdpkg.zip
 ```
 
-(In CI the same applies — publish, then copy from `src/Packages.Main/bin/Release/`
+(In CI the same applies — publish, then copy from `<package project>/bin/Release/`
 into the artifact drop.)
 
 ## Summary

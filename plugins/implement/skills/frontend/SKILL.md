@@ -12,6 +12,7 @@ Local only — nothing deploys; custom apps preview locally with `npm run dev`.
 
 ```
 txc component type list --search <term>            # find the component type
+txc workspace component create --help              # project templates (page, code app, script library)
 txc workspace component parameter list <type>      # every parameter, typed
 txc docs get form-xml-reference                    # form structure guide
 ```
@@ -24,17 +25,18 @@ txc docs get form-xml-reference                    # form structure guide
 | navigation (menu areas, groups, links) | sitemap types — `--search sitemap` |
 | a detail/edit screen for a table | form — `--search form` |
 | a list of records | view — `--search view` |
-| a fully custom page (React) | generative page — `--search page` |
-| a fully custom SPA app (React + Vite) | code app — `--search code` |
+| a fully custom page (React) | generative page project template |
+| a fully custom SPA app (React + Vite) | code app project template |
 | a packaged reusable UI component on a form | `txc workspace control attach` |
-| client-side logic on forms | script library + event handler types — `--search script` |
+| client-side logic on forms | script library project template + event handler types |
 | a toolbar / command-bar button | ribbon types — `--search ribbon` |
 
 ## Sequence
 
-1. UI lives in its own solution project (conventionally `src/Solutions.UI`);
-   reference tables from other solutions with `Behavior=Existing` — never
-   duplicate schema.
+1. UI lives in its own solution project, the UI solution (default
+   `src/Solutions.UI`; resolve the repository's real project per the `init` skill's
+   `workspace-layout` reference); reference tables from other solutions with
+   `Behavior=Existing` — never duplicate schema.
 2. The table and all columns a form or view shows must already exist
    (`data-model` skill) before the form or view is created.
 3. Compose top-down and register as you go: app → navigation → forms/views →

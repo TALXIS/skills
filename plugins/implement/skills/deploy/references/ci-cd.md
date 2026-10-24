@@ -11,7 +11,8 @@ via workload identity federation. No secret material is stored — only identifi
 run it only when the user asked for CI/CD.
 
 **Branching model — trunk-based.** Everyone integrates into `main` through
-short-lived topic branches (a day or two, named `users/<name>/<topic>`) and pull
+short-lived topic branches (a day or two, named `users/<name>/<topic>` unless the repository has its own
+branch convention) and pull
 requests. Long-lived feature branches drift away from main and end in merge hell:
 the longer a branch lives, the bigger and riskier the merge.
 
@@ -29,7 +30,7 @@ gh repo view --json nameWithOwner -q .nameWithOwner
    not an upstream parent).
 2. **Tenant id** — from `az account show` above.
 3. **Test environment URL** — e.g. `https://yourenv.crm4.dynamics.com`, no trailing slash.
-4. **Deploy app name** — Entra app registration display name, e.g. `<solutionname>-deploy`.
+4. **Deploy app name** — Entra app registration display name, e.g. `<repo>-deploy`.
 5. **Required PR approvals** — 0 suits a solo repository; a real team requires >= 1.
 
 Pushing files under `.github/workflows` needs the `workflow` scope; if
@@ -102,7 +103,7 @@ gh api -X PUT "repos/<owner>/<repo>/actions/permissions" -F enabled=true -f allo
 
 Copy `build.yml` and `deploy.yml` from
 [ci-cd-workflows.md](ci-cd-workflows.md) into `.github/workflows/`,
-replacing `<SolutionName>` with the repository's `.slnx` name. `build` compiles
+substituting its placeholders (solution file, package project). `build` compiles
 Release on every PR and push to main and publishes the `.pdpkg.zip` as the `drop`
 artifact; `deploy` triggers via `workflow_run` when build succeeds on main, requests
 an OIDC token (`permissions: id-token: write`), and imports the package through a

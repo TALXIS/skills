@@ -26,8 +26,9 @@ txc docs get security-roles                        # long-form guide
 
 ## Sequence
 
-1. Roles live in their own solution project (conventionally
-   `src/Solutions.Security`).
+1. Roles live in their own solution project: find the security solution in the
+   workspace or create one (default `src/Solutions.Security`; roles resolve per the
+   `init` skill's `workspace-layout` reference).
 2. Create the role, then one privilege entry per table it touches.
 3. `dotnet build`.
 

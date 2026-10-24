@@ -3,8 +3,8 @@
 
 # Create a generative page
 
-**Contract:** when this skill ends, the generative page project exists under `src/`,
-it is referenced from `Solutions.UI`, a sitemap subarea points at it, and
+**Contract:** when this skill ends, the `<page project>` exists,
+it is referenced from `<ui solution>`, a sitemap subarea points at it, and
 `dotnet build` passes at the repository root. Nothing is deployed — local only.
 
 A generative page is a single-file React page rendered inside a model-driven app.
@@ -14,7 +14,7 @@ summary cards, tables, whatever the page needs); there is no direct WebApi clien
 
 ## Step 1 — Gather inputs (once)
 
-1. **Project folder** — e.g. `src/GenPages.<Name>`
+1. **Project folder** — per the repository's convention (default `src/GenPages.<Name>`)
 2. **Name** — lowercase page name, e.g. `<pagename>` (becomes the csproj name)
 3. **DisplayName** — human-readable, e.g. `<Display Name>`
 4. **Sitemap placement** — Title, GroupTitle, AreaTitle, the model-driven app's name
@@ -22,22 +22,22 @@ summary cards, tables, whatever the page needs); there is no direct WebApi clien
 
 ## Step 2 — Scaffold
 
-Scaffold `pp-page-generative` into `src/GenPages.<Name>` (`txc workspace component
+Scaffold `pp-page-generative` into `<page project>` (`txc workspace component
 parameter list pp-page-generative` has the inputs; `Name` is the lowercase page name).
 
 The template names the `.csproj` after the `Name` param, not the folder — locate it
-with a glob rather than assuming (`src/GenPages.<Name>/*.csproj`), and read the
+with a glob rather than assuming (`<page project>/*.csproj`), and read the
 generated **GenPageId** from its `<PropertyGroup>`; Step 5 needs both.
 
 ## Step 3 — Implement the page
 
-Edit `src/GenPages.<Name>/page.tsx`. Query data via `props.dataApi`, render with
+Edit `<page project>/page.tsx`. Query data via `props.dataApi`, render with
 Fluent UI v9 components. Keep it a single self-contained page file.
 
-## Step 4 — Reference from Solutions.UI
+## Step 4 — Reference from the UI solution
 
 ```
-dotnet add "src/Solutions.UI/Solutions.UI.csproj" reference "src/GenPages.<Name>/<pagename>.csproj"
+dotnet add "<ui solution>" reference "<page project>/<pagename>.csproj"
 ```
 
 Use the actual csproj file name found in Step 2. The ProjectReference is what makes
@@ -46,7 +46,7 @@ the solution build compile and pack the page.
 ## Step 5 — Sitemap subarea
 
 ```
-txc workspace component create pp-sitemap-subarea --output "src/Solutions.UI" --param "PageType=genpage" --param "Title=<Title>" --param "EntityLogicalName=<prefix>_<entity>" --param "GenPageId=<genpage-id>" --param "GroupTitle=<GroupTitle>" --param "AreaTitle=<AreaTitle>" --param "AppName=<prefix>_<appname>"
+txc workspace component create pp-sitemap-subarea --output "<ui solution>" --param "PageType=genpage" --param "Title=<Title>" --param "EntityLogicalName=<prefix>_<entity>" --param "GenPageId=<genpage-id>" --param "GroupTitle=<GroupTitle>" --param "AreaTitle=<AreaTitle>" --param "AppName=<prefix>_<appname>"
 ```
 
 `GenPageId` is the GUID read from the csproj in Step 2; `AppName` is the model-driven

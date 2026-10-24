@@ -3,12 +3,12 @@
 
 # Develop Dataverse plugins
 
-**Contract:** when this skill ends, `src/Plugins.<Name>` contains the plugin classes,
+**Contract:** when this skill ends, `<plugin project>` contains the plugin classes,
 and `dotnet build` + `dotnet publish` pass in that project. Local only — nothing is
 deployed and no cloud environment is touched.
 
 This skill covers the code side only. Registering the assembly and its SDK message
-processing steps happens in `Solutions.Logic` — see the `plugin-registration` reference.
+processing steps happens in `<logic solution>` — see the `plugin-registration` reference.
 The assembly is a build artifact; when and where it runs is Dataverse configuration.
 
 ## Hard constraint — net462
@@ -20,18 +20,21 @@ the `test` skill's unit reference).
 
 ## Step 1 — Gather inputs (once)
 
-From the existing workspace (`txc workspace explain` if unsure): `<PublisherName>`,
-`<PublisherPrefix>`. For the project: `<Name>` — the domain the plugins serve,
-PascalCase (e.g. `Plugins.Inventory`). For each plugin class: the class name, the
+From the existing workspace (an existing solution project's csproj has
+`PublisherName` and `PublisherPrefix`): `<PublisherName>`, `<PublisherPrefix>`. Which
+project to use: an existing `<plugin project>` (`ProjectType` Plugin) when the logic
+belongs there, otherwise a new one named per the repository's convention (default
+`src/Plugins.<Name>`, `<Name>` = the domain the plugins serve, PascalCase). For each
+plugin class: the class name, the
 target entity, the SDK message (Create/Update/Delete), and the intended stage.
 
 ## Step 2 — Create the plugin project (first time only)
 
-Skip if `src/Plugins.<Name>/Plugins.<Name>.csproj` exists. From the repository root:
+Skip if the plugin project already exists. From the repository root:
 
 ```
-txc workspace component create pp-plugin --output "src/Plugins.<Name>" --param "PublisherName=<PublisherName>" --param "Company=<PublisherName>"
-dotnet sln add src/Plugins.<Name>
+txc workspace component create pp-plugin --output "<plugin project>" --param "PublisherName=<PublisherName>" --param "Company=<PublisherName>"
+dotnet sln add "<plugin project>"
 ```
 
 The template creates the `net462` project with a strong-name signing key — Dataverse
@@ -39,17 +42,18 @@ requires signed plugin assemblies, so keep the key file in the project.
 
 ## Step 3 — Write the plugin classes
 
-One `.cs` file per plugin class in `src/Plugins.<Name>/`. The `pp-plugin` template ships
+One `.cs` file per plugin class in `<plugin project>`. The `pp-plugin` template ships
 a `PluginBase` (tracing and fault wrapping) — derive from it and override
 `ExecuteDataversePlugin` with the `(string unsecure, string secure)` constructor the
 template uses. A plain `IPlugin.Execute(IServiceProvider)` class also works, but the
-scaffolded project and its tests assume the base class. Skeleton:
+scaffolded project and its tests assume the base class. Skeleton (`<Namespace>` is
+the project's root namespace):
 
 ```csharp
 using System;
 using Microsoft.Xrm.Sdk;
 
-namespace Plugins.<Name>
+namespace <Namespace>
 {
     public class <PluginClassName> : PluginBase
     {
@@ -77,7 +81,7 @@ The stage is set at registration time, but the code must be written for it:
   place to reject bad input: throw `InvalidPluginExecutionException` with a
   user-facing message and nothing has to be rolled back.
 - **Post-operation** — runs after the record is written, *still inside* the
-  transaction. Put related writes here (e.g. updating a balance when a transaction
+  transaction. Put related writes here (e.g. updating a parent's total when a child
   record is created) so they commit or roll back together with the triggering record.
 
 Validation logic never belongs in Post-operation, and dependent writes never belong
@@ -85,7 +89,7 @@ in Pre-validation.
 
 ## Step 4 — Validate
 
-From `src/Plugins.<Name>`:
+From `<plugin project>`:
 
 ```
 dotnet build
@@ -99,4 +103,4 @@ Both must pass. `dotnet publish` produces the assembly layout that registration
 
 Report the plugin classes created, their intended entity/message/stage, that build
 and publish passed, and that nothing was deployed. Next step in one line: register
-the assembly and steps in `Solutions.Logic` (`plugin-registration` reference).
+the assembly and steps in `<logic solution>` (`plugin-registration` reference).

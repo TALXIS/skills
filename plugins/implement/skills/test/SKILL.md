@@ -11,7 +11,7 @@ environment — say so before running them against one.
 ## Ask the CLI first
 
 ```
-txc component type list --search test              # test project types
+txc workspace component create --help              # test project templates
 txc workspace component parameter list <type>      # every parameter, typed
 ```
 
@@ -25,7 +25,9 @@ txc workspace component parameter list <type>      # every parameter, typed
 
 ## Sequence
 
-1. Scaffold the test project under `src/`, add it to the solution file.
+1. Find the test project for the layer (default `src/Tests.Plugins`, `src/Tests.Scripts`,
+   `src/Tests.UI`; roles resolve per the `init` skill's `workspace-layout` reference)
+   or scaffold it, and add it to the solution file.
 2. Write or generate the tests, then `dotnet build` and `dotnet test` at the
    project path — that is the whole loop.
 

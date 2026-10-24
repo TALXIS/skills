@@ -3,7 +3,7 @@
 
 # Create a code app
 
-**Contract:** when this skill ends, the code app project exists under `src/`, its
+**Contract:** when this skill ends, the `<code app project>` exists, its
 data sources are generated from local metadata, and `dotnet build` passes at the
 repository root. Nothing is deployed and no cloud environment is touched — local only.
 
@@ -13,18 +13,18 @@ keep general-purpose CRUD in the model-driven app.
 
 ## Step 1 — Gather inputs (once)
 
-1. **Project name** — PascalCase folder, e.g. `Apps.<Name>`
+1. **Project folder** — per the repository's convention (default
+   `src/Apps.<Name>`, PascalCase `<Name>`)
 2. **DisplayName** — human-readable, e.g. `<Display Name>`
 3. **AppName** — lowercase schema name, e.g. `<appname>`. Pin it explicitly so the
    CanvasApp schema name (`<prefix>_<appname>`) doesn't depend on the folder name.
 4. **Tables** — logical names of every table the app reads or writes, e.g.
-   `<prefix>_<entity>`. Each must already exist in `src/Solutions.DataModel`.
+   `<prefix>_<entity>`. Each must already exist in `<data-model solution>`.
 
 ## Step 2 — Scaffold and wire into the build
 
-Scaffold `pp-app-code` into `src/Apps.<Name>` with `DisplayName` and `AppName`, then
-`dotnet sln add` it and add a `ProjectReference` to it from
-`src/Solutions.UI/Solutions.UI.csproj`.
+Scaffold `pp-app-code` into `<code app project>` with `DisplayName` and `AppName`, then
+`dotnet sln add` it and add a `ProjectReference` to it from `<ui solution>`.
 
 A plain `ProjectReference` is all the wiring: the TALXIS build discovers any
 `ProjectType=CodeApp` reference regardless of which solution carries it — no dedicated
@@ -37,18 +37,18 @@ Replace the demo pages with the real screens once data sources exist.
 ## Step 3 — Data sources from local metadata (the differentiator)
 
 A code app talks to Dataverse through declared data sources, and `txc` generates them
-**offline** from the table metadata already sitting in `src/Solutions.DataModel` — no
+**offline** from the table metadata already sitting in `<data-model solution>` — no
 live environment, no auth, no cloud connection. One invocation per table:
 
 ```
-txc workspace component create pp-app-code-data --output "src/Apps.<Name>" --param "EntityLogicalName=<prefix>_<entity>" --param "ModelSolutionPath=../Solutions.DataModel"
+txc workspace component create pp-app-code-data --output "<code app project>" --param "EntityLogicalName=<prefix>_<entity>" --param "ModelSolutionPath=<relative path to the data-model solution>"
 ```
 
 `ModelSolutionPath` is resolved relative to `--output` (the template runs its
 post-actions there). Each run produces:
 
-- typed models and services under `src/Apps.<Name>/src/generated`
-- schema files under `src/Apps.<Name>/.power`
+- typed models and services under `<code app project>/src/generated`
+- schema files under `<code app project>/.power`
 - the data source registration in `power.config.json`, which the solution build packs
   with the app
 
@@ -58,7 +58,7 @@ Generated identifiers title-case the first character of the publisher prefix
 ## Step 4 — Local dev loop
 
 ```
-cd src/Apps.<Name>
+cd <code app project>
 npm run dev
 ```
 
