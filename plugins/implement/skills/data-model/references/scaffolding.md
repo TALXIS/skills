@@ -73,12 +73,15 @@ what is missing:
 
 - Every new table has a required primary name column `<PublisherPrefix>_name`; satisfy
   a "name" column with it instead of adding another.
-- A Lookup column creates its relationship: `Other/Relationships/<target>.xml` lists it.
-  If it is missing, create the relationship component yourself.
+- A Lookup column creates its relationship: a file `Other/Relationships/<target>.xml` and an
+  entry in `Other/Relationships.xml`. If it is missing, create the relationship component
+  (`EntityRelationship`) yourself.
 - Default forms, views and a ribbon file exist under `Entities/<prefix>_<entity>/`.
-- A local choice is the `OptionSet(Local)` column type with its options inline in
-  `OptionSetOptions` (comma-separated labels — without it a placeholder option is
-  written); a separate option-set component is only for a shared (global) list.
+- A choice is a column: `OptionSet(Local)` keeps its options inline in `OptionSetOptions`
+  (comma-separated labels — without it a placeholder option is written);
+  `OptionSet(Global)` uses a list shared across tables (`OptionSetType` New or Existing,
+  `OptionSetName`); `LocalMulti` / `GlobalMulti` are the multi-select variants. The
+  `OptionSet` component is that shared list on its own.
 - Date and time needs `DateTimeFormat=datetime`; the default is date-only.
 
 To reference a table owned by another solution project (or a standard Dataverse table)
