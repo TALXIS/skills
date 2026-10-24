@@ -67,7 +67,7 @@ For each environment (Dev and Test):
 txc env setting set PowerApps_AllowCodeApps true --profile <name>
 ```
 
-Idempotent. Verify with `txc env setting list --profile <name> --filter PowerApps_AllowCodeApps`.
+Idempotent.
 If `set` fails: admin center → Settings → Product → Features → Enable code apps.
 
 ## Step 6 — Select the default profile
