@@ -148,7 +148,7 @@ say so.
 | explains what a term meant | goes in `context`, and may resolve an apparent contradiction |
 | cannot place the vocabulary | `ubml walk legend` - the reviewer will not ask for a word they do not know they are missing |
 | asks what came before the quote | `ubml walk context <id>` - never send them back to the recording |
-| cannot settle it | status becomes `deferred`, with the reason and who can answer |
+| cannot settle it | status becomes `deferred`, with the reason, and who can answer recorded with `--to <name>` |
 | introduces something new | nothing, until it has a source of its own |
 
 The enum is `proposed`, `validated`, `disputed`, `deferred`, `retired` and
@@ -159,8 +159,9 @@ rather than inventing a word that reads right.
 the term appears four different ways in the transcript, the person who knows was
 not on the call - has decided something, and leaving it `proposed` records the
 opposite. The walk then offers that claim every time and the review cannot get
-past it. Note who can settle it and what exactly they need to answer; "check
-with the business owner" is not a question anyone can take away.
+past it. Record who can settle it with `--to`, so the open-questions view can
+see them, and note what exactly they need to answer; "check with the business
+owner" is not a question anyone can take away.
 
 It is not `disputed`. A deferred claim may be perfectly true; what is missing is
 the means to confirm it.
