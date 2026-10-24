@@ -29,18 +29,23 @@ dotnet add "<ui solution>" reference "<scripts project>"
 
 ## Write the handlers
 
-The rollup entry point is `<scripts project>/src/index.ts`. Export the handlers through
-a namespace object, e.g. `MyScripts.EntityForm.onLoad(executionContext)`. The UMD
-global `name` in `<scripts project>/rollup.config.mjs` defaults to `<prefix>_main` —
-it must equal the first segment of every `FunctionName` you register below, so either
-set it to your namespace (e.g. `MyScripts`) or name your functions
-`<prefix>_main.<...>`.
+The rollup entry point is `<scripts project>/src/index.ts` (replace the scaffold's
+sample `Main` class). The bundle is UMD: what `index.ts` exports becomes the properties
+of one global, so exporting `EntityForm` with an `onLoad` function is reached as
+`<global>.EntityForm.onLoad(executionContext)`. The global's `name` in
+`<scripts project>/rollup.config.mjs` defaults to `<prefix>_main` — it must equal the
+first segment of every `FunctionName` you register below, so either set it to your
+namespace (e.g. `MyScripts`) or name your functions `<prefix>_main.<...>`.
 
 Build the library — this is also the validation loop for the TypeScript:
 
 ```
 dotnet build "<scripts project>"
 ```
+
+A successful build can print `where: not found` (a Windows-only command in the build)
+and `CS2008: No source files specified`; both are harmless. `npm` leaves a
+`package-lock.json` — commit it.
 
 ## Register event handlers
 

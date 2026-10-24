@@ -46,9 +46,11 @@ requires signed plugin assemblies, so keep the key file in the project.
 
 One `.cs` file per plugin class in `<plugin project>`. The `pp-plugin` template ships
 a `PluginBase` (tracing and fault wrapping) — derive from it and override
-`ExecuteDataversePlugin`. Its constructor takes the plugin's `Type`; a
-`(string unsecure, string secure)` constructor on the derived class is the convention
-for receiving step configuration, and is optional. A plain
+`ExecuteDataversePlugin`. Its constructor takes the plugin's `Type`. Give the derived
+class a public **parameterless** constructor (below): FakeXrmEasy's
+`ExecutePluginWithTarget<T>` does not compile without one (CS0310). A
+`(string unsecure, string secure)` constructor is only for receiving step configuration
+and is optional. A plain
 `IPlugin.Execute(IServiceProvider)` class also works, but the scaffolded project and
 its tests assume the base class. Skeleton (`<Namespace>` is the project's root
 namespace):
@@ -61,8 +63,7 @@ namespace <Namespace>
 {
     public class <PluginClassName> : PluginBase
     {
-        public <PluginClassName>(string unsecureConfiguration, string secureConfiguration)
-            : base(typeof(<PluginClassName>))
+        public <PluginClassName>() : base(typeof(<PluginClassName>))
         {
         }
 

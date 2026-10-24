@@ -60,7 +60,12 @@ txc workspace component create pp-form-tab --output "<ui solution>" \
 
 **4. Column**, **5. Section**, **6. Row** — `pp-form-column`, `pp-form-section` and
 `pp-form-row` take the same `FormType`, `FormId` and `EntitySchemaName` as the tab;
-run `pp-form-row` once per field the section will hold.
+run `pp-form-row` once per field the section will hold. Each appends to the form's
+last tab/column/section by default; to target another one use the 1-based `TabIndex`,
+`ColumnIndex`, `SectionIndex` (`SectionId` with a GUID failed with "Target section not
+found" and rolled the command back). A new row is empty: its 1-based position in the
+section is the `RowIndex` of the cell and control that fill it — on a form that
+already has rows, count them (a section with one row gets `RowIndex=2`).
 
 **7. Cell** — one per row; `RowIndex` is 1-based and `DisplayName` is the field label:
 
@@ -75,13 +80,16 @@ txc workspace component create pp-form-cell --output "<ui solution>" \
 
 **8. Control** (the field's form control, not a PCF control) — one per cell, same `RowIndex` as the cell it fills.
 `ControlType` matches the attribute's type: `Text`, `MultilineText`, `WholeNumber`,
-`Decimal`, `Currency`, `DateTime`, `OptionSet` (also for booleans), `Lookup`:
+`Decimal`, `Currency`, `DateTime`, `OptionSet` (also for booleans), `Lookup`.
+`isUnbound` defaults to `true` (a control not bound to a column) — pass
+`isUnbound=false` for a field bound to `AttributeLogicalName`:
 
 ```
 txc workspace component create pp-form-control --output "<ui solution>" \
   --param "ControlType=Text" \
   --param "RowIndex=1" \
   --param "AttributeLogicalName=<prefix>_name" \
+  --param "isUnbound=false" \
   --param "FormType=main" \
   --param "FormId=$FORM_GUID" \
   --param "EntitySchemaName=<prefix>_<entity>"

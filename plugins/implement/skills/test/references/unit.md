@@ -47,14 +47,15 @@ reference` refuses to link across that gap, so add the `ProjectReference` to
 
 The build itself resolves this fine via asset target fallback and prints **NU1702**
 ("resolved using .NETFramework... instead of...") — that warning is expected and
-benign; do not "fix" it.
+benign; do not "fix" it. The restore may also print NU1902/NU1903 advisories for
+packages the test template pulls in transitively — not caused by your code.
 
 ## Plugin tests — Step 3: write tests
 
 One `<PluginClassName>Tests.cs` per plugin class in `<plugin test project>`. Derive each
 from the template's `FakeXrmEasyTestBase`: it builds `_context` (the `IXrmFakedContext`)
-and `_service`, and sets the FakeXrmEasy license — `Commercial` by default, change it in
-the base class if that is not yours. Pattern: seed records with `_context.Initialize`,
+and `_service`, and sets the FakeXrmEasy license — `Commercial` by default (tests run without a key; whether your use needs a purchased
+license is the user's call) — change it in the base class if that is not yours. Pattern: seed records with `_context.Initialize`,
 execute the plugin with `ExecutePluginWithTarget`, assert on the faked data or on the
 thrown `InvalidPluginExecutionException`. Attribute logical names carry the
 `<PublisherPrefix>_` prefix.
@@ -80,9 +81,10 @@ dotnet sln add "<script test project>"
 
 ## Script tests — Step 2: write tests
 
-Test files go in `<script test project>/tests/*.test.js`. Assign the `Xrm` functions a
-test relies on as `jest.fn()` explicitly in `beforeEach` — Jest 30 does not expose
-`global.jest` to the template's `setupXrm`.
+Test files go in `<script test project>/tests/*.test.js`. Nothing calls the template's
+`setupXrm` for you (`jest.config.js` has no `setupFiles`): call it in `beforeAll`, and
+assign the `Xrm` functions a test relies on as `jest.fn()` explicitly in `beforeEach` —
+Jest 30 does not expose `global.jest` to `setupXrm`.
 
 ## Script tests — Step 3: run
 
@@ -94,7 +96,9 @@ dotnet test "<script test project>" --nologo
 ```
 
 Must pass — `dotnet test` invokes Jest through the `RunJest` target, so one command
-covers both C# and JS suites in CI and locally.
+covers both C# and JS suites in CI and locally. A script-only test project also prints
+"No test is available in …dll" and still exits 0; a failing Jest test is what fails the
+run. The scaffolded csproj writes Windows-style backslash paths; they still worked on Linux.
 
 ## Summary
 

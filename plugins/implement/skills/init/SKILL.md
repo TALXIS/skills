@@ -29,7 +29,15 @@ txc workspace project explain   # project types and how they compose
 txc docs list                   # guides (txc docs get <id>)
 ```
 
-Piped txc output is JSON; every command answers `--help`.
+Piped txc output is JSON; every command answers `--help`. Local `txc workspace …`
+commands log `Resolved target environment … using profile …` when the machine has a
+txc profile; they still only touch files — that line does not mean an environment was
+contacted.
+
+Undoing a scaffold: deleting a scaffolded component's file leaves its entry in the
+solution's `Other/Solution.xml` (root components) and the build fails (TXM001) until you
+remove the entry; the build also keeps reporting the old ids until the solution
+project's `obj/` and `bin/` are deleted.
 
 ## Existing repository
 

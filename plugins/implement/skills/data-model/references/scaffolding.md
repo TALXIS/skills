@@ -1,6 +1,6 @@
 > **Needed because:** the scaffold sequence and cross-solution referencing are not surfaced by txc help.
 > **Remove when:** txc surfaces sequences in its own help/docs (TOOLING-BACKLOG T12), and
-> deletes components from an environment (tools-cli#72) so the schema-change note can point at it.
+> deletes every component type from an environment (tools-cli#72) so the schema-change note can point at it.
 
 # Implement the data model
 
@@ -25,7 +25,12 @@ broken XML references. Never scaffold a lookup before its target entity exists.
 
 Changing a schema name or attribute type of a component that is already deployed
 means deleting it in the environment first — Dataverse does not apply such a change
-on import. Editing the source alone does not fix a deployed environment.
+on import (tested: importing int → decimal fails with "Attribute … is a Integer, but a
+Decimal type was specified"; after `txc env entity attribute delete` and a re-import the
+column has the new type). Editing the source alone does not fix a deployed environment.
+Deleting a column also deletes its data. `txc env entity attribute delete` and
+`entity delete` cover columns and tables; other component types have no delete command
+yet (tools-cli#72).
 
 ## Step 1 — Gather inputs (once)
 
