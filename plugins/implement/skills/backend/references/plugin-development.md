@@ -39,22 +39,32 @@ requires signed plugin assemblies, so keep the key file in the project.
 
 ## Step 3 — Write the plugin classes
 
-One `.cs` file per plugin class in `src/Plugins.<Name>/`, each implementing
-`Microsoft.Xrm.Sdk.IPlugin`. Skeleton:
+One `.cs` file per plugin class in `src/Plugins.<Name>/`. The `pp-plugin` template ships
+a `PluginBase` (tracing and fault wrapping) — derive from it and override
+`ExecuteDataversePlugin` with the `(string unsecure, string secure)` constructor the
+template uses. A plain `IPlugin.Execute(IServiceProvider)` class also works, but the
+scaffolded project and its tests assume the base class. Skeleton:
 
 ```csharp
 using System;
 using Microsoft.Xrm.Sdk;
 
-public class <PluginClassName> : IPlugin
+namespace Plugins.<Name>
 {
-    public void Execute(IServiceProvider serviceProvider)
+    public class <PluginClassName> : PluginBase
     {
-        var context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
-        var factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
-        var service = factory.CreateOrganizationService(context.UserId);
-        var target = (Entity)context.InputParameters["Target"];
-        // logic here — attribute logical names carry the <PublisherPrefix>_ prefix
+        public <PluginClassName>(string unsecureConfiguration, string secureConfiguration)
+            : base(typeof(<PluginClassName>))
+        {
+        }
+
+        protected override void ExecuteDataversePlugin(ILocalPluginContext localPluginContext)
+        {
+            var context = localPluginContext.PluginExecutionContext;
+            var service = localPluginContext.OrgSvcFactory.CreateOrganizationService(context.UserId);
+            var target = (Entity)context.InputParameters["Target"];
+            // logic here — attribute logical names carry the <PublisherPrefix>_ prefix
+        }
     }
 }
 ```
