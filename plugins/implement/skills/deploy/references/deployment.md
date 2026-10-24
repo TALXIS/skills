@@ -33,15 +33,15 @@ txc env pkg import TALXIS.Controls.Grid.Package --profile <profile>
 ## Step 2 — Build the Package Deployer package
 
 ```
-dotnet publish <package project> -c Release
+dotnet publish <package project> -c <Debug|Release>
 ```
 
 Deliberately no `-o` — an explicit output dir leaks a global `PublishDir` into
 nested plugin builds and breaks them (tools-devkit-build#109). The `.pdpkg.zip`
 lands at `<package project>/bin/<Configuration>/<project name>.pdpkg.zip` (tooling-backlog
 T6; `<package project>` per the `init` skill's `workspace-layout` reference file).
-Release packs managed (Test/prod); Debug packs unmanaged (Dev) — use `-c Debug` for
-a Dev environment (the command above is Release). The build must be clean — never
+Release packs managed (Test/prod); Debug packs unmanaged (Dev): `-c Debug` for a Dev
+environment, `-c Release` for Test/prod. The build must be clean — never
 deploy a broken build.
 
 ## Step 3 — Import the package
@@ -62,7 +62,8 @@ import it can still show the old metadata — once, re-check after a few seconds
 import record (`txc env deployment list`, then `deployment get` with the run id from
 the list; `--latest` can return a child step such as PublishAll).
 
-To push a local change to a Dev environment, import the built solution zip instead —
+**Iterating on a Dev environment: use the solution zip as the default, not the package.**
+To push a local change to a Dev environment, import the built solution zip —
 the zip is written under the Dataverse solution project's `bin/<Configuration>/` (find
 it, the target-framework folder name varies):
 
