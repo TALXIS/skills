@@ -72,7 +72,7 @@ txc env solution import <path-to-solution .zip> --wait --profile <profile>
 
 It updates the installed solution in place (`path: update`). Importing the project
 folder (`txc env solution import <solution project>`) currently fails looking in a
-`net462` output folder (tools-cli#178).
+`net462` output folder (tools-cli#178; fix in PR #179).
 
 ## Step 4 — Pull environment edits back to source
 
@@ -84,12 +84,15 @@ only sanctioned way portal changes reach source control:
 txc env solution pull <solution project> --profile <profile>
 ```
 
-`<solution project>` is the folder of the solution project that owns the edited
-components (resolve it by what it contains, e.g. the solution that holds the roles),
+`<solution project>` is the **folder** of the solution project (not the `.csproj` file:
+"Directory not found") that owns the edited components (resolve it by what it contains, e.g. the solution that holds the roles),
 passed as the positional argument; `--output` overrides
 the solution root folder it syncs into. It overwrites the files in source with the
 environment's state, so a source change that was never pushed is deleted — push or
-commit first. A bare solution unique name needs `--output`. Then `git status` to show
+commit first. A bare solution unique name needs `--output`. `txc env solution clone <name> -o <dir>` (a
+new project from an environment's solution) must be run where a solution file is found
+(a `.sln`/`.slnx` in or above the working directory), otherwise it fails and leaves a
+half-written project (tools-cli#216). Then `git status` to show
 what changed: after one environment-side edit, expect exactly that edit (the first pull
 after a fresh scaffold also normalises XML formatting, tools-cli#54). Pull
 only from Dev — the place where humans edit; pipelines only ship built packages

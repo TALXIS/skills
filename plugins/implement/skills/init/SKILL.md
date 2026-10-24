@@ -29,7 +29,9 @@ txc workspace project explain   # project types and how they compose
 txc docs list                   # guides (txc docs get <id>)
 ```
 
-Piped txc output is JSON; every command answers `--help`. Local `txc workspace …`
+Piped txc output is JSON; every command answers `--help`. Usage errors ("Required
+option …", "Unrecognized argument …") go to stderr only, so with `2>/dev/null` a wrong
+call looks like empty output — read stderr when a command prints nothing. Local `txc workspace …`
 commands log `Resolved target environment … using profile …` when the machine has a
 txc profile; they still only touch files — that line does not mean an environment was
 contacted.

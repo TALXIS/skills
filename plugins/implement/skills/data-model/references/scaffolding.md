@@ -28,9 +28,14 @@ means deleting it in the environment first — Dataverse does not apply such a c
 on import (tested: importing int → decimal fails with "Attribute … is a Integer, but a
 Decimal type was specified"; after `txc env entity attribute delete` and a re-import the
 column has the new type). Editing the source alone does not fix a deployed environment.
-Deleting a column also deletes its data. `txc env entity attribute delete` and
-`entity delete` cover columns and tables; other component types have no delete command
-yet (tools-cli#72).
+Deleting a column also deletes its data. The commands are
+`txc env entity attribute delete <entity> --name <attr> --apply --yes` and
+`txc env entity delete --entity <entity> --apply --yes`; without `--apply` they exit 0
+and change nothing. Other component types have no delete command yet (tools-cli#72,
+PR #151 adds `env component delete`). To change a column's type in source, re-scaffold it
+with `pp-entity-attribute` instead of editing the XML by hand (the element names differ
+per type, e.g. a decimal uses `Accuracy`; a wrong hand edit fails the build with TXVAL001,
+and the message can name a stale copy under `obj/` until you delete it).
 
 ## Step 1 — Gather inputs (once)
 
