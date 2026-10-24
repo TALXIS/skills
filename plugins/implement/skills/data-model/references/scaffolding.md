@@ -30,12 +30,15 @@ Decimal type was specified"; after `txc env entity attribute delete` and a re-im
 column has the new type). Editing the source alone does not fix a deployed environment.
 Deleting a column also deletes its data. The commands are
 `txc env entity attribute delete <entity> --name <attr> --apply --yes` and
-`txc env entity delete --entity <entity> --apply --yes`; without `--apply` they exit 0
-and change nothing. Other component types have no delete command yet (tools-cli#72,
-PR #151 adds `env component delete`). To change a column's type in source, re-scaffold it
-with `pp-entity-attribute` instead of editing the XML by hand (the element names differ
-per type, e.g. a decimal uses `Accuracy`; a wrong hand edit fails the build with TXVAL001,
-and the message can name a stale copy under `obj/` until you delete it).
+`txc env entity delete --entity <entity> --apply --yes`; without `--apply` they refuse (exit 2,
+"must specify --apply or --stage") and change nothing. Other component types have no delete command yet (tools-cli#72,
+PR #151 adds `env component delete`). To change a column's type in source, delete its `<attribute>` block from the table's
+`Entity.xml`, then scaffold it again with `pp-entity-attribute` and the new `AttributeType`
+(scaffolding over an existing column exits 0 and changes nothing, templates#177; do not
+hand-write the new type's elements: a wrong edit fails the build with TXVAL001, and the
+message can name a stale copy under `obj/` until you delete it). A decimal's places are the
+`DecimalPrecision` parameter. A column that a form or view uses cannot be deleted in the
+environment — see the `inner-loop` reference, step 5.
 
 ## Step 1 — Gather inputs (once)
 

@@ -38,7 +38,8 @@ contacted.
 
 Undoing a scaffold: deleting a scaffolded component's file leaves its entry in the
 solution's `Other/Solution.xml` (root components) and the build fails (TXM001) until you
-remove the entry; the build also keeps reporting the old ids until the solution
+remove the entry (and any other reference to the component: grep the repository for its id and name, e.g. an app's role map);
+the build also keeps reporting the old ids until the solution
 project's `obj/` and `bin/` are deleted.
 
 ## Existing repository

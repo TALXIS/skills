@@ -58,7 +58,11 @@ A check that finds nothing means the change did not land: go to the failure tabl
 
 Push or commit your own changes first: `txc env solution pull <solution project folder> --profile <profile>`
 overwrites source with the environment's state, so an unpushed source change is deleted. Then `git diff`: after one
-environment-side edit expect exactly that edit; review, then commit.
+environment-side edit expect that edit; review, then commit. Tested: a pull deletes a column that exists only in source,
+and the files of other projects (plugin code, scripts) are not touched. With other uncommitted work in the tree, commit only the
+pulled paths (`git add -- <paths>`, check `git diff --cached --stat`). Serialization-only changes (for example
+`<AutoNumberFormat />` rewritten as an empty element pair) can show up next to the real edit: revert those lines so the commit
+holds only the change (tools-cli#54, PR #174).
 
 ## 5. Remove or rename a component
 
@@ -66,8 +70,23 @@ Delete it in source (its files and its root-component entry in `Other/Solution.x
 environment — importing a solution never deletes components, and a changed column type or schema name is rejected
 until the old column is gone: `txc env entity attribute delete <entity> --name <attr> --apply --yes`,
 `txc env entity delete --entity <entity> --apply --yes`, `txc env data record delete <id> --entity <table> --apply --yes`
-(roles, apps, plugin assemblies and steps, web resources). Check dependencies first
-(`txc env component dependency list|required`, `txc env solution uninstall-check <name>`).
+(roles, apps, plugin assemblies and steps, web resources; `env role` has no delete). Count rows first
+(`env data query sql "SELECT COUNT(*) FROM <table>"`): deleting a column or table deletes its data. Check dependencies first
+(`txc env component dependency list --entity <table> [--attribute <column>]`, `env solution uninstall-check <name>`).
+
+A column that a form or view uses cannot be deleted (`attribute delete` fails with "referenced by N other components";
+`dependency list` names them; `dependency delete-check` exits 1 while something blocks). Tested route for a type change:
+(1) in source remove the column from the form/views and keep the old column definition, build, import the zip, publish
+`--entities <table>`; (2) delete the column in the environment; (3) in source add the column with the new type and put
+it back on the form/views, build, import, publish. Check with `entity attribute get <table> --name <column>` and the
+form check above. Publish the form change before you delete the column.
+
+A **role** that an app uses cannot be deleted (`record delete` fails with "referenced by 1 other components"): in source
+also remove its id from the app's `AppModules/<app>/AppModule.xml` (`AppModuleRoleMaps`) and any `MissingDependencies` entry for
+it in the UI project's `Other/Solution.xml` (grep the repository for the role id and name), import and publish, then unlink
+it in the environment — `txc env data record disassociate <app id> --entity appmodule --target <role id> --target-entity role
+--relationship appmoduleroles_association --apply --yes` (the app keeps its other roles; find the id with `env data query odata
+appmodules --filter "uniquename eq '<app>'"`) — and delete the role.
 
 ## 6. Reset your Dev objects
 
