@@ -58,7 +58,24 @@ txc config profile create --name <name> --auth <auth-id> --connection <name>
 Use the same short name for connection and profile (`dev`, `test`) — one profile
 per environment. Verify with `txc config profile list --format json`.
 
-## Step 5 — Select the default profile
+## Step 5 — Enable code apps (only if the project contains a code app)
+
+Code apps are **off by default** on a new environment, and a code app does not run
+there until the setting is on. Do it for every environment the app will run in
+(Dev and Test), right after its profile exists. Check first, set only if needed:
+
+```
+txc env setting list --profile <name> --filter PowerApps_AllowCodeApps
+txc env setting set PowerApps_AllowCodeApps true --profile <name>
+```
+
+Setting it to `true` when it already is `true` is harmless, so this is safe to
+re-run on an environment created before the project had a code app. Re-run `list`
+afterwards and confirm `value` is `true`. If `set` fails, the same switch is
+**Enable code apps** under Settings → Product → Features in the admin center, and
+can also be set for many environments at once through environment group rules.
+
+## Step 6 — Select the default profile
 
 ```
 txc config profile select dev
