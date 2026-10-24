@@ -34,7 +34,11 @@ Skip if the workspace already has a UI solution. Create it like any solution pro
 In this order (`txc workspace component parameter list <type>` for each):
 
 1. `pp-entity` with `Behavior=Existing`, once per entity the app uses — a reference,
-   not a table (`DisplayName` is still required).
+   not a table (`DisplayName` is still required):
+
+   ```
+   txc workspace component create pp-entity --output "<ui solution>" --param "Behavior=Existing" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<entity>" --param "DisplayName=<Display Name>"
+   ```
 2. `pp-app-model` — the app. Its full name is `<PublisherPrefix>_<app>`, and every
    later command takes it as `AppName`. It has no display-name parameter: the label is
    the logical name, so set `LocalizedName` by hand in `AppModule.xml` and
@@ -64,7 +68,9 @@ dotnet build
 ```
 
 Must pass. `TALXISXSD001` = schema validation failed (fix the reported XML);
-`TALXISGUID001` = duplicate GUID (regenerate the reported id).
+`TALXISGUID001` = duplicate GUID (regenerate the reported id). If the build keeps
+reporting an error in a file you already fixed, it is validating a stale copy under
+`obj/` — delete the solution project's `obj/` and `bin/` and build again.
 
 ## Step 6 — Summary
 
