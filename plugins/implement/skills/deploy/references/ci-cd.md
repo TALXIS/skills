@@ -10,11 +10,16 @@ via workload identity federation. No secret material is stored — only identifi
 (client id, tenant id, environment URL). This skill talks to GitHub and Entra ID;
 run it only when the user asked for CI/CD.
 
-**Branching model — trunk-based.** Everyone integrates into `main` through
-short-lived topic branches (a day or two, named `users/<name>/<topic>` unless the repository has its own
-branch convention) and pull
-requests. Long-lived feature branches drift away from main and end in merge hell:
-the longer a branch lives, the bigger and riskier the merge.
+**Defaults, not requirements:** GitHub Actions as the host, `main` as the default branch
+(read it from the repository) and the branching model below. If the repository already
+has another CI host, branch name or branching convention, keep it and apply these steps
+(build, publish the package, import with a federated identity) in its terms.
+
+**Branching model (default) — trunk-based.** Everyone integrates into the default
+branch through short-lived topic branches (a day or two, named `users/<name>/<topic>`
+unless the repository has its own branch convention) and pull requests. Long-lived
+feature branches drift away from it and end in merge hell: the longer a branch lives,
+the bigger and riskier the merge.
 
 ## Step 1 — Prerequisites and inputs (once)
 
@@ -115,7 +120,7 @@ now, and the PR exercises the loop you just built.
 After the `build` workflow has reported at least once, update the ruleset so PRs
 cannot merge unless `build` passes and the branch is up to date with main. The PUT
 replaces the whole `rules` array — send every rule, not just the addition; payload
-in [ci-cd-branch-ruleset.md](ci-cd-branch-ruleset.md). Broken solutions
+in [ci-cd-branch-ruleset.md](ci-cd-branch-ruleset.md). Broken builds
 can no longer reach main.
 
 ## Step 7 — Validate and summarize

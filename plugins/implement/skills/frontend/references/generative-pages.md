@@ -34,14 +34,14 @@ generated **GenPageId** from its `<PropertyGroup>`; Step 5 needs both.
 Edit `<page project>/page.tsx`. Query data via `props.dataApi`, render with
 Fluent UI v9 components. Keep it a single self-contained page file.
 
-## Step 4 — Reference from the UI solution
+## Step 4 — Reference from `<ui solution>`
 
 ```
 dotnet add "<ui solution>" reference "<page project>/<pagename>.csproj"
 ```
 
 Use the actual csproj file name found in Step 2. The ProjectReference is what makes
-the solution build compile and pack the page.
+the solution project's build compile and pack the page.
 
 ## Step 5 — Sitemap subarea
 

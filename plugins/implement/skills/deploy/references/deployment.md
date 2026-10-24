@@ -47,7 +47,7 @@ must be clean — never deploy a broken build.
 txc env pkg import <path-to-.pdpkg.zip> --profile <profile>
 ```
 
-Import order of the solutions inside the package is derived from
+Import order of the Dataverse solutions inside the package is derived from
 `ProjectReference`s, so dependencies install first.
 
 ## Step 4 — Pull environment edits back to source
@@ -61,7 +61,7 @@ txc env solution pull <solution project> --profile <profile>
 ```
 
 `<solution project>` is the folder of the solution project that owns the edited
-components (resolve it by what it contains, e.g. the security solution for roles),
+components (resolve it by what it contains, e.g. the solution that holds the roles),
 passed as the positional argument; `--output` overrides
 the solution root folder it syncs into. Then `git status` to show what changed. Pull
 only from Dev — the place where humans edit; pipelines only ship built packages

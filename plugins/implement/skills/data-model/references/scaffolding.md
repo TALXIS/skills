@@ -8,11 +8,14 @@
 tables and columns, is referenced by `<package project>`, and `dotnet build` passes at
 the repository root. Local only — no cloud environment is touched.
 
-One solution per concern: schema lives in the data-model solution, never in UI or
-logic solutions. The repository must already be initialized (see the `init` skill).
-Project roles, their defaults (`src/Solutions.DataModel`, ...) and how to resolve them
-in an existing repository: [workspace-layout](../../init/references/workspace-layout.md).
-The repository's own naming wins; the defaults apply only when it has none.
+By default schema lives in its own Dataverse solution, apart from UI and logic, so
+schema changes stay out of UI diffs. In a repository split differently, or when the
+user wants another split (one solution for everything, split by domain, tables and UI
+together), `<data-model solution>` is whichever project holds the tables there, and may
+be the same project as the UI or logic role. The repository must already be initialized
+(see the `init` skill). Terms, project roles, their defaults (`src/Solutions.DataModel`,
+...) and how to resolve them: [workspace-layout](../../init/references/workspace-layout.md).
+The repository's own naming and layout win; the defaults apply only when it has none.
 
 ## Ordering invariant
 
@@ -31,11 +34,12 @@ From the existing workspace (an existing solution project's csproj has
 it), plural logical name, display names. For each column: attribute type, required
 level, display name.
 
-## Step 2 — Create the solution (first time only)
+## Step 2 — Create the Dataverse solution (first time only)
 
-Skip if the workspace already has a data-model solution. This is the pattern every
-solution project follows — create it with `pp-solution` (in a new repository at the
-default `src/Solutions.DataModel`) and reference it from the package project:
+Skip if the workspace already has a Dataverse solution for tables (in a single-solution
+repository, its one solution). This is the pattern every solution project follows —
+create it with `pp-solution` (in a new repository at the default `src/Solutions.DataModel`)
+and reference it from the package project:
 
 ```
 txc workspace component create pp-solution --output "<data-model solution>" --param "PublisherName=<PublisherName>" --param "PublisherPrefix=<PublisherPrefix>"
@@ -77,9 +81,10 @@ what is missing:
   written); a separate option-set component is only for a shared (global) list.
 - Date and time needs `DateTimeFormat=datetime`; the default is date-only.
 
-To reference a table owned by another solution (or a standard Dataverse table) without
-duplicating its schema, create it with `Behavior=Existing` — that makes a reference
-folder, not a table definition.
+To reference a table owned by another solution project (or a standard Dataverse table)
+without duplicating its schema, create it with `Behavior=Existing` — that makes a
+reference folder, not a table definition. Not for a table defined in the same project:
+tested, the build then fails (TXM004, two Entity root components with the same name).
 
 ## Step 4 — Validate
 
@@ -92,7 +97,7 @@ Must pass. `TALXISXSD001` = schema validation failed (fix the reported XML);
 
 ## Step 5 — Summary
 
-Report the tables and columns created, that `<package project>` references the solution,
+Report the tables and columns created, that `<package project>` references the Dataverse solution,
 that `dotnet build` passed, and that nothing was deployed. Natural next steps, one
 line each: security roles for the new tables (`security` skill), an app and
 navigation (`frontend` skill).

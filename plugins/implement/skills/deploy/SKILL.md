@@ -16,7 +16,7 @@ deploy them; never edit a live environment as a substitute for local work.
 txc config --help                # auth, connections, profiles
 txc environment --help           # live-environment operations
 txc docs get deployment-workflow # long-form guide
-txc docs get solution-layering   # managed/unmanaged doctrine
+txc docs get solution-layering   # managed/unmanaged Dataverse solutions
 ```
 
 ## Connect an environment
@@ -24,16 +24,17 @@ txc docs get solution-layering   # managed/unmanaged doctrine
 Bootstrap order is fixed: **auth → connection → profile → select**
 (`txc config auth login`, `txc config connection create`,
 `txc config profile create`, `txc config profile select`). Verify with
-`txc config profile validate` before any environment operation. Environments are
-cheap and ephemeral — source control is the source of truth; never share a dev
-environment between people.
+`txc config profile validate` before any environment operation. Default setup:
+environments are cheap and ephemeral (source control is the source of truth) and each
+developer has their own Dev environment; follow the team's existing setup if it
+differs ([references/environments.md](references/environments.md)).
 
 ## Build the artifact
 
 `dotnet build` validates; publishing the deployment package project in
 **Release** packs **managed** solutions (test/prod), **Debug** packs
 **unmanaged** (dev). The package artifact is a single deployable zip composing
-all referenced solutions in dependency order.
+all Dataverse solutions the package project references, in dependency order.
 
 ## Deploy and round-trip
 
@@ -47,12 +48,13 @@ all referenced solutions in dependency order.
 
 ## Invariants
 
-- Production contains **managed** solutions only; the unmanaged working state
+- Production contains **managed** Dataverse solutions only; the unmanaged working state
   lives in dev and in source control.
-- A managed package cannot overwrite an existing unmanaged solution (or vice
-  versa) — uninstall first.
+- A managed package cannot overwrite an existing unmanaged Dataverse solution (or
+  vice versa) — uninstall first.
 - CI/CD uses OIDC federation — identifiers only, no stored secrets
-  ([references/ci-cd.md](references/ci-cd.md)).
+  ([references/ci-cd.md](references/ci-cd.md); GitHub Actions is the default host, an
+  existing pipeline or another host is kept).
 
 Details: [references/](references/) — environments, build, deployment, layering,
 ci-cd (+ workflow, ruleset, and application-user templates)

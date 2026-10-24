@@ -9,13 +9,15 @@ components, and sitemap navigation, is referenced by `<package project>`, and
 `dotnet build` passes at the repository root. Local only — no cloud environment is
 touched.
 
-The UI solution does not own tables: it references them (`Behavior=Existing`) from
-`<data-model solution>` and only layers UI on top. A reference carries just enough
-metadata to attach UI components without duplicating schema, keeping the data-model
-solution the single owner of every table definition. Tables must already exist (see
-the `data-model` skill). Project roles and their defaults (`<ui solution>`, ...):
-[workspace-layout](../../init/references/workspace-layout.md); an existing repository's
-naming wins.
+In the default split the UI solution does not own tables: it references them
+(`Behavior=Existing`) from `<data-model solution>` and only layers UI on top. A
+reference carries just enough metadata to attach UI components without duplicating
+schema, so the table stays defined in one project. If `<ui solution>` and
+`<data-model solution>` are the same project (a single solution, or tables and UI
+together), the table is already defined there: skip the references in Step 3. Tables
+must already exist (see the `data-model` skill). Terms, project roles and their defaults
+(`<ui solution>`, ...): [workspace-layout](../../init/references/workspace-layout.md);
+an existing repository's layout and naming win.
 
 ## Step 1 — Gather inputs (once)
 
@@ -23,19 +25,22 @@ naming wins.
 project's csproj has them). App logical name (lowercase, no prefix). Which entities the app shows, and
 the navigation layout: areas → groups → subareas (one subarea per entity).
 
-## Step 2 — Create the solution (first time only)
+## Step 2 — Create the Dataverse solution (first time only)
 
-Skip if the workspace already has a UI solution. Create it like any solution project
+Skip if the workspace already has a Dataverse solution for UI (in a single-solution
+repository, its one solution). Otherwise create it like any solution project
 (default `<ui solution>`) — `pp-solution` and a `ProjectReference` from
 `<package project>`; the data-model reference shows the commands and the outcome to check
 (project listed by `dotnet sln list`, shipped in the package).
 
-## Step 3 — Reference the entities, create the app, add the entities to it
+## Step 3 — Create the app and add the entities to it (reference foreign tables first)
 
 In this order (`txc workspace component parameter list <type>` for each):
 
-1. `pp-entity` with `Behavior=Existing`, once per entity the app uses — a reference,
-   not a table (`DisplayName` is still required):
+1. Only for a table defined in another solution project: `pp-entity` with
+   `Behavior=Existing`, once per such entity — a reference, not a table (`DisplayName` is
+   still required). Not for a table in `<ui solution>` itself: a reference there
+   fails the build with a duplicate root component (TXM004).
 
    ```
    txc workspace component create pp-entity --output "<ui solution>" --param "Behavior=Existing" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<entity>" --param "DisplayName=<Display Name>"
@@ -44,7 +49,8 @@ In this order (`txc workspace component parameter list <type>` for each):
    later command takes it as `AppName`. It has no display-name parameter: the label is
    the logical name, so set `LocalizedName` by hand in `AppModule.xml` and
    `AppModuleSiteMap.xml` if the app needs a readable name.
-3. `pp-app-model-component`, once per entity, to add it to the app.
+3. `pp-app-model-component`, once per entity, to add it to the app (works for a table
+   defined in the same project and for a referenced one).
 
 ## Step 4 — Build the sitemap
 
@@ -75,7 +81,7 @@ reporting an error in a file you already fixed, it is validating a stale copy un
 
 ## Step 6 — Summary
 
-Report the app name, referenced entities, and the sitemap tree, that `<package project>`
-references the solution, that `dotnet build` passed, and that nothing was deployed.
+Report the app name, the entities (and which were referenced), and the sitemap tree, that
+`<package project>` references the Dataverse solution, that `dotnet build` passed, and that nothing was deployed.
 Suggest the next steps, one line each: forms and views for each entity (`forms` and
 `views-subgrids` references), then deploy the package (`deploy` skill).

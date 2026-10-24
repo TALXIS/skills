@@ -18,7 +18,7 @@ This scaffolds a TypeScript project compiled by `dotnet build` (rollup under the
 hood). The bundle output is `<scripts project>/build/<prefix>_main.js`, deployed as the
 web resource `<prefix>_main.js`.
 
-Reference it from the UI solution so the web resource ships with it:
+Reference it from `<ui solution>` so the web resource ships with it:
 
 ```
 dotnet add "<ui solution>" reference "<scripts project>"

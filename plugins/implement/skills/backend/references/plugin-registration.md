@@ -8,16 +8,20 @@
 registration and one step per plugin, and `dotnet build` passes at the repository
 root. Local only — nothing is deployed and no cloud environment is touched.
 
-The split is deliberate: the plugin project holds the code, the logic solution holds
-the registration. The assembly is a build artifact; when and where it runs is
-Dataverse configuration — each belongs to its own project. The plugin project must
+The plugin project holds the code, a Dataverse solution holds the registration. The
+assembly is a build artifact; when and where it runs is Dataverse configuration — each
+belongs to its own project. `<logic solution>` is the solution that holds registrations
+in this repository: the default split has its own (`src/Solutions.Logic`); a repository
+split differently, or with a single solution, uses the project that already holds (or
+should hold) them, possibly the same one as the tables and UI. Terms and roles:
+[workspace-layout](../../init/references/workspace-layout.md). The plugin project must
 already exist and build (see the `plugin-development` reference).
 
 ## How registration works
 
 A registration is two files in `<logic solution>` that share one id:
 `PluginAssemblies/<AssemblyName>.dll.data.xml` and a type-91 `RootComponent` in
-`Other/Solution.xml`. The `GeneratePluginAssembly` property in the solution's csproj
+`Other/Solution.xml`. The `GeneratePluginAssembly` property in that solution project's csproj
 (template default `true`) decides who writes them:
 
 - **Generated** (`true`): every build writes them for each referenced plugin project.
@@ -25,9 +29,9 @@ A registration is two files in `<logic solution>` that share one id:
   new classes, never removes any); otherwise it mints a new id. It needs a signed
   assembly with at least one public, non-abstract `IPlugin` class.
 - **Manual** (`false`): you scaffold `pp-plugin-assembly` (fresh lowercase GUID as
-  `AssemblyId`) after building the plugin project; the solution build leaves both files
+  `AssemblyId`) after building the plugin project; that solution project's build leaves both files
   alone. Use it only when you need a fixed id. With generation left on, running it
-  before the first solution build (plugin project already built) also works: the build
+  before the first build of the solution project (plugin project already built) also works: the build
   reuses that id. Never after a generated build has registered the assembly.
 
 **Registering in the wrong order can create duplicates.** Running `pp-plugin-assembly`
@@ -44,7 +48,7 @@ grep -o 'PluginAssemblyId="[^"]*"' <logic solution>/PluginAssemblies/*.data.xml
 **Order:** steps reference the assembly, so scaffold `pp-plugin-assembly-step` only
 after the registration exists (after the first build in generated mode).
 
-**Retrofitting an existing solution:** if it already holds the registration, leave
+**Retrofitting an existing Dataverse solution:** if it already holds the registration, leave
 generation on — the build reuses the existing id by file name. If the assembly already
 lives in an environment under another id, set that id in both files before the first
 build. Run the checks above before and after.
@@ -56,16 +60,17 @@ From the existing workspace: `<PublisherName>`, `<PublisherPrefix>`, the
 plugin class name, the target entity's prefixed logical name, the SDK message
 (Create/Update/Delete), and the stage (Pre-validation / Post-operation).
 
-## Step 2 — Create the logic solution (first time only)
+## Step 2 — Create the logic Dataverse solution (first time only)
 
-Skip if the workspace already has a logic solution. Create it like any solution
+Skip if the workspace already has a Dataverse solution that holds registrations (in a
+single-solution repository, its one solution); only otherwise create one like any solution
 project (default `src/Solutions.Logic`) — `pp-solution` and a `ProjectReference` from
 `<package project>`; the `data-model` reference shows the commands and the outcome to
 check (project listed by `dotnet sln list`, shipped in the package).
 
 ## Step 3 — Reference the plugin project and build
 
-The solution packages the assembly it registers, so it needs a `ProjectReference`
+The solution project packages the assembly it registers, so it needs a `ProjectReference`
 to the plugin project. The build then generates the registration (see "How
 registration works"):
 

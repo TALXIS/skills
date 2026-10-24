@@ -33,18 +33,20 @@ Piped txc output is JSON; every command answers `--help`.
 
 ## Existing repository
 
-Find the solution file (`*.slnx` or `*.sln`) and resolve the projects by role, not
-by folder name ([references/workspace-layout.md](references/workspace-layout.md)).
-Run `dotnet build` before changing anything; report the projects, the solutions and
-anything broken.
+Find the solution file (`*.slnx` or `*.sln`: the file listing the projects, not a
+Dataverse solution) and resolve the projects by role, not by folder name
+([references/workspace-layout.md](references/workspace-layout.md), which also defines
+the terms). Run `dotnet build` before changing anything; report the projects, the
+Dataverse solutions and what each contains, and anything broken.
 
 ## Naming and layout precedence
 
-The repository's existing convention wins; otherwise an explicit instruction from
-the user; otherwise the default layout in
+The repository's existing convention wins (including how it splits components across
+Dataverse solutions); otherwise an explicit instruction from the user (for example one
+solution for everything); otherwise the default layout in
 [references/workspace-layout.md](references/workspace-layout.md), which the other
 skills refer to through role placeholders (`<data-model solution>`,
-`<plugin project>`, ...).
+`<plugin project>`, ...). Several roles may be the same project.
 
 ## New repository
 
@@ -53,7 +55,7 @@ Ask once: project name, publisher name, publisher prefix.
 1. `git init -b main`, `dotnet new gitignore`
 2. `dotnet new sln --name <Name>` — it writes `<Name>.slnx` on current SDKs; only if
    it wrote a `<Name>.sln` instead, `dotnet sln <Name>.sln migrate` and delete the `.sln`
-3. Root keeps only the solution, `README.md`, `.gitignore`, `NuGet.config`
+3. Root keeps only the solution file, `README.md`, `.gitignore`, `NuGet.config`
    (nuget.org), and `.devcontainer/devcontainer.json` with
    `{"image": "ghcr.io/talxis/tools-agentbox/image:latest"}`; projects go in `src/`
    (the default layout)
@@ -63,7 +65,9 @@ Ask once: project name, publisher name, publisher prefix.
    `txc workspace component create <template> --output <package project>`, `dotnet sln add` it
 5. `dotnet build` passes
 
-Other projects come later, from `data-model`, `backend` and `frontend`: one
-solution per concern keeps schema changes out of UI diffs.
+Other projects come later, from `data-model`, `backend` and `frontend`. The default
+is one Dataverse solution per concern (data model, logic, UI, security), which keeps
+schema changes out of UI diffs; if the user wants a different split, create those
+instead.
 
 `dotnet build` at the root validates every change.

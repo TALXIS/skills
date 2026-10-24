@@ -8,12 +8,15 @@
 roles and privileges, is referenced by `<package project>`, and `dotnet build` passes at
 the repository root. Local only — no cloud environment is touched.
 
-Doctrine: model roles for **personas** (e.g. "Sales rep", "Sales
-manager"), never for individual people. Least-privilege by design — grant each
-persona only what its workflow needs, and give automated test users a
-least-privileged role too, never an admin account. Security config lives in its own
-security solution (one solution per concern), so access changes never
-hide inside schema or UI diffs.
+Default approach (an existing role scheme or an explicit instruction wins): model roles
+for **personas** (e.g. "Sales rep", "Sales manager") rather than individual people.
+Least-privilege by design — grant each persona only what its workflow needs, and give
+automated test users a least-privileged role too, never an admin account. In the
+default split security config lives in its own Dataverse solution, so access changes
+do not hide inside schema or UI diffs; in a repository split differently, or with a
+single solution, `<security solution>` is the project that holds roles there (possibly
+the same one as tables and UI; terms and roles:
+[workspace-layout](../../init/references/workspace-layout.md)).
 
 ## Step 1 — Gather inputs (once)
 
@@ -22,9 +25,10 @@ project's csproj has them). For each role: a persona name. For each role × enti
 (types + depth). The entities must already exist in the workspace (see the
 `data-model` skill).
 
-## Step 2 — Create the solution (first time only)
+## Step 2 — Create the Dataverse solution (first time only)
 
-Skip if the workspace already has a security solution. Create it like any solution
+Skip if the workspace already has a Dataverse solution that holds roles (in a
+single-solution repository, its one solution). Otherwise create it like any solution
 project (default `src/Solutions.Security`) — `pp-solution` and a `ProjectReference` from
 `<package project>`; the `data-model` reference shows the commands and the outcome to
 check (project listed by `dotnet sln list`, shipped in the package).
@@ -67,6 +71,6 @@ Must pass. `TALXISXSD001` = schema validation failed (fix the reported XML);
 ## Step 6 — Summary
 
 Report the roles and the privilege matrix per entity, that `<package project>` references
-the solution, that `dotnet build` passed, and that nothing was deployed. Suggest the
+the Dataverse solution, that `dotnet build` passed, and that nothing was deployed. Suggest the
 next step in one line: build the app and navigation (`model-app` skill), or deploy
 the package (`deploy` skill).

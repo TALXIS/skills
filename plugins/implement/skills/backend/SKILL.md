@@ -22,7 +22,7 @@ txc docs get plugin-development                    # long-form guide
 | You want | Component type |
 |---|---|
 | a C# project for server-side logic | plugin project template (`create --help`) |
-| register the compiled logic in the platform | none to scaffold — the logic solution's build registers the assembly |
+| register the compiled logic in the platform | none to scaffold — the build of the Dataverse solution that holds registrations registers the assembly |
 | run it on a specific event (create/update/…) | plugin step type |
 
 ## Sequence
@@ -30,11 +30,12 @@ txc docs get plugin-development                    # long-form guide
 1. Find the plugin project (`ProjectType` Plugin) or create one (default
    `src/Plugins.<Name>`), add it to the solution file, write the C# classes,
    `dotnet build`.
-2. Registration lives in the logic solution project (default `src/Solutions.Logic`;
-   resolve roles per the `init` skill's `workspace-layout` reference), which takes a
-   `ProjectReference` to the plugin project; the registration reference has the steps
-   to create it.
-3. The logic solution's build registers the assembly itself; add the steps after that
+2. Registration lives in a Dataverse solution project that takes a `ProjectReference` to
+   the plugin project: the one that holds registrations in this repository, or, in a new
+   repository with the default split, a logic solution (`src/Solutions.Logic`). Resolve
+   it per the `init` skill's `workspace-layout` reference (also the terms); create one
+   only if there is none. The registration reference has the steps.
+3. That solution's build registers the assembly itself; add the steps after that
    build — **registration before steps, always**. Scaffold the assembly type only in
    manual mode, or before the first build with the plugin project already built (to fix
    the id; the build then reuses it). Once a build has registered the assembly, never
@@ -52,7 +53,8 @@ txc docs get plugin-development                    # long-form guide
   (`GeneratePluginAssembly`) must never be mixed — see the registration reference,
   including how to add registration to an existing solution.
 - Code lives in the plugin project; *when and where it runs* is platform
-  configuration and lives in the logic solution.
+  configuration and lives in the Dataverse solution that holds registrations (the
+  logic solution in the default split).
 
 Details: [references/plugin-development.md](references/plugin-development.md) ·
 [references/plugin-registration.md](references/plugin-registration.md)

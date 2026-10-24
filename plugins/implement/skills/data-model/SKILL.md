@@ -29,10 +29,11 @@ Never guess parameters — `parameter list` is the authority.
 
 ## Sequence
 
-1. Find the data-model solution project in the workspace (role resolution:
-   `init` skill, `workspace-layout` reference); if there is none, create one
-   (`--search solution`), add it to the solution file, and reference it from the
-   package project. A new repository's default is `src/Solutions.DataModel`.
+1. Find the Dataverse solution that holds tables in the workspace (role resolution
+   and terms: `init` skill, `workspace-layout` reference). Only if the repository has
+   none, create one (`--search solution`), add it to the solution file, and reference
+   it from the package project; a new repository's default is `src/Solutions.DataModel`.
+   In a single-solution repository this is the one solution.
 2. Create the table, then its columns — **always table before columns, and both
    before any form or view exists for them** (UI XML references break otherwise).
 3. Relationships require both tables to exist first.
@@ -40,9 +41,12 @@ Never guess parameters — `parameter list` is the authority.
 
 ## Invariants
 
-- To use a table owned by another solution project without duplicating its schema,
-  create the entity reference with `Behavior=Existing`.
-- Table and column changes belong in the data-model solution, never in UI or
-  logic solutions (see the `deploy` skill for layering).
+- Define a table in one solution project only. To use a table that lives in
+  another solution project (or a standard table) without duplicating its schema, create
+  an entity reference with `Behavior=Existing`; for a table in the same project, create
+  it normally (a reference duplicates the root component and fails the build).
+- Put table and column changes in the solution that holds tables in this repository
+  (the default split keeps them in the data-model solution, apart from UI and logic;
+  see the `deploy` skill's layering reference).
 
 Details and worked examples: [references/scaffolding.md](references/scaffolding.md)

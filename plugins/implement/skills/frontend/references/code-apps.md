@@ -27,8 +27,8 @@ Scaffold `pp-app-code` into `<code app project>` with `DisplayName` and `AppName
 `dotnet sln add` it and add a `ProjectReference` to it from `<ui solution>`.
 
 A plain `ProjectReference` is all the wiring: the TALXIS build discovers any
-`ProjectType=CodeApp` reference regardless of which solution carries it — no dedicated
-solution project. During the solution build it runs `npm install` / `npm run build`,
+`ProjectType=CodeApp` reference regardless of which Dataverse solution carries it — no dedicated
+solution project. During that solution project's build it runs `npm install` / `npm run build`,
 registers the app as a CanvasApp root component, and packs `dist/` into the solution.
 
 The template scaffolds a working starter: router, layout, a demo home page, providers.
@@ -49,7 +49,7 @@ post-actions there). Each run produces:
 
 - typed models and services under `<code app project>/src/generated`
 - schema files under `<code app project>/.power`
-- the data source registration in `power.config.json`, which the solution build packs
+- the data source registration in `power.config.json`, which the solution project's build packs
   with the app
 
 Generated identifiers title-case the first character of the publisher prefix
@@ -70,7 +70,7 @@ Vite serves the app locally for iterating on pages against the typed services.
 dotnet build
 ```
 
-The solution build must pass — it exercises the npm install/build and the CanvasApp
+The build of the solution project must pass — it exercises the npm install/build and the CanvasApp
 packing end to end.
 
 ## Step 6 — Summary

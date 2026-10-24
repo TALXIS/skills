@@ -33,10 +33,12 @@ txc docs get form-xml-reference                    # form structure guide
 
 ## Sequence
 
-1. UI lives in its own solution project, the UI solution (default
-   `src/Solutions.UI`; resolve the repository's real project per the `init` skill's
-   `workspace-layout` reference); reference tables from other solutions with
-   `Behavior=Existing` — never duplicate schema.
+1. UI components go in the Dataverse solution that holds the UI in this repository (the
+   default split has its own, `src/Solutions.UI`; resolve the real project per the `init`
+   skill's `workspace-layout` reference, which also defines the terms). Create a new one
+   only if the repository has none. A table defined in another solution project is
+   referenced with `Behavior=Existing`, not copied; a table in the same project needs no
+   reference.
 2. The table and all columns a form or view shows must already exist
    (`data-model` skill) before the form or view is created.
 3. Compose top-down and register as you go: app → navigation → forms/views →
