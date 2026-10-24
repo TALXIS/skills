@@ -1,12 +1,14 @@
-> **Needed because:** the build-registers-the-assembly sequence is not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in help/docs (T12), and the `pp-solution`
-> template describes its `GeneratePluginAssembly` parameter (tools-devkit-templates#106).
+> **Needed because:** the build-registers-the-assembly sequence and the `[PluginStep]` attribute
+> surface are not surfaced by txc help (the attributes are described only in the Plugin build package README).
+> **Remove when:** txc surfaces sequences in help/docs (T12), the attribute reference is reachable
+> through `txc docs get` (T24), and the `pp-solution` template describes its
+> `GeneratePluginAssembly` parameter (tools-devkit-templates#106).
 
 # Register plugin assemblies and steps
 
 **Contract:** when this task ends, `<logic solution>` contains the assembly
-registration and one plugin step per plugin class, and `dotnet build` passes at the repository
-root. Local only — nothing is deployed and no cloud environment is touched.
+registration and the plugin steps of every plugin class (generated from its
+`[PluginStep]` attributes), and `dotnet build` passes at the repository root. Local only — nothing is deployed and no cloud environment is touched.
 
 The plugin project holds the code, a Dataverse solution holds the registration. The
 assembly is a build artifact; when and where it runs is Dataverse configuration — each
@@ -45,8 +47,10 @@ grep -o 'RootComponent type="91" id="[^"]*"' <logic solution>/Other/Solution.xml
 grep -o 'PluginAssemblyId="[^"]*"' <logic solution>/PluginAssemblies/*.data.xml
 ```
 
-**Order:** plugin steps reference the assembly, so scaffold `pp-plugin-assembly-step` only
-after the registration exists (after the first build in generated mode).
+**Order:** steps declared with `[PluginStep]` need no ordering: the same build writes them
+right after the assembly registration. Scaffolded steps (`pp-plugin-assembly-step`)
+reference the assembly, so scaffold them only after the registration exists (after the
+first build in generated mode).
 
 **Retrofitting an existing Dataverse solution:** if it already holds the registration, leave
 generation on — the build reuses the existing id by file name. If the assembly already
@@ -79,10 +83,50 @@ dotnet add "<logic solution>" reference "<plugin project>"
 dotnet build "<logic solution>"
 ```
 
-## Step 4 — Register the plugin steps
+## Step 4 — Declare the plugin steps on the classes
 
-One `pp-plugin-assembly-step` per plugin class — `PluginName` is the class name; `Stage` and
-`SdkMessage` take the choices `parameter list` shows:
+One `[PluginStep]` per message a class handles, written on the class in `<plugin project>`
+(`using TALXIS.DevKit.Build.Dataverse.Plugin;` — the build SDK compiles the attribute
+sources into the plugin project, there is nothing to reference). The solution build writes
+`SdkMessageProcessingSteps/{id}.xml` and the type-92 root components into `<logic solution>`;
+commit them like the assembly's `.data.xml`.
+
+```csharp
+[PluginStep("Update", "<PublisherPrefix>_<entity>", PluginStage.PostOperation,
+    FilteringAttributes = new[] { "<PublisherPrefix>_name" })]
+[PluginStepImage(PluginImageType.PreImage, "PreImage", "<PublisherPrefix>_name")]
+public class <PluginClassName> : PluginBase
+```
+
+- Message and stage are `PluginStage.PreValidation` / `PreOperation` / `PostOperation`. A
+  message without a primary entity (Associate, Disassociate, an unbound custom action) uses
+  `[PluginStep("Associate", PluginStage.PreOperation)]`.
+- Built-in message ids: Create, Update, Delete, SetState, SetStateDynamicEntity, Assign,
+  Retrieve, RetrieveMultiple, Associate, Disassociate, RetrieveExchangeRate. Any other message
+  (a custom action) needs `MessageId = "<guid>"`; that message must exist in the target or
+  travel in the same solution. A Custom API's message id is generated when the Custom API is created
+  (recreating it gives a new one), so it cannot be hard-coded.
+- Optional: `Name`, `Description`, `FilteringAttributes` (Update only), `Mode =
+  PluginMode.Asynchronous` (PostOperation only; `AsyncAutoDelete`), `Rank`, `Configuration`
+  (unsecure), `RunAsSystem`. `InvocationSource` is set from the message, as Dataverse stores
+  it; set it only to deviate.
+- `PluginStepImage` takes the image type, the name and the columns (none = all). With more
+  than one `[PluginStep]` on the class, `StepName` binds it to a step by that step's `Name`.
+- **Adopting an existing step:** set `Id` to its id (the file name in `SdkMessageProcessingSteps/`)
+  and `Id` on its images, otherwise the build warns that the old and the generated step would
+  both run. The file is then rewritten from the attribute, so anything the attribute cannot
+  express is dropped.
+- Removing a `[PluginStep]` removes its generated file and root component; hand-written steps
+  are never touched.
+- The build fails, naming the class, on a pre-image on Create, a post-image outside
+  PostOperation, an asynchronous step outside PostOperation, an ambiguous image binding, an
+  unknown message without `MessageId`, or two steps with the same id.
+
+**Manual steps** — for what attributes cannot express (Power Fx step types, impersonating a
+specific user, secure configuration), or when `PluginStep` does not compile because the
+project's build SDK predates attribute registration. One `pp-plugin-assembly-step` per
+plugin class — `PluginName` is the class name; `Stage` and `SdkMessage` take the choices
+`parameter list` shows:
 
 ```
 txc workspace component create pp-plugin-assembly-step --output "<logic solution>" --param "PrimaryEntity=<PublisherPrefix>_<entity>" --param "PluginProjectName=<plugin project name>" --param "PluginName=<PluginClassName>" --param "Stage=Pre-validation" --param "SdkMessage=Create"
@@ -101,12 +145,14 @@ record. Match the stage each class was written for.
 dotnet build
 ```
 
-Must pass at the repository root. `TALXISXSD001` = schema validation failed (fix the
+Must pass at the repository root, and a second `dotnet build` must change no file
+(`git status`). Check that `SdkMessageProcessingSteps/` holds one file per declared step.
+`TALXISXSD001` = schema validation failed (fix the
 reported XML); `TALXISGUID001` = duplicate GUID (regenerate the reported id).
 
 ## Step 6 — Summary
 
-Report the assembly and plugin steps registered (entity, message, stage per plugin step), that
+Report the assembly and plugin steps registered (entity, message, stage per plugin step, and whether each came from an attribute or a scaffold), that
 `<package project>` references `<logic solution>`, that `dotnet build` passed, and that
 nothing was deployed. Next step in one line: cover the plugin logic with local unit
 tests (`test` skill).
