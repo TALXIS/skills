@@ -5,7 +5,7 @@ description: Implements server-side logic in a TALXIS / Power Platform / Dataver
 
 # Backend logic
 
-**Contract:** code and its registration are scaffolded locally and
+**Contract:** code and its registration are in place locally and
 `dotnet build` passes. Local only — nothing deploys; to try the change in a Dev environment when the user asks, use the `deploy` skill (`inner-loop` reference).
 
 ## Ask the CLI first
@@ -22,7 +22,7 @@ txc workspace component parameter list <type>      # every parameter, typed
 |---|---|
 | a C# project for server-side logic | plugin project template (`create --help`) |
 | register the compiled logic in the platform | none to scaffold — the build of the Dataverse solution that holds registrations registers the assembly |
-| run it on a specific event (create/update/…) | plugin step type (a registration of a plugin class on a message and stage) |
+| run it on a specific event (create/update/…) | a `[PluginStep]` attribute on the plugin class — the Dataverse solution's build generates the step; the plugin step type (a registration of a class on a message and stage) only for what attributes cannot express |
 
 ## Sequence
 
@@ -34,8 +34,9 @@ txc workspace component parameter list <type>      # every parameter, typed
    repository with the default split, a logic solution (`src/Solutions.Logic`). Resolve
    it per the `init` skill's `workspace-layout` reference file (also the terms); create one
    only if there is none. The `plugin-registration` reference file has the steps.
-3. Don't scaffold the plugin assembly: the build of that solution registers it. Add the
-   plugin steps after that build.
+3. Don't scaffold the plugin assembly: the build of that solution registers it and
+   generates one plugin step per `[PluginStep]` on the plugin classes. Scaffold a plugin
+   step only for what an attribute cannot express, after that build.
 4. `dotnet build`.
 
 ## Invariants
@@ -47,7 +48,11 @@ txc workspace component parameter list <type>      # every parameter, typed
   (inside the transaction).
 - One registration per assembly, one id: the generated and the manual way
   (`GeneratePluginAssembly`) must never be mixed — see the registration reference,
-  including how to add registration to an existing solution.
+  including how to add registration to an existing solution. `[PluginStep]` works only
+  with the generated way.
+- Declare *when a class runs* with `[PluginStep]` on the class; the generated step files
+  live in the logic solution and are committed. A scaffolded step for the same class,
+  message, entity and stage would run twice.
 - Code lives in the plugin project; *when and where it runs* is platform
   configuration and lives in the Dataverse solution that holds registrations (the
   logic solution in the default split).

@@ -58,9 +58,11 @@ namespace):
 ```csharp
 using System;
 using Microsoft.Xrm.Sdk;
+using TALXIS.DevKit.Build.Dataverse.Plugin;
 
 namespace <Namespace>
 {
+    [PluginStep("<Message>", "<PublisherPrefix>_<entity>", PluginStage.<Stage>)]
     public class <PluginClassName> : PluginBase
     {
         public <PluginClassName>() : base(typeof(<PluginClassName>))
@@ -78,9 +80,14 @@ namespace <Namespace>
 }
 ```
 
+If `using TALXIS.DevKit.Build.Dataverse.Plugin;` does not compile, the project's build SDK
+predates attribute registration: drop the attribute line and scaffold the steps as the
+`plugin-registration` reference describes.
+
 ## Stage doctrine — decide it while writing the code
 
-The stage is set at registration time, but the code must be written for it:
+The stage is set on the `[PluginStep]` (see the `plugin-registration` reference), but the
+code must be written for it:
 
 - **Pre-validation** — runs *before* the database transaction starts. The cheapest
   place to reject bad input: throw `InvalidPluginExecutionException` with a
@@ -108,5 +115,6 @@ reference).
 ## Step 5 — Summary
 
 Report the plugin classes created, their intended entity/message/stage, that build
-and publish passed, and that nothing was deployed. Next step in one line: register
-the assembly and plugin steps in `<logic solution>` (`plugin-registration` reference).
+and publish passed, and that nothing was deployed. Next step in one line: build
+`<logic solution>` so it registers the assembly and the plugin steps declared on the
+classes (`plugin-registration` reference).

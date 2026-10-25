@@ -26,7 +26,7 @@ words. Here, unless a sentence says otherwise:
 | application user | the Dataverse user for that app registration's service principal | a person |
 | environment | a live Dataverse environment (Dev, Test, ...) | an operating-system environment variable |
 | profile, connection | txc config objects: a connection is an environment URL, a profile binds an auth to a connection | a `pac` auth profile |
-| plugin, assembly, step | the C# class/project (`pp-plugin`); its compiled DLL, registered in a Dataverse solution; one registration of a class on a message and stage (`pp-plugin-assembly-step`) | a "Step N" heading, a BDD step |
+| plugin, assembly, step | the C# class/project (`pp-plugin`); its compiled DLL, registered in a Dataverse solution; one registration of a class on a message and stage (a `[PluginStep]` attribute on the class, or a scaffolded `pp-plugin-assembly-step`) | a "Step N" heading, a BDD step |
 | script library, web resource | the scripts project (`pp-script-library`); its bundle as shipped in Dataverse (`<prefix>_main.js`) | an npm library |
 | reference | a `ProjectReference` between projects; a `Behavior=Existing` entity reference (a table defined in another solution project); a skill's reference file (`references/*.md`) | each other |
 | publish | `dotnet publish`; Dataverse "publish customizations" is always spelled out | each other |
