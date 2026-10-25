@@ -91,8 +91,9 @@ Bring it into the repository from the repository root, with the output folder **
 above it; outside it the command fails and leaves a half-written project, tools-cli#216):
 `txc env solution clone <unique name> --output src/<Project name> --profile <profile>`. This scaffolds a project like the
 repository's other solution projects, adds it to the `.slnx` and pulls the solution (tested). It does **not** add it to
-the package: add `<ProjectReference Include="..\<Project name>\<Project name>.csproj" />` to the package project in
-dependency order (the package imports in declaration order; tools-cli#240), then `dotnet build` and `dotnet publish` the
+the package: add `<ProjectReference Include="..\<Project name>\<Project name>.csproj" />` to the package project right after the
+solution it depends on (a lookup target, a table it references): the package imports in declaration order (tools-cli#240); name the
+project like the repository's others (`<prefix of the others>.<Name>`, `init` skill, `workspace-layout`), then `dotnet build` and `dotnet publish` the
 package project and check that the `.pdpkg.zip` contains `<Project name>.zip`. `pull <folder>` needs an existing
 `Other/Solution.xml`; for a new folder use `pull <unique name> --output <folder>`. After hand-editing project files check
 `git diff --stat`: an editor that normalises line endings turns a one-line change into a whole-file diff.
@@ -100,7 +101,11 @@ package project and check that the `.pdpkg.zip` contains `<Project name>.zip`. `
 Look at what the pulled solution contains (`Other/Solution.xml` root components). A table that another solution project of
 the repository already owns comes with a full copy: keep a reference instead — delete its folder under `Entities/`, delete
 its `behavior="0"` root-component line, scaffold `pp-entity` with `Behavior=Existing` (see the `data-model` skill), delete
-`obj/` of the project (a stale copy there repeats the build error) and build. Not tested: the first import of such a
+`obj/` of the project (a stale copy there repeats the build error) and build. Also remove what the table brought with it: its
+relationships in `Other/Relationships/*.xml` and `Other/Relationships.xml` that the other project owns (ownership `lk_`/`owner_`/`team_`/`user_`,
+currency, the other tables' lookups; the result's `excludedRelationships` lists them although the files still hold them, tools-cli#241), and a
+`MissingDependencies` entry that only described one of them (the empty `<MissingDependencies />` of the other projects is the
+model); keep only the relationships of the new table. The pulled `Other/Solution.xml` loses its byte-order mark, harmless. Not tested: the first import of such a
 solution when the environment holds it at another version than the build's `0.0.20000.0`.
 
 ## 5. Remove or rename a component
