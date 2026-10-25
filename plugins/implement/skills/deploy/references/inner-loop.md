@@ -3,7 +3,7 @@
 > **Remove when:** `env pkg import` reports what it installed or skipped (TALXIS/tools-cli#213), the
 > build outputs sit in the standard locations (TALXIS/tools-devkit-build#129), `env solution import`
 > publishes (tools-cli PR #139), pull is normalized (#54, PR #174) and `env component delete` exists
-> (tools-cli#72, PR #151).
+> (tools-cli#72, PR #151), `env solution clone` adds the package reference (#240).
 
 # Inner loop — change, push to Dev, verify, pull back
 
@@ -84,6 +84,24 @@ by hand into the script library or plugin project that builds it. Serialization-
 `<AutoNumberFormat />` rewritten as an empty element pair; a web resource's `.data.xml` `FileName` losing the dot of `skt_main.js<GUID>`;
 an empty `<WebResources />` added to `Other/Customizations.xml`) can show up next to the real edit: revert those lines so the commit
 holds only the change (tools-cli#54, PR #174).
+
+### A solution that exists only in the environment
+
+Bring it into the repository from the repository root, with the output folder **inside** the repository (a `.sln`/`.slnx`
+above it; outside it the command fails and leaves a half-written project, tools-cli#216):
+`txc env solution clone <unique name> --output src/<Project name> --profile <profile>`. This scaffolds a project like the
+repository's other solution projects, adds it to the `.slnx` and pulls the solution (tested). It does **not** add it to
+the package: add `<ProjectReference Include="..\<Project name>\<Project name>.csproj" />` to the package project in
+dependency order (the package imports in declaration order; tools-cli#240), then `dotnet build` and `dotnet publish` the
+package project and check that the `.pdpkg.zip` contains `<Project name>.zip`. `pull <folder>` needs an existing
+`Other/Solution.xml`; for a new folder use `pull <unique name> --output <folder>`. After hand-editing project files check
+`git diff --stat`: an editor that normalises line endings turns a one-line change into a whole-file diff.
+
+Look at what the pulled solution contains (`Other/Solution.xml` root components). A table that another solution project of
+the repository already owns comes with a full copy: keep a reference instead — delete its folder under `Entities/`, delete
+its `behavior="0"` root-component line, scaffold `pp-entity` with `Behavior=Existing` (see the `data-model` skill), delete
+`obj/` of the project (a stale copy there repeats the build error) and build. Not tested: the first import of such a
+solution when the environment holds it at another version than the build's `0.0.20000.0`.
 
 ## 5. Remove or rename a component
 

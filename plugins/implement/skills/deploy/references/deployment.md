@@ -101,9 +101,9 @@ the solution root folder it syncs into. It overwrites the files in source with t
 environment's state, so a source change that was never pushed is deleted — push or
 commit first. A bare solution unique name needs `--output`. The help text also says "merges changes"; in practice the solution's own
 files take the environment's state (tools-cli#230). `txc env solution clone <name> -o <dir>` (a
-new project from an environment's solution) must be run where a solution file is found
-(a `.sln`/`.slnx` in or above the working directory), otherwise it fails and leaves a
-half-written project (tools-cli#216). Later builds of a solution with an app may print
+new project from an environment's solution) needs `<dir>` inside the repository, below a `.sln`/`.slnx`,
+otherwise it fails and leaves a half-written project (tools-cli#216); the whole route is in the
+`inner-loop` reference. Later builds of a solution with an app may print
 `TXVAL002 … id.uniquename` warnings from a `<MissingDependencies>` block the pull writes into `Other/Solution.xml`
 (platform setting `AppChannel`); they are harmless (tools-cli PR #174). Then `git status` to show
 what changed: after one environment-side edit, expect exactly that edit (the first pull
