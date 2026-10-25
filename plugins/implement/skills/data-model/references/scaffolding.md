@@ -1,5 +1,6 @@
 > **Needed because:** the scaffold sequence and cross-solution referencing are not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in its own help/docs (TOOLING-BACKLOG T12).
+> **Remove when:** txc surfaces sequences in its own help/docs (TOOLING-BACKLOG T12), and
+> deletes components from an environment (tools-cli#72) so the schema-change note can point at it.
 
 # Implement the data model
 
@@ -15,6 +16,10 @@ solutions. The repository must already be initialized (see the `init-repo` skill
 Entity → attributes → forms/views. A column requires its entity to exist; a form or
 view requires the entity and its columns to exist — scaffolding out of order produces
 broken XML references. Never scaffold a lookup before its target entity exists.
+
+Changing a schema name or attribute type of a component that is already deployed
+means deleting it in the environment first — Dataverse does not apply such a change
+on import. Editing the source alone does not fix a deployed environment.
 
 ## Step 1 — Gather inputs (once)
 
@@ -71,7 +76,7 @@ txc workspace component create pp-entity-attribute --output "src/Solutions.DataM
 | `Decimal` | `--param "DecimalPrecision=3"` |
 | `Money` | `--param "DecimalPrecision=2"` |
 | `Boolean` | `--param "BooleanTrueLabel=Yes" --param "BooleanFalseLabel=No"` |
-| `DateTime` | `--param "DateTimeFormat=date"` for date-only; omit for date+time |
+| `DateTime` | `--param "DateTimeFormat=datetime"` for date+time; the default is `date` (date-only) |
 | `OptionSet(Local)` | `--param "OptionSetOptions=<Label1>,<Label2>,<Label3>"` |
 | `Lookup` | `--param "LookupTarget=<PublisherPrefix>_<targetentity>"` |
 

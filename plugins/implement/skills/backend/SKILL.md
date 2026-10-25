@@ -13,7 +13,6 @@ description: Implements server-side logic in a TALXIS / Power Platform / Dataver
 ```
 txc component type list --search plugin            # code project + registration types
 txc workspace component parameter list <type>      # every parameter, typed
-txc docs get plugin-development                    # long-form guide
 ```
 
 ## Intent → component type
@@ -21,7 +20,7 @@ txc docs get plugin-development                    # long-form guide
 | You want | Component type |
 |---|---|
 | a C# project for server-side logic | search: `--search plugin` (project type) |
-| register the compiled logic in the platform | plugin assembly type |
+| register the compiled logic in the platform | none to scaffold — the build of the Dataverse solution that holds registrations registers the assembly |
 | run it on a specific event (create/update/…) | plugin step type |
 
 ## Sequence
@@ -30,7 +29,8 @@ txc docs get plugin-development                    # long-form guide
    C# classes, `dotnet build`.
 2. Registration lives in a logic solution project (conventionally
    `src/Solutions.Logic`), which takes a `ProjectReference` to the plugin project.
-3. Register the assembly first, then its steps — **assembly before steps, always**.
+3. Don't scaffold the plugin assembly: the build of that solution registers it. Add the
+   plugin steps after that build.
 4. `dotnet build`.
 
 ## Invariants
@@ -40,6 +40,9 @@ txc docs get plugin-development                    # long-form guide
 - Reject invalid input in a **Pre-validation** step (cheapest, runs before the
   database transaction); make related writes atomic in a **Post-operation** step
   (inside the transaction).
+- One registration per assembly, one id: the generated and the manual way
+  (`GeneratePluginAssembly`) must never be mixed — see the registration reference,
+  including how to add registration to an existing solution.
 - Code lives in the plugin project; *when and where it runs* is platform
   configuration and lives in the logic solution.
 

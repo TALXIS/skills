@@ -39,22 +39,36 @@ requires signed plugin assemblies, so keep the key file in the project.
 
 ## Step 3 — Write the plugin classes
 
-One `.cs` file per plugin class in `src/Plugins.<Name>/`, each implementing
-`Microsoft.Xrm.Sdk.IPlugin`. Skeleton:
+One `.cs` file per plugin class in `<plugin project>`. The `pp-plugin` template ships
+a `PluginBase` (tracing and fault wrapping) — derive from it and override
+`ExecuteDataversePlugin`. Its constructor takes the plugin's `Type`. Give the derived
+class a public **parameterless** constructor (below): FakeXrmEasy's
+`ExecutePluginWithTarget<T>` does not compile without one (CS0310). A
+`(string unsecure, string secure)` constructor is only for receiving step configuration
+and is optional. A plain
+`IPlugin.Execute(IServiceProvider)` class also works, but the scaffolded project and
+its tests assume the base class. Skeleton (`<Namespace>` is the project's root
+namespace):
 
 ```csharp
 using System;
 using Microsoft.Xrm.Sdk;
 
-public class <PluginClassName> : IPlugin
+namespace <Namespace>
 {
-    public void Execute(IServiceProvider serviceProvider)
+    public class <PluginClassName> : PluginBase
     {
-        var context = (IPluginExecutionContext)serviceProvider.GetService(typeof(IPluginExecutionContext));
-        var factory = (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
-        var service = factory.CreateOrganizationService(context.UserId);
-        var target = (Entity)context.InputParameters["Target"];
-        // logic here — attribute logical names carry the <PublisherPrefix>_ prefix
+        public <PluginClassName>() : base(typeof(<PluginClassName>))
+        {
+        }
+
+        protected override void ExecuteDataversePlugin(ILocalPluginContext localPluginContext)
+        {
+            var context = localPluginContext.PluginExecutionContext;
+            var service = localPluginContext.OrgSvcFactory.CreateOrganizationService(context.UserId);
+            var target = (Entity)context.InputParameters["Target"];
+            // logic here — attribute logical names carry the <PublisherPrefix>_ prefix
+        }
     }
 }
 ```
@@ -82,8 +96,9 @@ dotnet build
 dotnet publish
 ```
 
-Both must pass. `dotnet publish` produces the assembly layout that registration
-(`pp-plugin-assembly`) consumes.
+Both must pass. Registration needs no extra input from here: the build of the
+Dataverse solution that holds registrations registers the assembly (`plugin-registration`
+reference).
 
 ## Step 5 — Summary
 
