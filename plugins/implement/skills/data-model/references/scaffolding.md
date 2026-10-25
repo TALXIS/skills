@@ -27,7 +27,7 @@ column has the new type). Editing the source alone does not fix a deployed envir
 Deleting a column also deletes its data. The commands are
 `txc env entity attribute delete <entity> --name <attr> --apply --yes` and
 `txc env entity delete --entity <entity> --apply --yes`; without `--apply` they refuse (exit 2,
-"must specify --apply or --stage") and change nothing. Other component types have no delete command yet (tools-cli#72,
+"must specify --apply or --stage") and change nothing. Other component types are deleted as records (`env data record delete`, see the `inner-loop` reference, step 5; tools-cli#72,
 PR #151 adds `env component delete`). To change a column's type in source, delete its `<attribute>` block from the table's
 `Entity.xml`, then scaffold it again with `pp-entity-attribute` and the new `AttributeType`
 (scaffolding over an existing column exits 0 and changes nothing, templates#177; do not

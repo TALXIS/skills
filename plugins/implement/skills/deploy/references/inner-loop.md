@@ -91,8 +91,8 @@ A column that a form or view uses cannot be deleted (`attribute delete` fails wi
 `dependency list` names them; `dependency delete-check` exits 1 while something blocks). Tested route for a type change:
 (1) in source remove the column from the form/views and keep the old column definition, build, import the zip, publish
 `--entities <table>`; (2) delete the column in the environment; (3) in source add the column with the new type and put
-it back on the form/views, build, import, publish. Check with `entity attribute get <table> --name <column>` and the
-form check above. Publish the form change before you delete the column.
+it back on the form/views, build, import, publish. Check with `entity attribute get <table> --name <column>` (a column that is gone exits 1 with a long "Could not find an attribute ()"
+message, tools-cli#238) and the form check above. Publish the form change before you delete the column.
 
 A **role** that an app uses cannot be deleted (`record delete` fails with "referenced by 1 other components"): in source
 also remove its id from the app's `AppModules/<app>/AppModule.xml` (`AppModuleRoleMaps`) and any `MissingDependencies` entry for
@@ -100,6 +100,11 @@ it in the UI project's `Other/Solution.xml` (grep the repository for the role id
 it in the environment — `txc env data record disassociate <app id> --entity appmodule --target <role id> --target-entity role
 --relationship appmoduleroles_association --apply --yes` (the app keeps its other roles; find the id with `env data query odata
 appmodules --filter "uniquename eq '<app>'"`) — and delete the role.
+
+When the removal empties a Dataverse solution (a role was its only component), the solution stays installed as an empty container in the
+environment and its project in the repository: remove the project and its package reference only if the user wants the
+solution gone, then `env solution delete <name> --yes`; delete the folder the removed file leaves empty. `env role get` takes the
+role as `--role <name|guid>`, not as an argument.
 
 ## 6. Reset your Dev objects
 
