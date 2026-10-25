@@ -117,4 +117,8 @@ the app leaves it; `env data query odata sitemaps --filter "sitemapnameunique eq
 `env data record delete <id> --entity sitemap`), web resources, tables (their forms, views and relationships go with them),
 the solution containers, and last the publisher (`txc env publisher delete <name> --yes`, only after no solution or
 component uses it). Forms and views need no separate check (`odata systemforms|savedqueries --filter "…id eq <guid>"`
-returns nothing once the table is gone). Confirm with the counts: `env solution list` back to the earlier number.
+returns nothing once the table is gone). Confirm with the counts: `env solution list` back to the earlier number — note the count (and `env publisher list`) before the
+first deployment, there is no way to recover it afterwards. Tested: the plugin type goes with its assembly; `solution delete` and
+`publisher delete` take no `--apply` (`record delete` and `entity delete` do); the web resource table is `webresource` in SQL and
+`webresourceset` in `odata`; the deployment history of
+earlier runs stays (`env deployment list`; there is no delete).
