@@ -27,7 +27,7 @@ column has the new type). Editing the source alone does not fix a deployed envir
 Deleting a column also deletes its data. The commands are
 `txc env entity attribute delete <entity> --name <attr> --apply --yes` and
 `txc env entity delete --entity <entity> --apply --yes`; without `--apply` they refuse (exit 2,
-"must specify --apply or --stage") and change nothing. Other component types have no delete command yet (tools-cli#72,
+"must specify --apply or --stage") and change nothing. Other component types are deleted as records (`env data record delete`, see the `inner-loop` reference, step 5; tools-cli#72,
 PR #151 adds `env component delete`). To change a column's type in source, delete its `<attribute>` block from the table's
 `Entity.xml`, then scaffold it again with `pp-entity-attribute` and the new `AttributeType`
 (scaffolding over an existing column exits 0 and changes nothing, templates#177; do not
@@ -80,6 +80,9 @@ placeholder):
 txc workspace component create pp-entity --output "<data-model solution>" --param "EntityType=Standard" --param "Behavior=New" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<entity>" --param "LogicalNamePlural=<entities>" --param "DisplayName=<Display Name>" --param "DisplayNamePlural=<Display Names>"
 ```
 
+A number column defaults to the full range of its type and has no description: if the user did not give a range or a description, ask
+(`WholeNumberMinValue`/`WholeNumberMaxValue`, `DecimalMinValue`/`DecimalMaxValue`/`DecimalPrecision`, `MoneyMinValue`/`MoneyMaxValue`,
+`Description`) — do not leave the defaults silently.
 On a column, `EntitySchemaName` is the prefixed table name `<PublisherPrefix>_<entity>`
 and a lookup's `LookupTarget` is the prefixed name of a table that already exists.
 

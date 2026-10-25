@@ -113,6 +113,9 @@ Do not re-scaffold. Instead:
    Adding a **section** or **tab**: use `pp-form-section` / `pp-form-tab` the same way.
    Only edit the XML by hand when the commands cannot target the right spot (e.g. inserting
    a row before an existing one) — then copy an existing sibling element as the pattern.
+   **Removing** a field has no command: delete its whole `<row>` (a row holds its cells and their controls) from the form XML,
+   or the `<cell>` if the row holds more than one, and also drop the column from every view that shows it. A column that a form
+   or view still uses cannot be deleted from the environment (`deploy` skill, `inner-loop` reference, step 5).
 4. Validate before finishing: no skipped hierarchy levels, every `datafieldname`
    exists as an attribute of the entity in `<data-model solution>`, and all GUIDs in
    the file are unique.
