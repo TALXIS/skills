@@ -1,11 +1,12 @@
 > **Needed because:** the BDD scaffold/run sequence and binding scope are not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in help/docs (T12).
+> **Remove when:** txc surfaces sequences in help/docs (T12), and the UI test templates are fixed
+> (TALXIS/tools-devkit-templates#182, TALXIS/tools-cli#207).
 
 # UI testing with Playwright + Reqnroll
 
-**Contract:** when this skill ends, `src/Tests.UI` exists with at least one feature
-file, `dotnet build src/Tests.UI/Tests.UI.csproj` passes, and Playwright browsers
-are installed. Scaffolding and building are local; `dotnet test` runs against the
+**Contract:** when this task ends, `<ui test project>` exists with at least one feature
+file, and `dotnet build "<ui test project>"` passes. Where the machine allows it,
+Playwright browsers are installed too. Scaffolding and building are local; `dotnet test` runs against the
 live environment configured in `appsettings.json`.
 
 **What the template covers.** `pp-test-ui` ships frozen step bindings (under
@@ -17,29 +18,19 @@ and navigation. They navigate via the model-driven URL shape
 
 ## Step 1 — Scaffold the test project
 
-From the repository root:
-
-```
-txc workspace component create pp-test-ui --output "src/Tests.UI"
-dotnet sln add src/Tests.UI/Tests.UI.csproj
-```
-
-Remove the Calculator sample the template ships:
-
-```
-rm -f src/Tests.UI/Features/Calculator.feature src/Tests.UI/Features/Calculator.feature.cs
-```
+Resolve `<ui test project>` per the `init` skill's `workspace-layout` reference file
+(default `src/Tests.UI`; an existing repository's names win). Scaffold `pp-test-ui`
+into it and `dotnet sln add` it (the template does not add itself).
+No `Features/` folder exists yet.
 
 ## Step 2 — Add a feature file
 
-One per feature under test, PascalCase name:
-
-```
-txc workspace component create pp-test-ui-feature --param "name=<FeatureName>" --output "src/Tests.UI"
-```
-
-This scaffolds an empty `Feature: <FeatureName>` stub in `src/Tests.UI/Features/` —
-write the real scenarios into it. Reqnroll generates the `.feature.cs` designer
+One `.feature` file per product feature under test, PascalCase name — scaffold `pp-test-ui-feature` into
+`<ui test project>` with `--param "name=<FeatureName>"` (`parameter list` shows no
+parameters for this template). It creates an empty `Feature: <FeatureName>` stub in
+`<ui test project>/Features/` — write the real scenarios into it. The same command also
+drops a `Calculator.feature` sample there (and its `.feature.cs`); delete it, its steps
+are unbound. Reqnroll generates the `.feature.cs` designer
 file from it at build time; nothing else to create.
 
 ## Step 3 — Write scenarios (BDD discipline)
@@ -55,15 +46,14 @@ Scenarios speak business language so domain experts can read and challenge them:
 
 For model-driven surfaces, phrase steps to match the frozen bindings (open app,
 open view, open record, fill field, press command, assert value). For code apps,
-write the steps you need as C# classes in `src/Tests.UI/StepDefinitions/` following
+write the steps you need as C# classes in `<ui test project>/StepDefinitions/` following
 the same rules.
 
 ## Step 4 — Configure
 
-`src/Tests.UI/appsettings.json` holds the environment URL, app name, and Playwright
-options. Every setting can be overridden per run via environment variables:
-`TXC_ENVIRONMENT_URL`, `TXC_APP_NAME`, `TXC_HEADLESS`, `TXC_SLOWMO`, `TXC_TIMEOUT`,
-`TXC_STORAGE_STATE_PATH`, `TXC_SCREENSHOT_ON_FAILURE`, `TXC_TRACING_ENABLED`.
+`<ui test project>/appsettings.json` holds the Dataverse environment URL, app name, and Playwright
+options. Every setting can be overridden per run with a `TXC_`-prefixed operating-system
+environment variable (the keys are in the file).
 
 `StorageStatePath` must be an **absolute** path — relative paths resolve from the
 test binary output directory (`bin/Debug/<tfm>/`) and are silently ignored by
@@ -73,17 +63,18 @@ Headless runs need a captured auth state (on a machine with a display):
 
 ```
 playwright-cli open --browser=msedge --headed <env-url>
-playwright-cli state-save src/Tests.UI/auth-state.json
+playwright-cli state-save <ui test project>/auth-state.json
 playwright-cli close
 ```
 
-Never commit `auth-state.json` — it holds live session cookies; gitignore it.
+Never commit `auth-state.json` — it holds live session cookies. The template's
+`.gitignore` only covers `playwright-auth-state.encrypted`, so add this file to it.
 
 ## Step 5 — Build and install browsers
 
 ```
-dotnet build src/Tests.UI/Tests.UI.csproj
-pwsh src/Tests.UI/bin/Debug/<tfm>/playwright.ps1 install chromium
+dotnet build "<ui test project>"
+pwsh "<ui test project>/bin/Debug/<tfm>/playwright.ps1" install chromium
 ```
 
 The build emits `playwright.ps1`; `<tfm>` is the target framework directory the
@@ -93,7 +84,7 @@ finish.
 ## Step 6 — Run
 
 ```
-dotnet test src/Tests.UI/Tests.UI.csproj --configuration Release
+dotnet test "<ui test project>" --configuration Release
 ```
 
 Headless (CI, Codespaces): set `TXC_HEADLESS=true` in the environment.
@@ -101,7 +92,8 @@ Headless (CI, Codespaces): set `TXC_HEADLESS=true` in the environment.
 ## Step 7 — CI workflow (optional)
 
 Live runs need the captured auth state, so keep the workflow manual
-(`workflow_dispatch`) until state handling in CI is decided. `.github/workflows/test.yml`:
+(`workflow_dispatch`) until state handling in CI is decided. `.github/workflows/test.yml`
+(substitute `<ui test project>` with its real folder, see Step 1):
 
 ```yaml
 name: test
@@ -117,7 +109,7 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.x'
-      - run: dotnet test src/Tests.UI/Tests.UI.csproj --configuration Release
+      - run: dotnet test <ui test project> --configuration Release
         env:
           TXC_HEADLESS: 'true'
 ```

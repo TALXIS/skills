@@ -3,38 +3,43 @@
 
 # Develop Dataverse plugins
 
-**Contract:** when this skill ends, `src/Plugins.<Name>` contains the plugin classes,
+**Contract:** when this task ends, `<plugin project>` contains the plugin classes,
 and `dotnet build` + `dotnet publish` pass in that project. Local only — nothing is
 deployed and no cloud environment is touched.
 
-This skill covers the code side only. Registering the assembly and its SDK message
-processing steps happens in `Solutions.Logic` — see the `plugin-registration` skill.
+This reference covers the code side only. Registering the assembly and its SDK message
+processing steps happens in `<logic solution>` — see the `plugin-registration` reference.
 The assembly is a build artifact; when and where it runs is Dataverse configuration.
 
-## Hard constraint — net462
+## Hard constraint — stay on .NET Framework
 
-The plugin project targets `net462` because the Dataverse plugin sandbox still runs
+The plugin project targets .NET Framework (the build SDK sets the version; `net472` today)
+because the Dataverse plugin sandbox still runs
 .NET Framework. Never "upgrade" or retarget it to modern .NET — the assembly would be
 rejected at import. Test projects reference it across that gap without moving it (see
-the `testing-unit` skill).
+the `test` skill's unit reference).
 
 ## Step 1 — Gather inputs (once)
 
-From the existing workspace (`txc workspace explain` if unsure): `<PublisherName>`,
-`<PublisherPrefix>`. For the project: `<Name>` — the domain the plugins serve,
-PascalCase (e.g. `Plugins.Inventory`). For each plugin class: the class name, the
+From the existing workspace (an existing solution project's csproj has
+`PublisherName` and `PublisherPrefix`): `<PublisherName>`, `<PublisherPrefix>`. Which
+project to use: an existing `<plugin project>` (`ProjectType` Plugin) when the logic
+belongs there, otherwise a new one named per the repository's convention (default
+`src/Plugins.<Name>`, `<Name>` = the domain the plugins serve, PascalCase). For each
+plugin class: the class name, the
 target entity, the SDK message (Create/Update/Delete), and the intended stage.
 
 ## Step 2 — Create the plugin project (first time only)
 
-Skip if `src/Plugins.<Name>/Plugins.<Name>.csproj` exists. From the repository root:
+Skip if the plugin project already exists. From the repository root:
 
 ```
-txc workspace component create pp-plugin --output "src/Plugins.<Name>" --param "PublisherName=<PublisherName>" --param "Company=<PublisherName>"
-dotnet sln add src/Plugins.<Name>
+txc workspace component create pp-plugin --output "<plugin project>" --param "PublisherName=<PublisherName>" --param "Company=<PublisherName>"
 ```
 
-The template creates the `net462` project with a strong-name signing key — Dataverse
+Expected outcome: the project is in the solution file (`dotnet sln list` shows it; if
+not, `dotnet sln add` — the template's post-action can fail without an error) and is a
+.NET Framework project (the target is set by the build SDK) with a strong-name signing key — Dataverse
 requires signed plugin assemblies, so keep the key file in the project.
 
 ## Step 3 — Write the plugin classes
@@ -81,7 +86,7 @@ The stage is set at registration time, but the code must be written for it:
   place to reject bad input: throw `InvalidPluginExecutionException` with a
   user-facing message and nothing has to be rolled back.
 - **Post-operation** — runs after the record is written, *still inside* the
-  transaction. Put related writes here (e.g. updating a balance when a transaction
+  transaction. Put related writes here (e.g. updating a parent's total when a child
   record is created) so they commit or roll back together with the triggering record.
 
 Validation logic never belongs in Post-operation, and dependent writes never belong
@@ -89,7 +94,7 @@ in Pre-validation.
 
 ## Step 4 — Validate
 
-From `src/Plugins.<Name>`:
+From `<plugin project>`:
 
 ```
 dotnet build
@@ -104,4 +109,4 @@ reference).
 
 Report the plugin classes created, their intended entity/message/stage, that build
 and publish passed, and that nothing was deployed. Next step in one line: register
-the assembly and steps in `Solutions.Logic` (`plugin-registration` skill).
+the assembly and plugin steps in `<logic solution>` (`plugin-registration` reference).

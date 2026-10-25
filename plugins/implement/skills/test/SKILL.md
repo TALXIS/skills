@@ -11,7 +11,7 @@ environment — say so before running them against one.
 ## Ask the CLI first
 
 ```
-txc component type list --search test              # test project types
+txc workspace component create --help              # test project templates
 txc workspace component parameter list <type>      # every parameter, typed
 ```
 
@@ -21,22 +21,24 @@ txc workspace component parameter list <type>      # every parameter, typed
 |---|---|
 | unit tests for server-side logic (in-memory platform) | plugin test project |
 | unit tests for client scripts (mocked runtime) | script test project |
-| BDD end-to-end UI tests (Gherkin + browser) | UI test project + feature type |
+| BDD end-to-end UI tests (Gherkin + browser) | UI test project + feature-file type |
 
 ## Sequence
 
-1. Scaffold the test project under `src/`, add it to the solution file.
+1. Find the test project for the kind of test (default `src/Tests.Plugins`, `src/Tests.Scripts`,
+   `src/Tests.UI`; slots resolve per the `init` skill's `workspace-layout` reference file)
+   or scaffold it, and add it to the solution file.
 2. Write or generate the tests, then `dotnet build` and `dotnet test` at the
    project path — that is the whole loop.
 
 ## Invariants
 
-- UI tests ship frozen step bindings for standard model-driven screens; fully
-  custom apps need hand-written step definitions.
+- UI tests ship frozen BDD step bindings for standard model-driven screens; code apps
+  (fully custom) need hand-written step definitions.
 - BDD scenarios: Given sets context, When is one action, Then is an observable
   outcome — 3–5 steps. Selectors and waits live in step definitions, never in
   feature files; prefer test-id selectors; never hard-sleep.
-- Unit test projects target modern .NET while the tested assembly stays net462 —
+- Unit test projects target modern .NET while the tested assembly stays on .NET Framework —
   the resulting NU1702 warning is expected.
 
 Details: [references/unit.md](references/unit.md) ·

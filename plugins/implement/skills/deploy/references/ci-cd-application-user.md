@@ -7,7 +7,7 @@ Why the OData API and not `pac admin assign-user`: pac requires an interactive p
 auth profile which is not available in CI or headless shells (e.g. Codespaces),
 while `az` is already authenticated and can mint a Dataverse-scoped token directly.
 
-Run in PowerShell (`pwsh`). Inputs: `$appId` (the deploy app's client id) and
+Run in PowerShell (`pwsh`). Inputs: `$appId` (the client id of the deploy app registration) and
 `$testUrl` (the test environment URL, e.g. `https://yourenv.crm4.dynamics.com`).
 
 ```powershell
@@ -40,5 +40,5 @@ Verify: the first `systemusers?$filter=applicationid eq $appId` query now return
 one record, and the role association query returns the System Administrator role.
 
 System Administrator keeps setup simple but breaks least-privilege. In production,
-give the deploy principal a custom role scoped to what package imports actually
+give the deploy principal a custom security role scoped to what package imports actually
 need, and never a tenant-level Power Platform admin role.

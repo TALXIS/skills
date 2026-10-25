@@ -3,17 +3,23 @@
 
 # CI/CD with GitHub Actions and OIDC
 
-**Contract:** when this skill ends, `.github/workflows/build.yml` and `deploy.yml`
+**Contract:** when this task ends, `.github/workflows/build.yml` and `deploy.yml`
 are committed, `main` accepts changes only through pull requests that pass the
 `build` check, and every push to `main` deploys the package to the test environment
 via workload identity federation. No secret material is stored — only identifiers
-(client id, tenant id, environment URL). This skill talks to GitHub and Entra ID;
+(client id, tenant id, environment URL). This reference talks to GitHub and Entra ID;
 run it only when the user asked for CI/CD.
 
-**Branching model — trunk-based.** Everyone integrates into `main` through
-short-lived topic branches (a day or two, named `users/<name>/<topic>`) and pull
-requests. Long-lived feature branches drift away from main and end in merge hell:
-the longer a branch lives, the bigger and riskier the merge.
+**Defaults, not requirements:** GitHub Actions as the host, `main` as the default branch
+(read it from the repository) and the branching model below. If the repository already
+has another CI host, branch name or branching convention, keep it and apply these steps
+(build, publish the package, import with a federated identity) in its terms.
+
+**Branching model (default) — trunk-based.** Everyone integrates into the default
+branch through short-lived topic branches (a day or two, named `users/<name>/<topic>`
+unless the repository has its own branch convention) and pull requests. Long-lived
+feature branches drift away from it and end in merge hell: the longer a branch lives,
+the bigger and riskier the merge.
 
 ## Step 1 — Prerequisites and inputs (once)
 
@@ -25,11 +31,12 @@ az account show --query tenantId -o tsv
 gh repo view --json nameWithOwner -q .nameWithOwner
 ```
 
-1. **Repository** `<owner>/<repo>` — from `gh repo view` above (the origin remote,
+1. **GitHub repository** `<owner>/<repo>` — from `gh repo view` above (the origin remote,
    not an upstream parent).
 2. **Tenant id** — from `az account show` above.
 3. **Test environment URL** — e.g. `https://yourenv.crm4.dynamics.com`, no trailing slash.
-4. **Deploy app name** — Entra app registration display name, e.g. `<solutionname>-deploy`.
+4. **Deploy app name** — display name of the Entra app registration CI signs in as (not
+   the app being built), e.g. `<repo>-deploy`.
 5. **Required PR approvals** — 0 suits a solo repository; a real team requires >= 1.
 
 Pushing files under `.github/workflows` needs the `workflow` scope; if
@@ -80,7 +87,7 @@ interactive pac auth profile that is not available in CI or headless shells, whi
 [ci-cd-application-user.md](ci-cd-application-user.md).
 
 Least-privilege note: System Administrator is the simple default; in production give
-the deploy principal a custom role scoped to what package imports actually need, and
+the deploy principal a custom security role scoped to what package imports actually need, and
 never a tenant-level Power Platform admin role.
 
 ## Step 5 — Secrets and workflows
@@ -102,7 +109,7 @@ gh api -X PUT "repos/<owner>/<repo>/actions/permissions" -F enabled=true -f allo
 
 Copy `build.yml` and `deploy.yml` from
 [ci-cd-workflows.md](ci-cd-workflows.md) into `.github/workflows/`,
-replacing `<SolutionName>` with the repository's `.slnx` name. `build` compiles
+substituting its placeholders (solution file, package project). `build` compiles
 Release on every PR and push to main and publishes the `.pdpkg.zip` as the `drop`
 artifact; `deploy` triggers via `workflow_run` when build succeeds on main, requests
 an OIDC token (`permissions: id-token: write`), and imports the package through a
@@ -114,7 +121,7 @@ now, and the PR exercises the loop you just built.
 After the `build` workflow has reported at least once, update the ruleset so PRs
 cannot merge unless `build` passes and the branch is up to date with main. The PUT
 replaces the whole `rules` array — send every rule, not just the addition; payload
-in [ci-cd-branch-ruleset.md](ci-cd-branch-ruleset.md). Broken solutions
+in [ci-cd-branch-ruleset.md](ci-cd-branch-ruleset.md). Broken builds
 can no longer reach main.
 
 ## Step 7 — Validate and summarize

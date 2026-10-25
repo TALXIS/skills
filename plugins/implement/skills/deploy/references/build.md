@@ -3,13 +3,13 @@
 
 # Build and validate locally
 
-**Contract:** local only — no cloud environment is touched. When this skill ends,
+**Contract:** local only — no cloud environment is touched. When this task ends,
 `dotnet build` passes at the repository root, and if a package was requested, the
 `.pdpkg.zip` path is reported.
 
 ## Local-first routing
 
-Creating or changing components (tables, columns, forms, plugins, roles) is
+Creating or changing components (tables, columns, forms, plugins, security roles) is
 **always** local: scaffold in the workspace, validate with `dotnet build`. Never
 edit the live environment for development — those changes are not in source
 control, and local is instant while environment operations take 30s–5min. The
@@ -45,25 +45,30 @@ Never import a Release (managed) package over an existing unmanaged solution or
 vice versa — Dataverse rejects it; uninstall first or rebuild with the matching
 configuration.
 
-## Producing the deployable package
+## Producing the deployable package (`.pdpkg.zip`)
 
 ```
-dotnet publish src/Packages.Main/Packages.Main.csproj -c Release
+dotnet publish <package project> -c Release
 ```
+
+`<package project>` is the project with `ProjectType` PDPackage (the `init` skill's
+`workspace-layout` reference file shows how to resolve it; default `src/Packages.Main`).
 
 Do not pass `-o`: an explicit output dir sets a global `PublishDir` that leaks
 into nested plugin project builds and breaks their auto-publish step
 (tools-devkit-build#109).
 
 Current quirk (tooling-backlog T6): the `.pdpkg.zip` lands next to the project,
-not in the publish output — find it at:
+not in the publish output, and is named after the project — find it at:
 
 ```
-src/Packages.Main/bin/Release/Packages.Main.pdpkg.zip
+<package project>/bin/<Configuration>/*.pdpkg.zip
 ```
 
-(In CI the same applies — publish, then copy from `src/Packages.Main/bin/Release/`
-into the artifact drop.)
+(In CI the same applies — publish, then copy from `<package project>/bin/Release/`
+into the artifact drop.) Every build of the package project prints a warning that the
+PDPackage targets are "not verified" with the installed .NET SDK; it is harmless
+(tools-devkit-build#128).
 
 ## Summary
 
