@@ -75,10 +75,13 @@ if (!result.success) throw new Error(result.error?.message ?? "The operation fai
 ```
 
 **Lookups come back as ids.** A record from a generated service carries a lookup as
-`_<prefix>_<attribute>_value` (the related record's GUID) and nothing else: there is no
-`<prefix>_<attribute>name` field, and reading one shows an empty column. To show the related
-record's name, load the target table once (`getAll` with `select` of its id and `<prefix>_name`)
-and map the id to the name, or bind the field to the base-controls `Lookup`, which resolves it.
+`_<prefix>_<attribute>_value` (the related record's GUID). The generated model also declares
+`<prefix>_<attribute>name`, and `<prefix>_<choice>name` for choice columns, but `get` and
+`getAll` leave them empty, so a column bound to one shows nothing. To show the related record's
+name, load the target table once (`getAll` with `select` of its id and `<prefix>_name`) and map
+the id to the name, or bind the field to the base-controls `Lookup`, which resolves it. A choice
+comes back as its number; its label is in the model's exported option map (`<Table><column>`,
+number to label).
 
 **Controls.** The `pp-app-code` starter brings Fluent UI v9 and `@talxis/base-controls`. Use the
 base controls where they fit, instead of re-implementing them with plain Fluent tables and inputs:
