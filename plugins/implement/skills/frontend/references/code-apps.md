@@ -74,6 +74,21 @@ const result = await <Prefix>_<entity>sService.create(record);
 if (!result.success) throw new Error(result.error?.message ?? "The operation failed");
 ```
 
+**Lookups come back as ids.** A record from a generated service carries a lookup as
+`_<prefix>_<attribute>_value` (the related record's GUID). The generated model also declares
+`<prefix>_<attribute>name`, and `<prefix>_<choice>name` for choice columns, but `get` and
+`getAll` leave them empty, so a column bound to one shows nothing. To show the related record's
+name, load the target table once (`getAll` with `select` of its id and `<prefix>_name`) and map
+the id to the name, or bind the field to the base-controls `Lookup`, which resolves it. A choice
+comes back as its number; its label is in the model's exported option map (`<Table><column>`,
+number to label).
+
+**Controls.** The `pp-app-code` starter brings Fluent UI v9 and `@talxis/base-controls`. Use the
+base controls where they fit, instead of re-implementing them with plain Fluent tables and inputs:
+`Grid` over a `MemoryDataProvider` for record lists, `Form`/`useForm` for record forms and dialogs
+(they validate required fields, ranges and number parsing from the column metadata on save),
+`Lookup` for lookup fields. Fluent for the rest (layout, buttons, dialogs, messages).
+
 ## Connector data sources (live, only when asked)
 
 Data from an external API comes through a custom connector (`backend` skill, custom-connectors reference). Unlike a
