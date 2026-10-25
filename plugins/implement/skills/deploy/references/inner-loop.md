@@ -69,12 +69,20 @@ A check that finds nothing means the change did not land: go to the failure tabl
 
 ## 4. Pull what was changed in the environment
 
+To find out what was changed or added in the environment (by you or someone else), pull every Dataverse solution of the
+repository into a clean tree and read `git diff` / `git status`: a new table arrives as a new folder under `Entities/`, a
+root-component line in `Other/Solution.xml` and its lookups in `Other/Relationships/*.xml`; a changed column as an edited
+`<attribute>` block (tested: new table, new column and a renamed column were all found and `dotnet build` passed).
+
 Push or commit your own changes first: `txc env solution pull <solution project folder> --profile <profile>`
 overwrites source with the environment's state, so an unpushed source change is deleted. Then `git diff`: after one
 environment-side edit expect that edit; review, then commit. Tested: a pull deletes a column that exists only in source,
 and the files of other projects (plugin code, scripts) are not touched. With other uncommitted work in the tree, commit only the
-pulled paths (`git add -- <paths>`, check `git diff --cached --stat`). Serialization-only changes (for example
-`<AutoNumberFormat />` rewritten as an empty element pair) can show up next to the real edit: revert those lines so the commit
+pulled paths (`git add -- <paths>`, check `git diff --cached --stat`). A pull does not bring back **web resource script content** or **plugin assembly binaries**: its JSON result lists them as
+`excludedWebResources` / `excludedBinaries`, so JavaScript or plugin code edited in the environment is lost unless you copy it
+by hand into the script library or plugin project that builds it. Serialization-only changes (for example
+`<AutoNumberFormat />` rewritten as an empty element pair; a web resource's `.data.xml` `FileName` losing the dot of `skt_main.js<GUID>`;
+an empty `<WebResources />` added to `Other/Customizations.xml`) can show up next to the real edit: revert those lines so the commit
 holds only the change (tools-cli#54, PR #174).
 
 ## 5. Remove or rename a component
