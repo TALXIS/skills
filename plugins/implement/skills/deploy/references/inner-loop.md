@@ -121,4 +121,4 @@ returns nothing once the table is gone). Confirm with the counts: `env solution 
 first deployment, there is no way to recover it afterwards. Tested: the plugin type goes with its assembly; `solution delete` and
 `publisher delete` take no `--apply` (`record delete` and `entity delete` do); the web resource table is `webresource` in SQL and
 `webresourceset` in `odata`; the deployment history of
-earlier runs stays (`env deployment list`; there is no delete).
+earlier runs stays (`env deployment list`; there is no delete, tools-cli#239).
