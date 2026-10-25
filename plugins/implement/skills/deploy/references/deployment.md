@@ -82,7 +82,9 @@ It updates the installed solution in place (`path: update`). Importing the proje
 (`txc env solution import <solution project>`) builds it and takes the zip path from MSBuild
 from txc 1.22.1 on (tools-cli#234; not re-run here); before that it looked in a `net462`
 output folder and failed (#178). When several solutions changed, import their zips in the
-package's dependency order (the order of the `ProjectReference`s).
+package's dependency order (the order of the `ProjectReference`s). A Dataverse solution the package does not
+reference — by default the connector solution (`backend` skill, custom-connectors reference) — is always imported
+this way, into every environment whose apps use it.
 
 ## Step 4 — Pull environment edits back to source
 
@@ -110,6 +112,27 @@ what changed: after one environment-side edit, expect exactly that edit (the fir
 after a fresh scaffold also normalises XML formatting, tools-cli#54). Pull
 only from Dev — the place where humans edit; pipelines only ship built packages
 forward.
+
+## Import or export records (CMT data package)
+
+The package imports the CMT data package in `<package project>/Data/` with the solutions (`data-model` skill,
+`seed-data` reference). To load or refresh just the records:
+
+```
+txc data pkg import <package project>/Data --profile <profile>
+```
+
+It takes the folder or a `.zip`; records keep their GUIDs, so a re-import updates them instead of adding duplicates,
+and txc deactivates the plugin steps around the import and reactivates them after (tested: 11 records in about 14 s).
+`--allow-production` allows it against Production or Default environments, or environments whose type cannot be
+determined (the help text) — the rule above still holds: Dev/Test first. To bring records created in Dev back into
+source:
+
+```
+txc data pkg export --schema <package project>/Data/data_schema.xml --output <package project>/Data --overwrite --profile <profile>
+```
+
+Then `git diff` and commit only the records that belong in source.
 
 ## Failure recovery
 

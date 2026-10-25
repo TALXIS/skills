@@ -27,6 +27,7 @@ txc docs get form-xml-reference                    # form structure guide
 | a list of records | view — `--search view` |
 | a fully custom page (React) | generative page project template |
 | a fully custom SPA (React + Vite) | code app project template |
+| external API data in a code app | a custom connector (`backend` skill) bound with `pa` (code-apps reference) |
 | a packaged PCF control on a form | `txc workspace control attach` |
 | client-side logic on forms | script library project template + event handler types |
 | a toolbar / command-bar button | ribbon types — `--search ribbon` |
@@ -53,7 +54,9 @@ txc docs get form-xml-reference                    # form structure guide
 - Generated views contain only the primary column — columns must be patched into
   the view XML (T3).
 - Code apps generate typed data access **offline from local metadata** —
-  no live environment needed.
+  no live environment needed (a connector data source is the exception: bound live).
+- Code app services return `{ success, error }` instead of throwing: check `success` on
+  every call, or a save the server refused shows as done.
 
 Details: [references/](references/) — forms, views-subgrids, model-app,
 form-scripts, ribbon, pcf-controls, code-apps, generative-pages

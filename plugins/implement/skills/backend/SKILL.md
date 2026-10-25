@@ -23,6 +23,7 @@ txc workspace component parameter list <type>      # every parameter, typed
 | a C# project for server-side logic | plugin project template (`create --help`) |
 | register the compiled logic in the platform | none to scaffold — the build of the Dataverse solution that holds registrations registers the assembly |
 | run it on a specific event (create/update/…) | a `[PluginStep]` attribute on the plugin class — the Dataverse solution's build generates the step; the plugin step type (a registration of a class on a message and stage) only for what attributes cannot express |
+| call an external API from an app | a custom connector project — `Connector` (`--search connector`), shipped in its own Dataverse solution ([references/custom-connectors.md](references/custom-connectors.md)) |
 
 ## Sequence
 
@@ -58,4 +59,5 @@ txc workspace component parameter list <type>      # every parameter, typed
   logic solution in the default split).
 
 Details: [references/plugin-development.md](references/plugin-development.md) ·
-[references/plugin-registration.md](references/plugin-registration.md)
+[references/plugin-registration.md](references/plugin-registration.md) ·
+[references/custom-connectors.md](references/custom-connectors.md)

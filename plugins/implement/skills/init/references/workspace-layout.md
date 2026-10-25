@@ -77,6 +77,8 @@ SDK recognises the referenced type).
 | `<plugin project>` | `src/Plugins.<Name>` | Plugin |
 | `<scripts project>` | `src/Scripts.UI` | ScriptLibrary |
 | `<code app project>` | `src/Apps.<Name>` | CodeApp |
+| `<connector project>` | `src/Connectors.<Name>` | Connector |
+| `<connector solution>` | `src/Solutions.Connectors` | Solution; references the connector projects; deployed on its own, not by the package |
 | `<page project>` | `src/GenPages.<Name>` | GenPage |
 | `<plugin test project>`, `<script test project>`, `<ui test project>` | `src/Tests.Plugins`, `src/Tests.Scripts`, `src/Tests.UI` | no `ProjectType`; test frameworks (FakeXrmEasy, Jest, Reqnroll + Playwright) |
 

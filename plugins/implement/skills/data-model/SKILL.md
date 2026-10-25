@@ -27,6 +27,7 @@ Never guess parameters — `parameter list` is the authority.
 | a lookup between tables | a `Lookup` column (it creates the relationship); `Customer` is its own column type |
 | a relationship without a lookup column | `EntityRelationship` (`--search relationship`) |
 | a choice (fixed value list) | a choice column: local to the table (`OptionSet(Local)`) or shared across tables (`OptionSet(Global)`), with multi-select variants; the `OptionSet` component (alias `Choice`) is a shared list on its own |
+| reference or seed records that ship with the app | no component type — a CMT data package in the package project ([references/seed-data.md](references/seed-data.md)) |
 
 ## Sequence
 
@@ -51,4 +52,5 @@ Never guess parameters — `parameter list` is the authority.
   (the default split keeps them in the data-model solution, apart from UI and logic;
   see the `deploy` skill's layering reference).
 
-Details and worked examples: [references/scaffolding.md](references/scaffolding.md)
+Details and worked examples: [references/scaffolding.md](references/scaffolding.md) ·
+seed records: [references/seed-data.md](references/seed-data.md)

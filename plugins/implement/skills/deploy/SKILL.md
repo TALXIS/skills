@@ -50,7 +50,8 @@ The everyday loop (change → push to Dev → verify it landed → pull back) is
 2. After edits made directly in a live dev environment, pull them back into
    source: `txc environment solution pull` — then commit. The pull overwrites source
    with the environment's state: push or commit your own changes first. CMT data packages
-   (records, not components) round-trip the same way (`txc data package export` / `import`).
+   (records, not components) round-trip the same way (`txc data package export` / `import`;
+   [deployment](references/deployment.md); authoring them: `data-model` skill).
 3. On failure: check the latest deployment record, then component layers, then
    missing dependencies — never retry more than twice without diagnosing.
 
