@@ -8,14 +8,10 @@
 tables and columns, is referenced by `<package project>`, and `dotnet build` passes at
 the repository root. Local only — no cloud environment is touched.
 
-By default schema lives in its own Dataverse solution, apart from UI and logic, so
-schema changes stay out of UI diffs. In a repository split differently, or when the
-user wants another split (one solution for everything, split by domain, tables and UI
-together), `<data-model solution>` is whichever project holds the tables there, and may
-be the same project as the UI or logic slot. The repository must already be initialized
-(see the `init` skill). Terms, project slots, their defaults (`src/Solutions.DataModel`,
-...) and how to resolve them: [workspace-layout](../../init/references/workspace-layout.md).
-The repository's own naming and layout win; the defaults apply only when it has none.
+By default schema lives in its own Dataverse solution, apart from UI and logic;
+`<data-model solution>` is whichever project holds the tables in the repository at hand.
+The repository must already be initialized (see the `init` skill). Slots, terms and defaults:
+[workspace-layout](../../init/references/workspace-layout.md); the repository's own layout and naming win.
 
 ## Ordering invariant
 
@@ -68,7 +64,13 @@ package project's generated `ImportConfig.g.xml` (under `obj/`) lists it.
 
 ## Step 3 — Create entities and columns
 
-One `pp-entity` per table, then one `pp-entity-attribute` per column
+One `pp-entity` per table, then one `pp-entity-attribute` per column. A column needs five
+keys besides `--output`; the rest of its parameters depend on `AttributeType`:
+
+```
+txc workspace component create pp-entity-attribute --output "<data-model solution>" --param "EntitySchemaName=<PublisherPrefix>_<entity>" --param "AttributeType=<type>" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<column>" --param "DisplayName=<Display Name>"
+```
+
 (`txc workspace component parameter list <type>` has the parameters, defaults and
 choices — including the `AttributeType` values and the extra parameters each takes).
 A table needs `Behavior` and an explicit `PublisherPrefix` (it defaults to a
@@ -94,7 +96,7 @@ noise in `git diff`, harmless):
 - A choice is a column: `OptionSet(Local)` keeps its options inline in `OptionSetOptions`
   (comma-separated labels — without it a placeholder option is written);
   `OptionSet(Global)` uses a list shared across tables (`OptionSetType` New or Existing,
-  `OptionSetName`); `LocalMulti` / `GlobalMulti` are the multi-select variants. The
+  `OptionSetName`); `OptionSet(LocalMulti)` / `OptionSet(GlobalMulti)` are the multi-select variants. The
   `OptionSet` component is that shared list on its own.
 - Date and time needs `DateTimeFormat=datetime`; the default is date-only.
 

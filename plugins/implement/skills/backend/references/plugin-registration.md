@@ -65,7 +65,7 @@ build. Run the checks above before and after.
 
 From the existing workspace: `<PublisherName>`, `<PublisherPrefix>`, the
 `<plugin project>` and its project name (`<plugin project name>`). For each plugin step: the
-plugin class name, the target entity's prefixed logical name, the SDK message
+plugin class name, the target entity's logical name (with the publisher prefix; the schema name as it is in the environment), the SDK message
 (Create/Update/Delete), and the stage (Pre-validation / Post-operation).
 
 ## Step 2 — Create the logic Dataverse solution (first time only)

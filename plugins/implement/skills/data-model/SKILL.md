@@ -23,7 +23,7 @@ Never guess parameters — `parameter list` is the authority.
 | You want | Component type |
 |---|---|
 | a database table | `Entity` (alias `Table`) |
-| a column / field on a table | `EntityAttribute` — the column type picks text, number, date, lookup, choice, ... |
+| a column / field on a table | `Attribute` (alias `Column`) — the column type picks text, number, date, lookup, choice, ... |
 | a lookup between tables | a `Lookup` column (it creates the relationship); `Customer` is its own column type |
 | a relationship without a lookup column | `EntityRelationship` (`--search relationship`) |
 | a choice (fixed value list) | a choice column: local to the table (`OptionSet(Local)`) or shared across tables (`OptionSet(Global)`), with multi-select variants; the `OptionSet` component (alias `Choice`) is a shared list on its own |

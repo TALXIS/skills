@@ -11,11 +11,9 @@ the repository root. Local only — no cloud environment is touched.
 Default approach (an existing role scheme or an explicit instruction wins): model roles
 for **personas** (e.g. "Sales rep", "Sales manager") rather than individual people.
 Least-privilege by design — grant each persona only what its workflow needs, and give
-automated test users a least-privileged role too, never an admin account. In the
-default split security config lives in its own Dataverse solution, so access changes
-do not hide inside schema or UI diffs; in a repository split differently, or with a
-single solution, `<security solution>` is the project that holds roles there (possibly
-the same one as tables and UI; terms and slots:
+automated test users a least-privileged role too, never an admin account. By default security
+config lives in its own Dataverse solution; `<security solution>` is whichever project holds
+roles in the repository at hand (slots:
 [workspace-layout](../../init/references/workspace-layout.md)).
 
 ## Step 1 — Gather inputs (once)
@@ -35,7 +33,12 @@ check (project listed by `dotnet sln list`, shipped in the Package Deployer pack
 
 ## Step 3 — Create roles
 
-One `pp-security-role` per persona (`RoleName`).
+One `pp-security-role` per persona; the privilege commands below must repeat the same `RoleName`
+exactly:
+
+```
+txc workspace component create pp-security-role --output "<security solution>" --param "RoleName=<Persona name>"
+```
 
 ## Step 4 — Grant privileges
 
@@ -76,5 +79,5 @@ Must pass. `TALXISXSD001` = schema validation failed (fix the reported XML);
 
 Report the roles and the privilege matrix per entity, that `<package project>` references
 the Dataverse solution, that `dotnet build` passed, and that nothing was deployed. Suggest the
-next step in one line: build the app and navigation (`model-app` skill), or deploy
+next step in one line: build the app and navigation (`model-app` reference of the `frontend` skill), or deploy
 the package (`deploy` skill).

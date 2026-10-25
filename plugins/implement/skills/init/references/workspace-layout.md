@@ -1,5 +1,5 @@
 > **Needed because:** txc has no command that lists a repository's projects by slot, and `txc workspace explain` / `project explain` print a fixed string instead of inspecting the repository.
-> **Remove when:** those commands inspect the workspace and carry this default (TOOLING-BACKLOG T14; TALXIS/tools-cli#204, #210).
+> **Remove when:** those commands inspect the workspace and carry this default (TOOLING-BACKLOG T14; TALXIS/tools-cli#204, #210). The Terms table below is a glossary, not a txc gap: it stays.
 
 # Layout, naming and project slots
 
@@ -32,7 +32,7 @@ words. Here, unless a sentence says otherwise:
 | publish | `dotnet publish`; Dataverse "publish customizations" is always spelled out | each other |
 | workflow | a GitHub Actions workflow (`build.yml`); a Dataverse workflow is always called that | each other |
 | logical name | the name you pass to a template (`LogicalName`): lowercase, **without** the publisher prefix; the template adds it, so the result (schema or unique name) is `<prefix>_<name>` | a name that already carries the prefix |
-| table, column | the same as txc's `Entity`, `EntityAttribute` types | |
+| table, column | the same as txc's `Entity` (alias `Table`) and `Attribute` (alias `Column`) types | |
 | feature | a Reqnroll `.feature` file | a product feature |
 | skill | one of the skills of this plugin (`init`, `backend`, ...); a reference is a file inside one | an entry of `txc docs` (`txc docs list` calls them skills) |
 
@@ -116,3 +116,17 @@ instruction wins (a publisher prefix already in use is never changed).
 - Publisher prefix: lowercase alphanumeric, 5 characters or fewer (the template's guidance).
 - Trunk-based topic branches `users/<name>/<topic>` (`deploy` skill, CI/CD reference).
 - CI definitions live where the host requires them (GitHub Actions: `.github/workflows/`).
+
+## Working with txc in a repository
+
+- Piped txc output is JSON. Usage errors ("Required option …", "Unrecognized argument …") go to
+  stderr only, so with `2>/dev/null` a wrong call looks like empty output — read stderr when a
+  command prints nothing.
+- Local `txc workspace …` commands log `Resolved target environment … using profile …` when the
+  machine has a txc profile; they still only touch files — that line does not mean an environment
+  was contacted (tools-cli#229).
+- Undoing a scaffold: deleting a scaffolded component's file leaves its entry in the solution's
+  `Other/Solution.xml` (root components) and the build fails (TXM001) until you remove the entry
+  and any other reference to the component (grep the repository for its id and name, e.g. an app's
+  role map). The build also keeps reporting the old ids until the solution project's `obj/` and
+  `bin/` are deleted.

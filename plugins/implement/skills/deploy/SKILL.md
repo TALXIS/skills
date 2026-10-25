@@ -24,7 +24,7 @@ txc docs get solution-layering   # managed/unmanaged Dataverse solutions
 Bootstrap order is fixed: **auth → connection → profile → select**
 (`txc config auth login`, `txc config connection create`,
 `txc config profile create`, `txc config profile select`). Verify with
-`txc config profile validate <name>` (the name is required) before any environment operation. Default setup:
+`txc config profile validate [<name>]` (txc before 1.22 requires the name) before any environment operation. Default setup:
 environments are cheap and ephemeral (source control is the source of truth) and each
 developer has their own Dev environment; follow the team's existing setup if it
 differs ([references/environments.md](references/environments.md)).

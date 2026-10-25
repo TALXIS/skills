@@ -1,5 +1,8 @@
 > **Needed because:** import ordering and failure recovery are not surfaced by txc help.
-> **Remove when:** txc surfaces the deploy sequence in help/docs (T12).
+> **Remove when:** txc surfaces the deploy sequence in help/docs (T12); and, for the Dev-iteration
+> workaround below, `env pkg import` reports skipped solutions or has a force option
+> (TALXIS/tools-cli#213), `env solution clone` checks its precondition (#216), and pull no longer
+> writes serialization noise (#54, PR #174).
 
 # Deploy to an environment
 
@@ -11,7 +14,7 @@ deploy or sync. It requires a valid txc profile; it never creates environments
 
 ```
 txc config profile list --format json
-txc config profile validate <name>
+txc config profile validate [<name>]
 ```
 
 The target profile must exist on this machine — a cached name from another
@@ -71,9 +74,11 @@ it, the target-framework folder name varies):
 txc env solution import <path-to-solution .zip> --wait --profile <profile>
 ```
 
-It updates the installed solution in place (`path: update`). Importing the project
-folder (`txc env solution import <solution project>`) currently fails looking in a
-`net462` output folder (tools-cli#178; fix in PR #179).
+It updates the installed solution in place (`path: update`). Importing the project folder
+(`txc env solution import <solution project>`) builds it and takes the zip path from MSBuild
+from txc 1.22.1 on (tools-cli#234; not re-run here); before that it looked in a `net462`
+output folder and failed (#178). When several solutions changed, import their zips in the
+package's dependency order (the order of the `ProjectReference`s).
 
 ## Step 4 — Pull environment edits back to source
 
