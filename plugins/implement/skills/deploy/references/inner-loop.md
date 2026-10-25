@@ -18,7 +18,8 @@ Change the source with the component skills, then `dotnet build` at the reposito
 
 ## 2. Push
 
-First see what is installed: `txc env solution get <name> --profile <profile>` per Dataverse solution (`env solution list`
+First see what is installed: `txc env solution get <name> --profile <profile>` per Dataverse solution — `<name>` is the
+`UniqueName` in the project's `Other/Solution.xml` (no dots; the dotted form is the friendly name and finds nothing) (`env solution list`
 returns every solution of the environment, 500+ in a shared one) — a Dataverse
 solution of the repository that is already there means "iterating"; earlier deployment runs in
 `env deployment list` do not mean it is still installed.
@@ -54,6 +55,11 @@ included, and is for apps, sitemaps and web resources that belong to no table. `
 | model-driven app, role, plugin assembly, plugin step, web resource | `txc env data query sql "SELECT name FROM <appmodule\|role\|pluginassembly\|sdkmessageprocessingstep\|webresource> WHERE name LIKE '<name>%'"` (a step's name ends with `Create of <table>` etc.; filtering `sdkmessagefilter` by table fails with BadRequest) |
 | plugin code | the assembly keeps its version, so a name check proves nothing. Test the behaviour: `txc env data record create --entity <table> --data '{…}' --apply` with a value the new code accepts and one it rejects (the rejection message appears in the result), then delete the test record with `env data record delete`. A zip import replaces the DLL at an unchanged version and needs no publish |
 | that the import ran at all | `txc env deployment list --since 1h` (package runs are named after the package's last solution), `txc env deployment get --solution-run-id <id>` for findings |
+
+A plugin step belongs to the table you registered it on when its filter does: read `_sdkmessagefilterid_value` on the step
+(`env data query odata sdkmessageprocessingsteps --filter "name eq '<step name>'" --select "name,stage,mode,_sdkmessagefilterid_value"`),
+then `env data query odata sdkmessagefilters --filter "sdkmessagefilterid eq <that id>" --select primaryobjecttypecode`.
+Filtering `sdkmessagefilters` by the table alone returns about 30 system rows and proves nothing.
 
 SQL pitfalls in these checks: `LIKE 'skt_%'` treats `_` as a wildcard and ignores case (escape it as `[_]`), a `JOIN` returns
 `[]` instead of an error, and some tables (`systemform`, `sdkmessagefilter`, `sitemap`) answer BadRequest — use `odata` for those.

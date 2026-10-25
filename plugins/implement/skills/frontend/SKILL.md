@@ -35,7 +35,8 @@ txc docs get form-xml-reference                    # form structure guide
 
 1. UI components go in the Dataverse solution that holds the UI in this repository (the
    default split has its own, `src/Solutions.UI`; resolve the real project per the `init`
-   skill's `workspace-layout` reference file, which also defines the terms). Create a new one
+   skill's `workspace-layout` reference file, which also defines the terms). Exception: the default forms and views
+   of a table are created with the table and sit in `<data-model solution>` — edit them there. Create a new solution
    only if the repository has none. A table defined in another solution project is
    referenced with a `Behavior=Existing` entity reference, not copied; a table in the same
    project needs none.

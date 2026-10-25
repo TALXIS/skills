@@ -24,6 +24,10 @@ another environment. Never deploy directly to production — always Dev/Test fir
 
 ## Step 1 — Import dependency packages first
 
+Quick check whether the repository needs one: `MissingDependencies` entries in a solution project's
+`Other/Solution.xml` that name a component from a package the repository does not build (a control, a managed solution).
+Entries for platform components, or for components of the repository's own other solutions, need no package.
+
 Any dependency package — one this repository does not build, e.g. a PCF control's NuGet
 package — must already exist in the target environment; importing the repository's own
 package first fails Dataverse's missing-dependency check. Example (pulled from nuget.org

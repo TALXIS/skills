@@ -80,6 +80,9 @@ placeholder):
 txc workspace component create pp-entity --output "<data-model solution>" --param "EntityType=Standard" --param "Behavior=New" --param "PublisherPrefix=<PublisherPrefix>" --param "LogicalName=<entity>" --param "LogicalNamePlural=<entities>" --param "DisplayName=<Display Name>" --param "DisplayNamePlural=<Display Names>"
 ```
 
+A number column defaults to the full range of its type and has no description: if the user did not give a range or a description, ask
+(`WholeNumberMinValue`/`WholeNumberMaxValue`, `DecimalMinValue`/`DecimalMaxValue`/`DecimalPrecision`, `MoneyMinValue`/`MoneyMaxValue`,
+`Description`) — do not leave the defaults silently.
 On a column, `EntitySchemaName` is the prefixed table name `<PublisherPrefix>_<entity>`
 and a lookup's `LookupTarget` is the prefixed name of a table that already exists.
 
