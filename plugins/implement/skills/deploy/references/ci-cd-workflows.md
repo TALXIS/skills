@@ -41,9 +41,10 @@ jobs:
         run: dotnet build <solution file> --configuration Release --no-restore
       - name: Publish package
         run: |
-          dotnet publish <package project> --configuration Release --no-build -o ./drop
-          # The .pdpkg.zip is created alongside the project, not in --output; collect it for deploy
-          cp <package project>/bin/Release/*.pdpkg.zip ./drop/
+          # No -o: an explicit output folder leaks into nested plugin builds (tools-devkit-build#109)
+          dotnet publish <package project> --configuration Release --no-build
+          # The .pdpkg.zip is created next to the project, not in a publish folder; collect it for deploy
+          mkdir -p ./drop && cp <package project>/bin/Release/*.pdpkg.zip ./drop/
       - uses: actions/upload-artifact@v4
         with:
           name: drop

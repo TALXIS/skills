@@ -80,16 +80,15 @@ txc workspace component create pp-form-cell --output "<ui solution>" \
 
 **8. Control** (the field's form control, not a PCF control) — one per cell, same `RowIndex` as the cell it fills.
 `ControlType` matches the attribute's type: `Text`, `MultilineText`, `WholeNumber`,
-`Decimal`, `Currency`, `DateTime`, `OptionSet` (also for booleans), `Lookup`.
-`isUnbound` defaults to `true` (a control not bound to a column) — pass
-`isUnbound=false` for a field bound to `AttributeLogicalName`:
+`Decimal`, `Currency`, `DateTime`, `OptionSet` (also for booleans), `Lookup`. On a main form
+the control is bound through `AttributeLogicalName` (tested: the XML is the same with or without
+`isUnbound`; that parameter only matters for dialog forms):
 
 ```
 txc workspace component create pp-form-control --output "<ui solution>" \
   --param "ControlType=Text" \
   --param "RowIndex=1" \
   --param "AttributeLogicalName=<prefix>_name" \
-  --param "isUnbound=false" \
   --param "FormType=main" \
   --param "FormId=$FORM_GUID" \
   --param "EntitySchemaName=<prefix>_<entity>"
@@ -112,8 +111,8 @@ Do not re-scaffold. Instead:
 3. Adding a **field**: prefer the `pp-form-row` / `pp-form-cell` / `pp-form-control`
    commands above with the existing form's GUID; they append into the form XML.
    Adding a **section** or **tab**: use `pp-form-section` / `pp-form-tab` the same way.
-   Only edit the XML by hand when the commands cannot target the right spot (e.g. a
-   non-last section) — then copy an existing sibling element as the pattern.
+   Only edit the XML by hand when the commands cannot target the right spot (e.g. inserting
+   a row before an existing one) — then copy an existing sibling element as the pattern.
 4. Validate before finishing: no skipped hierarchy levels, every `datafieldname`
    exists as an attribute of the entity in `<data-model solution>`, and all GUIDs in
    the file are unique.

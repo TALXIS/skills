@@ -1,6 +1,9 @@
 > **Needed because:** the app/sitemap composition sequence is not surfaced by txc help.
 > **Remove when:** txc surfaces sequences in help/docs (T12), and `pp-app-model` /
-> `pp-sitemap-area` emit the display name and the area title (TALXIS/tools-devkit-templates#181).
+> `pp-sitemap-area` emit the display name and the area title (TALXIS/tools-devkit-templates#181),
+> and `pp-app-model` / `pp-app-security-role` no longer write or break the role map (templates#78,
+> #152, #184; the appliers keep existing roles and drop the `<Everyone />` default,
+> platform-metadata#135) — then the role-id hand edit below goes away.
 
 # Implement a model-driven app
 
@@ -9,15 +12,11 @@ components, and sitemap navigation, is referenced by `<package project>`, and
 `dotnet build` passes at the repository root. Local only — no cloud environment is
 touched.
 
-In the default split the UI solution does not own tables: it references them
-(`Behavior=Existing` entity references) from `<data-model solution>` and only layers UI on top. A
-reference carries just enough metadata to attach UI components without duplicating
-schema, so the table stays defined in one project. If `<ui solution>` and
-`<data-model solution>` are the same project (a single solution, or tables and UI
-together), the table is already defined there: skip the entity references in Step 3. Tables
-must already exist (see the `data-model` skill). Terms, project slots and their defaults
-(`<ui solution>`, ...): [workspace-layout](../../init/references/workspace-layout.md);
-an existing repository's layout and naming win.
+In the default split the UI solution only layers UI on top of tables it references
+(`Behavior=Existing` entity references) from `<data-model solution>`; if both slots are the same
+project the table is already defined there: skip the entity references in Step 3. Tables must
+already exist (see the `data-model` skill). Slots and defaults:
+[workspace-layout](../../init/references/workspace-layout.md); the repository's layout and naming win.
 
 ## Step 1 — Gather inputs (once)
 

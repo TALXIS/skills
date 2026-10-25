@@ -53,7 +53,8 @@ the same rules.
 
 `<ui test project>/appsettings.json` holds the Dataverse environment URL, app name, and Playwright
 options. Every setting can be overridden per run with a `TXC_`-prefixed operating-system
-environment variable (the keys are in the file).
+environment variable (the keys are in the file; the `TXC_` variables are read in
+`Support/TestConfiguration.cs`).
 
 `StorageStatePath` must be an **absolute** path — relative paths resolve from the
 test binary output directory (`bin/Debug/<tfm>/`) and are silently ignored by

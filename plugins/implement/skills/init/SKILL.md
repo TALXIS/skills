@@ -29,18 +29,9 @@ txc workspace project explain   # project types and how they compose
 txc docs list                   # guides (txc docs get <id>)
 ```
 
-Piped txc output is JSON; every command answers `--help`. Usage errors ("Required
-option …", "Unrecognized argument …") go to stderr only, so with `2>/dev/null` a wrong
-call looks like empty output — read stderr when a command prints nothing. Local `txc workspace …`
-commands log `Resolved target environment … using profile …` when the machine has a
-txc profile; they still only touch files — that line does not mean an environment was
-contacted (tools-cli#229).
-
-Undoing a scaffold: deleting a scaffolded component's file leaves its entry in the
-solution's `Other/Solution.xml` (root components) and the build fails (TXM001) until you
-remove the entry (and any other reference to the component: grep the repository for its id and name, e.g. an app's role map);
-the build also keeps reporting the old ids until the solution
-project's `obj/` and `bin/` are deleted.
+Piped txc output is JSON; every command answers `--help`. Notes on usage errors, the
+`Resolved target environment` log line and undoing a scaffold:
+[workspace-layout](references/workspace-layout.md#working-with-txc-in-a-repository).
 
 ## Existing repository
 

@@ -1,7 +1,9 @@
 > **Needed because:** the push → verify → pull loop, its traps and the per-component checks are not
 > surfaced by txc help; success exit codes do not prove a change landed.
-> **Remove when:** `env pkg import` reports what it installed or skipped (TALXIS/tools-cli#213) and
-> the build outputs sit in the standard locations (TALXIS/tools-devkit-build#129).
+> **Remove when:** `env pkg import` reports what it installed or skipped (TALXIS/tools-cli#213), the
+> build outputs sit in the standard locations (TALXIS/tools-devkit-build#129), `env solution import`
+> publishes (tools-cli PR #139), pull is normalized (#54, PR #174) and `env component delete` exists
+> (tools-cli#72, PR #151).
 
 # Inner loop — change, push to Dev, verify, pull back
 
@@ -28,7 +30,8 @@ solution of the repository that is already there means "iterating"; earlier depl
 
 The zip is `<project file name>.zip` in the project's output folder, `<solution project>/bin/Debug/<target framework>/`
 (`dotnet msbuild <solution project> -p:Configuration=Debug -getProperty:OutDir` prints the folder; `TargetPath` names a
-`.dll` that does not exist). Why the second row: Package Deployer skips every solution whose version is already
+`.dll` that does not exist; from txc 1.22.1 `txc env solution import <solution project>` does this lookup itself, tools-cli#234).
+Why the second row: Package Deployer skips every solution whose version is already
 installed, and local builds always have the same version, so a changed package imports "successfully" and changes
 nothing; `env pkg import` prints nothing on stdout (the log on stderr only says it completed); `solution export|unpack|pack|pull|clone`
 print packager progress text before the JSON, so do not parse their stdout as one JSON document (tools-cli#217). Debug packs

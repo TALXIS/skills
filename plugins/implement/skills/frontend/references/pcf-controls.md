@@ -43,6 +43,9 @@ cd <scripts project>
 npm install --save-dev @talxis/client-libraries @types/powerapps-component-framework @microsoft/microsoft-graph-types
 ```
 
+(The versions are whatever npm resolves; keep the ones in an existing project's `package.json`,
+and commit the lock file.)
+
 **onLoad handler on the form** — the template's post-scripts add the web resource to the form's
 `<formLibraries>`, which is required: the form must load the web resource before the
 PCF can call into it:
