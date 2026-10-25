@@ -45,6 +45,7 @@ recommendation, not a requirement.
 | Plugin registration, Dataverse workflow, business rule | `<logic solution>` (`Solutions.Logic`) |
 | Form, view, model-driven app, sitemap | `<ui solution>` (`Solutions.UI`) |
 | Security role, field-level security | `<security solution>` (`Solutions.Security`) |
+| Custom connector | `<connector solution>` (`Solutions.Connectors`) |
 | Unsure | `txc workspace explain` — inspect the workspace and follow the repo's own convention |
 
 **Other splits.** If the repository already uses different solution names or layering,
