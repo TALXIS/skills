@@ -64,6 +64,8 @@ npm run dev
 
 Vite serves the app locally for iterating on pages against the typed services.
 
+Running against a live environment needs code apps enabled there (`deploy` skill, environments).
+
 ## Step 5 — Validate
 
 ```

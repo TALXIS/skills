@@ -44,7 +44,7 @@ When the named fix ships, delete the file and shrink the skill.
 
 ## Manifests
 
-`plugin.json` (Agent Plugins 1.0) and `mcp.json` are the source of truth;
+`plugin.json` (Agent Plugins 1.0) and, for plugins that ship an MCP server, `mcp.json` are the source of truth;
 `.claude-plugin/plugin.json` and `.mcp.json` are generated — never edit them:
 
 ```

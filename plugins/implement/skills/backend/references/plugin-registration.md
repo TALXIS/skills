@@ -1,5 +1,8 @@
-> **Needed because:** the build-registers-the-assembly sequence is not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in help/docs (T12), and the `pp-solution`
+> **Needed because:** the build-registers-the-assembly sequence is not surfaced by txc help,
+> and `txc docs get plugin-development` still lists `pp-plugin-assembly` as a registration
+> step — which is why the backend skill does not point at it.
+> **Remove when:** txc surfaces sequences in help/docs (T12), the `plugin-development` doc
+> describes build-generated registration (tools-cli#205), and the `pp-solution`
 > template describes its `GeneratePluginAssembly` parameter (tools-devkit-templates#106).
 
 # Register plugin assemblies and steps
@@ -38,7 +41,9 @@ A registration is two files in `<logic solution>` that share one id:
 after a generated build, renaming the assembly, or editing the id in only one of the two
 files leaves two roots, and the next build fails with "root components are not defined
 in customizations". Nothing guards against this yet, so after every build that touches
-registration, check there is exactly one registration and the ids match:
+registration, check there is exactly one registration and the ids match (`<logic solution>`
+is the Dataverse solution project that holds the registrations: `src/Solutions.Logic` in the
+default split, otherwise whichever project holds them):
 
 ```
 grep -o 'RootComponent type="91" id="[^"]*"' <logic solution>/Other/Solution.xml

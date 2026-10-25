@@ -101,8 +101,9 @@ dotnet build
 dotnet publish
 ```
 
-Both must pass. `dotnet publish` produces the assembly layout that registration
-(`pp-plugin-assembly`) consumes.
+Both must pass. Registration needs no extra input from here: the build of the
+Dataverse solution that holds registrations registers the assembly (`plugin-registration`
+reference).
 
 ## Step 5 — Summary
 

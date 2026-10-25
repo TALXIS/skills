@@ -14,7 +14,6 @@ description: Implements server-side logic in a TALXIS / Power Platform / Dataver
 txc component type list --search plugin            # registration types
 txc workspace component create --help              # project templates (plugin project)
 txc workspace component parameter list <type>      # every parameter, typed
-txc docs get plugin-development                    # long-form guide
 ```
 
 ## Intent → component type
@@ -35,11 +34,8 @@ txc docs get plugin-development                    # long-form guide
    repository with the default split, a logic solution (`src/Solutions.Logic`). Resolve
    it per the `init` skill's `workspace-layout` reference file (also the terms); create one
    only if there is none. The `plugin-registration` reference file has the steps.
-3. That solution's build registers the assembly itself; add the plugin steps after that
-   build — **assembly registration before plugin steps, always**. Scaffold the assembly type only in
-   manual mode, or before the first build with the plugin project already built (to fix
-   the id; the build then reuses it). Once a build has registered the assembly, never
-   scaffold it again: that duplicates the registration.
+3. Don't scaffold the plugin assembly: the build of that solution registers it. Add the
+   plugin steps after that build.
 4. `dotnet build`.
 
 ## Invariants
