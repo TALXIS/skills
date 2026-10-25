@@ -86,7 +86,8 @@ predates attribute registration: drop the attribute line and scaffold the steps 
 
 ## Stage doctrine — decide it while writing the code
 
-The stage is set on the `[PluginStep]` (see the `plugin-registration` reference), but the code must be written for it:
+The stage is set on the `[PluginStep]` (see the `plugin-registration` reference), but the
+code must be written for it:
 
 - **Pre-validation** — runs *before* the database transaction starts. The cheapest
   place to reject bad input: throw `InvalidPluginExecutionException` with a
@@ -107,10 +108,13 @@ dotnet build
 dotnet publish
 ```
 
-Both must pass. `dotnet publish` produces the assembly layout the registration reads.
+Both must pass. Registration needs no extra input from here: the build of the
+Dataverse solution that holds registrations registers the assembly (`plugin-registration`
+reference).
 
 ## Step 5 — Summary
 
 Report the plugin classes created, their intended entity/message/stage, that build
-and publish passed, and that nothing was deployed. Next step in one line: register
-the assembly and plugin steps in `<logic solution>` (`plugin-registration` reference).
+and publish passed, and that nothing was deployed. Next step in one line: build
+`<logic solution>` so it registers the assembly and the plugin steps declared on the
+classes (`plugin-registration` reference).

@@ -26,8 +26,8 @@ Identical in **Claude Code** and **GitHub Copilot CLI**:
 
 In **VS Code** (Copilot chat): add `"TALXIS/skills"` to the
 `chat.plugins.marketplaces` setting and install `implement` from the Extensions
-view (`@agentPlugins`). One install registers the skills **and** the `txc` MCP server,
-available in every project folder.
+view (`@agentPlugins`). One install registers the skills, available in every project
+folder; the agent runs the `txc` CLI directly.
 
 ## Try it
 

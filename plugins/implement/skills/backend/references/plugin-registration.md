@@ -1,6 +1,9 @@
 > **Needed because:** the build-registers-the-assembly sequence and the `[PluginStep]` attribute
-> surface are not surfaced by txc help (the attributes are described only in the Plugin build package README).
-> **Remove when:** txc surfaces sequences in help/docs (T12), the attribute reference is reachable
+> surface are not surfaced by txc help (the attributes are described only in the Plugin build
+> package README), and `txc docs get plugin-development` still lists `pp-plugin-assembly` as a
+> registration step — which is why the backend skill does not point at it.
+> **Remove when:** txc surfaces sequences in help/docs (T12), the `plugin-development` doc
+> describes build-generated registration (tools-cli#205), the attribute reference is reachable
 > through `txc docs get` (T24), and the `pp-solution` template describes its
 > `GeneratePluginAssembly` parameter (tools-devkit-templates#106).
 
@@ -8,7 +11,8 @@
 
 **Contract:** when this task ends, `<logic solution>` contains the assembly
 registration and the plugin steps of every plugin class (generated from its
-`[PluginStep]` attributes), and `dotnet build` passes at the repository root. Local only — nothing is deployed and no cloud environment is touched.
+`[PluginStep]` attributes, or scaffolded), and `dotnet build` passes at the repository
+root. Local only — nothing is deployed and no cloud environment is touched.
 
 The plugin project holds the code, a Dataverse solution holds the registration. The
 assembly is a build artifact; when and where it runs is Dataverse configuration — each
@@ -87,7 +91,8 @@ dotnet build "<logic solution>"
 
 One `[PluginStep]` per message a class handles, written on the class in `<plugin project>`
 (`using TALXIS.DevKit.Build.Dataverse.Plugin;` — the build SDK compiles the attribute
-sources into the plugin project, there is nothing to reference). The solution build writes
+sources into the plugin project, there is nothing to reference). It needs the generated
+registration (`GeneratePluginAssembly` on, the default). The solution build writes
 `SdkMessageProcessingSteps/{id}.xml` and the type-92 root components into `<logic solution>`;
 commit them like the assembly's `.data.xml`.
 
@@ -147,12 +152,12 @@ dotnet build
 
 Must pass at the repository root, and a second `dotnet build` must change no file
 (`git status`). Check that `SdkMessageProcessingSteps/` holds one file per declared step.
-`TALXISXSD001` = schema validation failed (fix the
-reported XML); `TALXISGUID001` = duplicate GUID (regenerate the reported id).
+`TALXISXSD001` = schema validation failed (fix the reported XML); `TALXISGUID001` =
+duplicate GUID (regenerate the reported id).
 
 ## Step 6 — Summary
 
-Report the assembly and plugin steps registered (entity, message, stage per plugin step, and whether each came from an attribute or a scaffold), that
-`<package project>` references `<logic solution>`, that `dotnet build` passed, and that
-nothing was deployed. Next step in one line: cover the plugin logic with local unit
+Report the assembly and plugin steps registered (entity, message, stage per plugin step,
+and whether each came from an attribute or a scaffold), that `<package project>`
+references `<logic solution>`, that `dotnet build` passed, and that nothing was deployed. Next step in one line: cover the plugin logic with local unit
 tests (`test` skill).
