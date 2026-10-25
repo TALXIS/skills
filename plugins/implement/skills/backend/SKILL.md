@@ -20,7 +20,7 @@ txc workspace component parameter list <type>      # every parameter, typed
 | You want | Component type |
 |---|---|
 | a C# project for server-side logic | search: `--search plugin` (project type) |
-| register the compiled logic in the platform | nothing to scaffold — the logic solution's build registers the assembly |
+| register the compiled logic in the platform | none to scaffold — the build of the Dataverse solution that holds registrations registers the assembly |
 | run it on a specific event (create/update/…) | plugin step type |
 
 ## Sequence
@@ -29,8 +29,8 @@ txc workspace component parameter list <type>      # every parameter, typed
    C# classes, `dotnet build`.
 2. Registration lives in a logic solution project (conventionally
    `src/Solutions.Logic`), which takes a `ProjectReference` to the plugin project.
-3. Don't scaffold the plugin assembly: the logic solution's build registers it. Add the
-   steps after that build.
+3. Don't scaffold the plugin assembly: the build of that solution registers it. Add the
+   plugin steps after that build.
 4. `dotnet build`.
 
 ## Invariants

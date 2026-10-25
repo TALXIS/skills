@@ -18,9 +18,9 @@ already exist and build (see the `plugin-development` skill).
 
 ## How registration works
 
-A registration is two files in `Solutions.Logic` that share one id:
+A registration is two files in `<logic solution>` that share one id:
 `PluginAssemblies/<AssemblyName>.dll.data.xml` and a type-91 `RootComponent` in
-`Other/Solution.xml`. The `GeneratePluginAssembly` property in `Solutions.Logic.csproj`
+`Other/Solution.xml`. The `GeneratePluginAssembly` property in that solution project's csproj
 (template default `true`) decides who writes them:
 
 - **Generated** (`true`): every build writes them for each referenced plugin project.
@@ -28,26 +28,28 @@ A registration is two files in `Solutions.Logic` that share one id:
   new classes, never removes any); otherwise it mints a new id. It needs a signed
   assembly with at least one public, non-abstract `IPlugin` class.
 - **Manual** (`false`): you scaffold `pp-plugin-assembly` (fresh lowercase GUID as
-  `AssemblyId`) after building the plugin project; the solution build leaves both files
+  `AssemblyId`) after building the plugin project; that solution project's build leaves both files
   alone. Use it only when you need a fixed id. With generation left on, running it
-  before the first solution build (plugin project already built) also works: the build
+  before the first build of the solution project (plugin project already built) also works: the build
   reuses that id. Never after a generated build has registered the assembly.
 
 **Registering in the wrong order can create duplicates.** Running `pp-plugin-assembly`
 after a generated build, renaming the assembly, or editing the id in only one of the two
 files leaves two roots, and the next build fails with "root components are not defined
 in customizations". Nothing guards against this yet, so after every build that touches
-registration, check there is exactly one registration and the ids match:
+registration, check there is exactly one registration and the ids match (`<logic solution>`
+is the Dataverse solution project that holds the registrations: `src/Solutions.Logic` in the
+default split, otherwise whichever project holds them):
 
 ```
-grep -o 'RootComponent type="91" id="[^"]*"' src/Solutions.Logic/Other/Solution.xml
-grep -o 'PluginAssemblyId="[^"]*"' src/Solutions.Logic/PluginAssemblies/*.data.xml
+grep -o 'RootComponent type="91" id="[^"]*"' <logic solution>/Other/Solution.xml
+grep -o 'PluginAssemblyId="[^"]*"' <logic solution>/PluginAssemblies/*.data.xml
 ```
 
-**Order:** steps reference the assembly, so scaffold `pp-plugin-assembly-step` only
+**Order:** plugin steps reference the assembly, so scaffold `pp-plugin-assembly-step` only
 after the registration exists (after the first build in generated mode).
 
-**Retrofitting an existing solution:** if it already holds the registration, leave
+**Retrofitting an existing Dataverse solution:** if it already holds the registration, leave
 generation on — the build reuses the existing id by file name. If the assembly already
 lives in an environment under another id, set that id in both files before the first
 build. Run the checks above before and after.
@@ -71,7 +73,7 @@ dotnet sln add src/Solutions.Logic
 
 ## Step 3 — Reference the plugin project and build
 
-The solution packages the assembly it registers, so it needs a `ProjectReference`
+The solution project packages the assembly it registers, so it needs a `ProjectReference`
 to the plugin project. The build then generates the registration (see "How
 registration works"):
 
@@ -80,7 +82,7 @@ dotnet add "src/Solutions.Logic/Solutions.Logic.csproj" reference "src/Plugins.<
 dotnet build src/Solutions.Logic
 ```
 
-## Step 4 — Register the steps
+## Step 4 — Register the plugin steps
 
 One command per plugin class. `PluginName` is the plugin class name; `Stage` is
 `Pre-validation` or `Post-operation`; `SdkMessage` is `Create`, `Update`, or `Delete`:

@@ -39,7 +39,7 @@ requires signed plugin assemblies, so keep the key file in the project.
 
 ## Step 3 — Write the plugin classes
 
-One `.cs` file per plugin class in `src/Plugins.<Name>/`. The `pp-plugin` template ships
+One `.cs` file per plugin class in `<plugin project>`. The `pp-plugin` template ships
 a `PluginBase` (tracing and fault wrapping) — derive from it and override
 `ExecuteDataversePlugin`. Its constructor takes the plugin's `Type`. Give the derived
 class a public **parameterless** constructor (below): FakeXrmEasy's
@@ -47,13 +47,14 @@ class a public **parameterless** constructor (below): FakeXrmEasy's
 `(string unsecure, string secure)` constructor is only for receiving step configuration
 and is optional. A plain
 `IPlugin.Execute(IServiceProvider)` class also works, but the scaffolded project and
-its tests assume the base class. Skeleton:
+its tests assume the base class. Skeleton (`<Namespace>` is the project's root
+namespace):
 
 ```csharp
 using System;
 using Microsoft.Xrm.Sdk;
 
-namespace Plugins.<Name>
+namespace <Namespace>
 {
     public class <PluginClassName> : PluginBase
     {
@@ -95,8 +96,9 @@ dotnet build
 dotnet publish
 ```
 
-Both must pass. Registration needs no extra input from here: the build of
-`Solutions.Logic` registers the assembly (`plugin-registration` skill).
+Both must pass. Registration needs no extra input from here: the build of the
+Dataverse solution that holds registrations registers the assembly (`plugin-registration`
+reference).
 
 ## Step 5 — Summary
 
