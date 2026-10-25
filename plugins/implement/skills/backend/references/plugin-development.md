@@ -41,9 +41,11 @@ requires signed plugin assemblies, so keep the key file in the project.
 
 One `.cs` file per plugin class in `src/Plugins.<Name>/`. The `pp-plugin` template ships
 a `PluginBase` (tracing and fault wrapping) — derive from it and override
-`ExecuteDataversePlugin`. Its constructor takes the plugin's `Type`; a
-`(string unsecure, string secure)` constructor on the derived class is the convention
-for receiving step configuration, and is optional. A plain
+`ExecuteDataversePlugin`. Its constructor takes the plugin's `Type`. Give the derived
+class a public **parameterless** constructor (below): FakeXrmEasy's
+`ExecutePluginWithTarget<T>` does not compile without one (CS0310). A
+`(string unsecure, string secure)` constructor is only for receiving step configuration
+and is optional. A plain
 `IPlugin.Execute(IServiceProvider)` class also works, but the scaffolded project and
 its tests assume the base class. Skeleton:
 
@@ -55,8 +57,7 @@ namespace Plugins.<Name>
 {
     public class <PluginClassName> : PluginBase
     {
-        public <PluginClassName>(string unsecureConfiguration, string secureConfiguration)
-            : base(typeof(<PluginClassName>))
+        public <PluginClassName>() : base(typeof(<PluginClassName>))
         {
         }
 
@@ -94,8 +95,8 @@ dotnet build
 dotnet publish
 ```
 
-Both must pass. `dotnet publish` produces the assembly layout that registration
-(`pp-plugin-assembly`) consumes.
+Both must pass. Registration needs no extra input from here: the build of
+`Solutions.Logic` registers the assembly (`plugin-registration` skill).
 
 ## Step 5 — Summary
 

@@ -1,5 +1,8 @@
-> **Needed because:** the build-registers-the-assembly sequence is not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in help/docs (T12), and the `pp-solution`
+> **Needed because:** the build-registers-the-assembly sequence is not surfaced by txc help,
+> and `txc docs get plugin-development` still lists `pp-plugin-assembly` as a registration
+> step — which is why the backend skill does not point at it.
+> **Remove when:** txc surfaces sequences in help/docs (T12), the `plugin-development` doc
+> describes build-generated registration (tools-cli#205), and the `pp-solution`
 > template describes its `GeneratePluginAssembly` parameter (tools-devkit-templates#106).
 
 # Register plugin assemblies and steps
