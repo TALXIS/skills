@@ -1,6 +1,7 @@
-> **Needed because:** privilege depth semantics and the role/privilege sequence are not surfaced by txc help.
-> **Remove when:** txc surfaces sequences and privilege semantics in help/docs (T12), and the
-> docs and the scaffold agree on the valid depths (TALXIS/tools-cli#208).
+> **Needed because:** privilege depth semantics and the role/privilege sequence are not surfaced by txc help, and the
+> build does not check privilege names.
+> **Remove when:** txc surfaces sequences and privilege semantics in help/docs (T12), the
+> docs and the scaffold agree on the valid depths (TALXIS/tools-cli#208), and the build checks privilege names (T31).
 
 # Implement security roles
 
@@ -65,6 +66,11 @@ txc workspace component create pp-security-role-privilege --output "<security so
   privileges in any role until you grant them, so personas silently can't use it.
 - A deliberate matrix beats uniform grants: e.g. a worker reads everything (`Read`
   Global) but edits only records they own (`Write` Basic).
+- **Privilege names are not checked by the build.** A name that does not exist grants nothing. Names follow the
+  table's schema name (`prvReadAppModule`), while the template writes the logical name (`prvReadappmodule`), and
+  some obvious names do not exist (`prvReadCustomControl` is `prvReadComplexControl`). For a table outside the
+  data model, take the name from the environment (read-only):
+  `txc env data query sql "SELECT name FROM privilege WHERE name LIKE 'prvRead%' ORDER BY name" --profile <profile>`
 
 ## Step 5 — Validate
 
@@ -81,3 +87,25 @@ Report the roles and the privilege matrix per entity, that `<package project>` r
 the Dataverse solution, that `dotnet build` passed, and that nothing was deployed. Suggest the
 next step in one line: build the app and navigation (`model-app` reference of the `frontend` skill), or deploy
 the package (`deploy` skill).
+
+## Users need a baseline to open the app
+
+A model-driven app also needs reads on platform tables (the app, forms, views, web resources, option sets, user
+settings). Without them the app does not open, even with every privilege on your own tables. The out-of-box
+**App Opener** role has exactly this set: assign it next to your roles, or copy its privileges into them. To list
+them (read-only):
+
+```
+txc env data query fetchxml "<fetch><entity name='privilege'><attribute name='name'/><link-entity name='roleprivileges' from='privilegeid' to='privilegeid' intersect='true'><link-entity name='role' from='roleid' to='roleid'><filter><condition attribute='name' operator='eq' value='App Opener'/></filter></link-entity></link-entity></entity></fetch>" --profile <profile>
+```
+
+## What an import does to a role
+
+- Importing a **custom** role replaces its privileges with what the solution declares
+  ([Microsoft docs](https://learn.microsoft.com/power-platform/alm/how-managed-solutions-merged#security-role-privilege-updates)).
+  A line removed from the role XML removes that permission in the environment — name every removed or lowered
+  privilege in the summary.
+- Environments with *Maintain security role privileges* turned on merge admin changes instead. Check the role
+  after an import rather than assuming either way.
+- Keep each role in one solution: updating it from another solution can drop privilege changes.
+- Do not change out-of-box roles in a solution; copy them into a custom role instead.
