@@ -1,6 +1,7 @@
 > **Needed because:** the scaffold sequence and cross-solution referencing are not surfaced by txc help.
-> **Remove when:** txc surfaces sequences in its own help/docs (TOOLING-BACKLOG T12), and
-> deletes every component type from an environment (tools-cli#72) so the schema-change note can point at it.
+> **Remove when:** txc surfaces sequences in its own help/docs (TOOLING-BACKLOG T12),
+> deletes every component type from an environment (tools-cli#72) so the schema-change note can point at it, and
+> the column scaffold quirks are fixed (TALXIS/tools-devkit-templates#198–#202).
 
 # Implement the data model
 
@@ -73,6 +74,8 @@ txc workspace component create pp-entity-attribute --output "<data-model solutio
 
 (`txc workspace component parameter list <type>` has the parameters, defaults and
 choices — including the `AttributeType` values and the extra parameters each takes).
+Pass `LogicalName` without the prefix (`code`, not `demo_code`). The template adds the prefix itself, so
+`demo_code` silently becomes the column `demo_demo_code` (TALXIS/tools-devkit-templates#198).
 A table needs `Behavior` and an explicit `PublisherPrefix` (it defaults to a
 placeholder):
 
@@ -88,7 +91,7 @@ and a lookup's `LookupTarget` is the prefixed name of a table that already exist
 
 Expected outcome of the scaffold. Check it after the command, and repair by hand only
 what is missing (a scaffold can also drop the byte-order mark of `Other/Solution.xml`:
-noise in `git diff`, harmless):
+noise in `git diff`, harmless, TALXIS/tools-devkit-templates#202):
 
 - Every new table has a required primary name column `<PublisherPrefix>_name`; satisfy
   a "name" column with it instead of adding another.
@@ -101,6 +104,16 @@ noise in `git diff`, harmless):
   `OptionSet(Global)` uses a list shared across tables (`OptionSetType` New or Existing,
   `OptionSetName`); `OptionSet(LocalMulti)` / `OptionSet(GlobalMulti)` are the multi-select variants. The
   `OptionSet` component is that shared list on its own.
+- `OptionSetOptions` on a column accepts `Label:Value` pairs (`Open:100000000,Closed:100000001`) to set the values.
+  `pp-optionset-global` does not: it keeps `Open:100000000` as the label and generates the values
+  (TALXIS/tools-devkit-templates#201) — pass plain labels there.
+- Only the English (1033) display name is written (TALXIS/tools-devkit-templates#200). If the solution has other
+  languages, add one line per language next to it in `Entity.xml`:
+  `<displayname description="<label>" languagecode="<lcid>" />`.
+- A lookup's relationship file is named after the target in lowercase (`Other/Relationships/team.xml`). If the
+  folder already has the same file in another case (`Team.xml`, from an export), move the new
+  `<EntityRelationship>` blocks into it and delete the lowercase file — the two collide on Windows and macOS
+  (TALXIS/tools-devkit-templates#199).
 - Date and time needs `DateTimeFormat=datetime`; the default is date-only.
 
 To reference a table owned by another solution project (or a standard Dataverse table)
@@ -123,3 +136,14 @@ Report the tables and columns created, that `<package project>` references the D
 that `dotnet build` passed, and that nothing was deployed. Natural next steps, one
 line each: security roles for the new tables (`security` skill), an app and
 navigation (`frontend` skill).
+
+## Undo a scaffolded lookup
+
+A wrong lookup (wrong name or target) leaves three pieces. Remove all three, then scaffold it again:
+
+1. the `<attribute PhysicalName="<prefix>_<column>">` block in the table's `Entity.xml`;
+2. its `<EntityRelationship Name="…" />` line in `Other/Relationships.xml`;
+3. its `<EntityRelationship>` block in `Other/Relationships/<target>.xml` (delete the file if nothing else is in it).
+
+Check with `txc workspace validate <data-model solution>`: `dotnet build` still passes when step 2 is missed, the
+validation does not.
