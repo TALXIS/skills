@@ -27,8 +27,12 @@ dotnet add "<ui solution>" reference "src/Controls.<Name>/<Name>.csproj"
 
 ## 2. Build the UI from TALXIS base controls
 
-Before writing a grid, form, lookup or dialog by hand, look in `@talxis/base-controls` — it has them, styled like
-the rest of the app:
+Before writing any UI piece by hand, check whether `@talxis/base-controls` already has it. It has a control for
+each field type (text, number, date, choice, lookup, ...) plus grids, forms, a ribbon and notifications, all
+styled like the rest of the app. The full list, with live examples, is at
+[talxis.github.io/base-controls](https://talxis.github.io/base-controls).
+
+Tips for the common cases:
 
 | You need | Use |
 |---|---|
