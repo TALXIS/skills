@@ -29,6 +29,7 @@ txc docs get form-xml-reference                    # form structure guide
 | a fully custom SPA (React + Vite) | code app project template |
 | external API data in a code app | a custom connector (`backend` skill) bound with `pa` (code-apps reference) |
 | a packaged PCF control on a form | `txc workspace control attach` |
+| your own custom UI control (PCF) | `pp-pcf` project template |
 | client-side logic on forms | script library project template + event handler types |
 | a toolbar / command-bar button | ribbon types — `--search ribbon` |
 
@@ -59,4 +60,4 @@ txc docs get form-xml-reference                    # form structure guide
   every call, or a save the server refused shows as done.
 
 Details: [references/](references/) — forms, views-subgrids, model-app,
-form-scripts, ribbon, pcf-controls, code-apps, generative-pages
+form-scripts, ribbon, pcf-controls, pcf-development, code-apps, generative-pages
