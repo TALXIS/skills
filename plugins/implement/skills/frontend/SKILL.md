@@ -34,6 +34,11 @@ txc docs get form-xml-reference                    # form structure guide
 
 ## Sequence
 
+**Decision point:** which interface each persona gets: a model-driven app (standard
+forms and views, fastest), a code app (fully custom React) or both. Then which fields
+each form shows and which columns each view lists. If the user chose UI tests, write
+each agreed user flow as a scenario before building its screens (`test` skill).
+
 1. UI components go in the Dataverse solution that holds the UI in this repository (the
    default split has its own, `src/Solutions.UI`; resolve the real project per the `init`
    skill's `workspace-layout` reference file, which also defines the terms). Exception: the default forms and views
@@ -53,6 +58,8 @@ txc docs get form-xml-reference                    # form structure guide
   subgrids, event handlers, and adding the form to the app (T4).
 - Generated views contain only the primary column — columns must be patched into
   the view XML (T3).
+- Generated main forms also show only the primary column: add the agreed fields to
+  the form, or users can't fill in the record.
 - Code apps generate typed data access **offline from local metadata** —
   no live environment needed (a connector data source is the exception: bound live).
 - Code app services return `{ success, error }` instead of throwing: check `success` on

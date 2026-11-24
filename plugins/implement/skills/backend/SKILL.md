@@ -27,9 +27,16 @@ txc workspace component parameter list <type>      # every parameter, typed
 
 ## Sequence
 
+**Decision point:** propose the business rules the domain implies (for example "a
+quantity may not go negative") and, for each, where it runs: a plugin (server-side,
+enforced for every client), a cloud flow (low-code, asynchronous) or a form script (UI
+only, never the only guard), plus each rule's acceptance criteria as Given / When / Then
+(for example: given 5 in stock, when an outbound of 6 is saved, then the save is refused
+with the agreed message). Build what the user picks.
+
 1. Find the plugin project (`ProjectType` Plugin) or create one (default
-   `src/Plugins.<Name>`), add it to the solution file, write the C# classes,
-   `dotnet build`.
+   `src/Plugins.<Name>`), add it to the solution file. Write failing plugin tests from
+   the agreed criteria first (`test` skill), then the C# classes until `dotnet test` passes.
 2. Registration lives in a Dataverse solution project that takes a `ProjectReference` to
    the plugin project: the one that holds registrations in this repository, or, in a new
    repository with the default split, a logic solution (`src/Solutions.Logic`). Resolve

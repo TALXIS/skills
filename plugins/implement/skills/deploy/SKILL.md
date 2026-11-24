@@ -21,9 +21,14 @@ txc docs get solution-layering   # managed/unmanaged Dataverse solutions
 
 ## Connect an environment
 
-Bootstrap order is fixed: **auth → connection → profile → select**
+**Decision point:** before creating an environment, its type and region (a Developer
+environment is the per-user default; tenants often restrict Sandbox creation to
+admins), and before importing, the target environment.
+
+Bootstrap order is fixed: **auth → connection → profile → pin**
 (`txc config auth login`, `txc config connection create`,
-`txc config profile create`, `txc config profile select`). Verify with
+`txc config profile create`, `txc config profile pin`, which binds the profile to this
+repository; `profile select` changes the machine-wide default, only when asked). Verify with
 `txc config profile validate [<name>]` (txc before 1.22 requires the name) before any environment operation. Default setup:
 environments are cheap and ephemeral (source control is the source of truth) and each
 developer has their own Dev environment; follow the team's existing setup if it
@@ -53,7 +58,11 @@ The everyday loop (change → push to Dev → verify it landed → pull back) is
    (records, not components) round-trip the same way (`txc data package export` / `import`;
    [deployment](references/deployment.md); authoring them: `data-model` skill).
 3. On failure: check the latest deployment record, then component layers, then
-   missing dependencies — never retry more than twice without diagnosing.
+   missing dependencies — never retry more than twice without diagnosing. A new
+   environment may refuse imports while it starts (async operations disabled): wait and retry.
+4. Verify behaviour, not only components: run the UI tests against the environment, or
+   without them create records through `txc environment data` that trigger each business
+   rule and check the outcome. Report PASS / FAIL per rule and say what was not checked.
 
 ## Invariants
 

@@ -31,6 +31,9 @@ Never guess parameters — `parameter list` is the authority.
 
 ## Sequence
 
+**Decision point:** before scaffolding, show the tables with their key columns, choices
+and relationships as one table; build after the user confirms or edits it.
+
 1. Find the Dataverse solution that holds tables in the workspace (slot resolution
    and terms: `init` skill, `workspace-layout` reference file). Only if the repository has
    none, create one (`pp-solution`), add it to the solution file, and add a

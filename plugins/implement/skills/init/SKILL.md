@@ -21,6 +21,24 @@ Local only — nothing deploys.
   the dev container from step 3 below. To stay local, `agentbox prerequisite
   install` prints the install commands; show them, never run them.
 
+## Working with the user
+
+Build the app in a dialogue, not in one autonomous pass. At each **decision point**
+(every skill marks its own), propose 2–3 options with their trade-offs, recommend one,
+then stop and wait for the user's answer, even in an autonomous or auto-approve mode.
+Between decision points, work without asking. Anything unforeseen is a decision point
+too: when a template, the build or the CLI can't do what was agreed, or a fix would
+change an agreed decision or turn off a check, stop, name the gap and ask instead of
+working around it. For a new app, first interview the user: what the business does, who
+the users are and what each of them does. Then cover the areas one at a time (data
+model, business rules in `backend`, access in `security`, UI in `frontend`): agree one
+area, build it, then move to the next area's decision point; never bundle all areas into
+one approval. Skip an area only when the user says so. Work test-first: business rules get failing
+unit tests before their code, agreed user flows get UI test scenarios before their
+screens (`test` skill). Record each agreed decision in
+`docs/design/<area>.md` before building it, and commit once the area is built and
+`dotnet build` passes.
+
 ## Ask the CLI first
 
 ```
@@ -52,13 +70,14 @@ skills refer to through slot placeholders (`<data-model solution>`,
 
 ## New repository
 
-Ask once: name (the repository and the solution file), publisher name, publisher prefix.
+**Decision point:** name (the repository and the solution file), publisher name,
+publisher prefix. Propose values that fit the interview.
 
 1. `git init -b main`, `dotnet new gitignore`
 2. `dotnet new sln --name <Name>` — it writes `<Name>.slnx` on current SDKs; only if
    it wrote a `<Name>.sln` instead, `dotnet sln <Name>.sln migrate` and delete the `.sln`
 3. Root keeps only the solution file, `README.md`, `.gitignore`, `NuGet.config`
-   (nuget.org), and `.devcontainer/devcontainer.json` with
+   (nuget.org), `docs/design/`, and `.devcontainer/devcontainer.json` with
    `{"image": "ghcr.io/talxis/tools-agentbox/image:latest"}`; projects go in `src/`
    (the default layout)
 4. Package project (builds the Package Deployer package): find its template in
