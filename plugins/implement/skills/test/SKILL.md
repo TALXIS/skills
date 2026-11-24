@@ -25,6 +25,13 @@ txc workspace component parameter list <type>      # every parameter, typed
 
 ## Sequence
 
+Unit tests for every agreed business rule and client script are not optional: write
+them from the agreed criteria before the code, see them fail, then make them pass.
+
+**Decision point:** UI tests for the agreed user flows, written before their screens
+(model-driven apps; they run against a live environment and need a test user's sign-in,
+which the user sets up), or none yet.
+
 1. Find the test project for the kind of test (default `src/Tests.Plugins`, `src/Tests.Scripts`,
    `src/Tests.UI`; slots resolve per the `init` skill's `workspace-layout` reference file)
    or scaffold it, and add it to the solution file.
